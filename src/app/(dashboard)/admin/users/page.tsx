@@ -65,7 +65,7 @@ export default async function AdminUsersPage({
             {/* Tab Content */}
             <div className="mt-2">
                 {tab === 'add' ? (
-                    <div className="max-w-2xl mx-auto">
+                    <div className="max-w-4xl mx-auto w-full">
                         <AddUserForm classes={classes} />
                     </div>
                 ) : (
