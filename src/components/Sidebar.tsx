@@ -8,7 +8,7 @@ export async function Sidebar() {
 
     return (
         <div className="w-64 h-full bg-slate-100 border-r p-4 flex-col hidden md:flex">
-            <div className="text-xl font-bold mb-6 text-primary px-2 italic tracking-tight uppercase">LMS TIK & KKA</div>
+            <div className="text-xl font-bold mb-6 text-primary px-2 italic tracking-tight">LMS Sekolah</div>
 
             <nav className="flex flex-col gap-1">
                 <NavItem href="/dashboard" icon={<Home size={20} />} label="Beranda" />
