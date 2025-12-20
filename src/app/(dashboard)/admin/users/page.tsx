@@ -7,9 +7,9 @@ import { getClasses } from "@/actions/classes";
 export default async function AdminUsersPage({
     searchParams
 }: {
-    searchParams: Promise<{ tab?: string; page?: string }>
+    searchParams: Promise<{ tab?: string; page?: string; q?: string; classId?: string }>
 }) {
-    const { tab = 'staff', page = '1' } = await searchParams;
+    const { tab = 'staff', page = '1', q = '', classId = '' } = await searchParams;
     const itemsPerPage = 10;
     const currentPage = parseInt(page);
     const skip = (currentPage - 1) * itemsPerPage;
@@ -17,17 +17,42 @@ export default async function AdminUsersPage({
     // Determine roles for the active tab
     const roles = tab === 'students' ? ['STUDENT'] : ['ADMIN', 'TEACHER'];
 
+    // Build the where clause
+    const where: any = {
+        role: { in: roles },
+    };
+
+    if (q) {
+        where.OR = [
+            { name: { contains: q, mode: 'insensitive' } },
+            { username: { contains: q, mode: 'insensitive' } },
+        ];
+    }
+
+    if (tab === 'students' && classId) {
+        where.enrollments = {
+            some: {
+                classId: classId
+            }
+        };
+    }
+
     // Fetch data, count, and classes in parallel
     const [users, totalCount, classes] = await Promise.all([
         prisma.user.findMany({
-            where: { role: { in: roles } },
+            where,
+            include: {
+                enrollments: {
+                    include: {
+                        class: true
+                    }
+                }
+            },
             orderBy: { name: 'asc' },
             skip,
             take: itemsPerPage,
         }),
-        prisma.user.count({
-            where: { role: { in: roles } }
-        }),
+        prisma.user.count({ where }),
         getClasses()
     ]);
 
@@ -71,10 +96,12 @@ export default async function AdminUsersPage({
                     </div>
                 ) : (
                     <UserTable
-                        users={users}
+                        users={users as any}
                         currentPage={currentPage}
                         totalPages={totalPages}
                         totalCount={totalCount}
+                        classes={classes}
+                        showFilters={tab === 'students'}
                     />
                 )}
             </div>

@@ -11,8 +11,7 @@ import {
     CheckSquare,
     Square
 } from "lucide-react";
-import { EditUserModal } from "./EditUserModal";
-import { DeleteUserButton } from "./DeleteUserButton";
+import { Search, Filter, X } from "lucide-react";
 
 interface User {
     id: string;
@@ -20,6 +19,11 @@ interface User {
     username: string;
     email: string | null;
     role: string;
+    enrollments?: {
+        class: {
+            name: string;
+        }
+    }[];
 }
 
 interface UserTableProps {
@@ -27,11 +31,14 @@ interface UserTableProps {
     currentPage: number;
     totalPages: number;
     totalCount: number;
+    classes: { id: string, name: string }[];
+    showFilters?: boolean;
 }
 
-export function UserTable({ users, currentPage, totalPages, totalCount }: UserTableProps) {
+export function UserTable({ users, currentPage, totalPages, totalCount, classes, showFilters }: UserTableProps) {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [isPending, startTransition] = useTransition();
+    const [searchTerm, setSearchTerm] = useState("");
 
     const toggleSelectAll = () => {
         if (selectedIds.length === users.length) {
@@ -61,8 +68,57 @@ export function UserTable({ users, currentPage, totalPages, totalCount }: UserTa
         });
     };
 
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        const url = new URL(window.location.href);
+        if (searchTerm) url.searchParams.set('q', searchTerm);
+        else url.searchParams.delete('q');
+        url.searchParams.set('page', '1');
+        window.location.href = url.toString();
+    };
+
+    const handleFilterClass = (classId: string) => {
+        const url = new URL(window.location.href);
+        if (classId) url.searchParams.set('classId', classId);
+        else url.searchParams.delete('classId');
+        url.searchParams.set('page', '1');
+        window.location.href = url.toString();
+    };
+
     return (
         <div className="flex flex-col gap-4">
+            {/* Search & Filters */}
+            <div className="flex flex-col md:flex-row gap-4 mb-2">
+                <form onSubmit={handleSearch} className="flex-1 relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input
+                        type="text"
+                        placeholder="Cari berdasarkan nama atau username..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-bold shadow-sm"
+                    />
+                </form>
+
+                {showFilters && (
+                    <div className="flex items-center gap-2">
+                        <div className="relative">
+                            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                            <select
+                                onChange={(e) => handleFilterClass(e.target.value)}
+                                defaultValue={new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('classId') || ""}
+                                className="pl-10 pr-10 py-3 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-black text-slate-700 appearance-none shadow-sm min-w-[180px]"
+                            >
+                                <option value="">Semua Kelas</option>
+                                {classes.map(c => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                )}
+            </div>
+
             {/* Table Actions */}
             <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
                 <div className="flex items-center gap-4">
@@ -99,6 +155,7 @@ export function UserTable({ users, currentPage, totalPages, totalCount }: UserTa
                                 <th className="p-6 w-10"></th>
                                 <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Identitas</th>
                                 <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Kontak</th>
+                                <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Kelas</th>
                                 <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Peran</th>
                                 <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400 text-right">Aksi</th>
                             </tr>
@@ -127,8 +184,8 @@ export function UserTable({ users, currentPage, totalPages, totalCount }: UserTa
                                     </td>
                                     <td className="p-6">
                                         <span className={`px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase ${user.role === 'ADMIN' ? 'bg-purple-50 text-purple-600 border border-purple-100' :
-                                                user.role === 'TEACHER' ? 'bg-blue-50 text-blue-600 border border-blue-100' :
-                                                    'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                                            user.role === 'TEACHER' ? 'bg-blue-50 text-blue-600 border border-blue-100' :
+                                                'bg-emerald-50 text-emerald-600 border border-emerald-100'
                                             }`}>
                                             {user.role}
                                         </span>
@@ -143,7 +200,7 @@ export function UserTable({ users, currentPage, totalPages, totalCount }: UserTa
                             ))}
                             {users.length === 0 && (
                                 <tr>
-                                    <td colSpan={5} className="py-20 text-center text-slate-400 font-bold">
+                                    <td colSpan={6} className="py-20 text-center text-slate-400 font-bold">
                                         Tidak ada data ditemukan.
                                     </td>
                                 </tr>
