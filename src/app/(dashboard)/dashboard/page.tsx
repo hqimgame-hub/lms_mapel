@@ -79,7 +79,29 @@ export default async function DashboardPage() {
     const isAdmin = session.user.role === 'ADMIN';
 
     // Flatten courses from all enrolled classes (Student)
-    const myCourses = user?.enrollments.flatMap(e => e.class.courses) || [];
+    let myCourses: any[] = [];
+    if (session.user.role === 'STUDENT') {
+        const studentData = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            include: {
+                enrollments: {
+                    include: {
+                        class: {
+                            include: {
+                                courses: {
+                                    include: {
+                                        subject: true,
+                                        teacher: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        myCourses = studentData?.enrollments.flatMap(e => e.class.courses) || [];
+    }
 
     async function joinClass(formData: FormData) {
         'use server';
