@@ -16,7 +16,7 @@ interface EditUserModalProps {
 
 export function EditUserModal({ user }: EditUserModalProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [state, formAction, isPending] = useActionState(updateUser, { success: false, message: '' });
+    const [state, formAction, isPending] = useActionState(updateUser, { success: false, message: '', errors: undefined as Record<string, string[]> | undefined });
 
     if (!isOpen) {
         return (
@@ -43,12 +43,7 @@ export function EditUserModal({ user }: EditUserModalProps) {
                     </button>
                 </div>
 
-                <form action={async (formData) => {
-                    await formAction(formData);
-                    if (state?.success) {
-                        setIsOpen(false);
-                    }
-                }} className="p-6 space-y-4">
+                <form action={formAction} className="p-6 space-y-4">
                     <input type="hidden" name="id" value={user.id} />
 
                     <div className="space-y-1">

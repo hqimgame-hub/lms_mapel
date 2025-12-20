@@ -66,7 +66,10 @@ export function EditAssignmentModal({ assignment }: EditAssignmentModalProps) {
                                     className="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 outline-none font-bold text-slate-700 transition-all"
                                     required
                                 />
-                                {state?.errors?.title && <p className="text-red-500 text-xs font-bold">{state.errors.title[0]}</p>}
+                                {(() => {
+                                    const error = (state?.errors as any)?.title;
+                                    return error ? <p className="text-red-500 text-xs font-bold">{error[0]}</p> : null;
+                                })()}
                             </div>
 
                             <div className="space-y-2">

@@ -46,9 +46,10 @@ export function RegisterForm({ classes }: { classes: { id: string, name: string 
                         <School size={18} />
                     </div>
                 </div>
-                {state?.errors?.classId && (
-                    <p className="text-red-500 text-xs mt-1">{state.errors.classId[0]}</p>
-                )}
+                {(() => {
+                    const error = state?.errors?.classId;
+                    return error ? <p className="text-red-500 text-xs mt-1">{error[0]}</p> : null;
+                })()}
             </div>
 
             <div className="flex flex-col gap-1">
