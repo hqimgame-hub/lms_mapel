@@ -1,0 +1,87 @@
+'use client';
+
+import { updateSubject } from "@/actions/subjects";
+import { useActionState, useState } from "react";
+import { BookOpen, Edit, X } from "lucide-react";
+
+interface EditSubjectModalProps {
+    subject: {
+        id: string;
+        name: string;
+    };
+}
+
+export function EditSubjectModal({ subject }: EditSubjectModalProps) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [state, formAction, isPending] = useActionState(updateSubject, { success: false, message: '' });
+
+    if (!isOpen) {
+        return (
+            <button
+                onClick={() => setIsOpen(true)}
+                className="text-blue-500 hover:text-blue-700"
+                title="Edit Mapel"
+            >
+                <Edit size={18} />
+            </button>
+        );
+    }
+
+    return (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden">
+                <div className="bg-primary p-4 text-white flex items-center justify-between">
+                    <h3 className="font-bold flex items-center gap-2">
+                        <BookOpen size={20} />
+                        Edit Mata Pelajaran
+                    </h3>
+                    <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-1 rounded-lg">
+                        <X size={20} />
+                    </button>
+                </div>
+
+                <form action={async (formData) => {
+                    await formAction(formData);
+                    if (state?.success) {
+                        setIsOpen(false);
+                    }
+                }} className="p-6 space-y-4">
+                    <input type="hidden" name="id" value={subject.id} />
+
+                    <div className="space-y-1">
+                        <label className="text-xs font-bold text-slate-500 uppercase">Nama Mata Pelajaran</label>
+                        <input
+                            name="name"
+                            defaultValue={subject.name}
+                            className="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            required
+                        />
+                    </div>
+
+                    {state?.message && (
+                        <p className={`text-sm p-3 rounded-xl ${state.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                            {state.message}
+                        </p>
+                    )}
+
+                    <div className="flex gap-3 pt-2">
+                        <button
+                            type="button"
+                            onClick={() => setIsOpen(false)}
+                            className="flex-1 px-4 py-2.5 rounded-xl border font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={isPending}
+                            className="flex-1 px-4 py-2.5 rounded-xl bg-primary text-white font-bold hover:bg-blue-600 transition-colors disabled:opacity-50"
+                        >
+                            {isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}

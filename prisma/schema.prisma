@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+
+
+model User {
+  id       String @id @default(cuid())
+  username String @unique
+  email    String? @unique
+  password String
+  name     String
+  role     String // ADMIN, TEACHER, STUDENT
+
+  // Relations
+  submissions        Submission[] // Student
+  teachingCourses    Course[]     @relation("TeacherCourses") // Teacher
+  enrollments        Enrollment[] // Student
+
+  @@index([role])
+  @@index([name])
+}
+
+model Subject {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "Informatika", "KKA"
+  courses     Course[]
+}
+
+model Class {
+  id          String   @id @default(cuid())
+  name        String   // e.g., "X-1", "X-2" (Rombel)
+  code        String   @unique // Auto-generated code for joining
+  description String?
+  
+  students    Enrollment[]
+  courses     Course[]
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  
+  classId     String
+  class       Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  
+  teacherId   String
+  teacher     User     @relation("TeacherCourses", fields: [teacherId], references: [id], onDelete: Cascade)
+
+  assignments Assignment[]
+  materials   Material[]
+  exams       Exam[]
+
+  @@unique([classId, subjectId]) // One subject per class (usually)
+}
+
+model Enrollment {
+  id        String @id @default(cuid())
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classId   String
+  class     Class  @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  joinedAt  DateTime @default(now())
+
+  @@unique([userId, classId])
+}
+
+model Material {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  type        String   // TEXT, PDF_LINK, YOUTUBE_LINK, EXTERNAL_LINK
+  content     String   // The content itself or the link
+  createdAt   DateTime @default(now())
+  
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Exam {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  type        String   // GFORM, INTERNAL_QUIZ
+  link        String?  // For GForm or external links
+  dueDate     DateTime?
+  startTime   DateTime? // Waktu mulai ujian
+  endTime     DateTime? // Waktu selesai ujian (otomatis tutup)
+  duration    Int?      // Durasi dalam menit (opsional, informasi saja)
+  createdAt   DateTime @default(now())
+  
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Assignment {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  submissions Submission[]
+}
+
+model Submission {
+  id           String           @id @default(cuid())
+  content      String?          
+  fileUrl      String?          // URL to the uploaded file
+  fileName     String?          // Original name of the uploaded file
+  status       String           @default("DRAFT")
+  submittedAt  DateTime?
+  grade        Int?
+  feedback     String?
+  
+  studentId    String
+  student      User             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  assignmentId String
+  assignment   Assignment       @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, assignmentId])
+}
