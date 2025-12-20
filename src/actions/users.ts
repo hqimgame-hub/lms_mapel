@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { auth } from "@/auth";
 
 const UserSchema = z.object({
     name: z.string().min(3, "Nama minimal 3 karakter"),
