@@ -1,71 +1,88 @@
 import { AddCourseForm } from "@/components/admin/AddCourseForm";
 import { DeleteCourseButton } from "@/components/admin/DeleteCourseButton";
 import { EditCourseModal } from "@/components/admin/EditCourseModal";
+import { CourseFilters } from "@/components/admin/CourseFilters";
+import { BookOpen, GraduationCap, User } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
-export default async function AdminCoursesPage() {
-    const [courses, classes, subjects, teachers] = await Promise.all([
-        prisma.course.findMany({
-            include: {
-                class: true,
-                subject: true,
-                teacher: true,
-            },
-            orderBy: { class: { name: 'asc' } }
-        }),
-        prisma.class.findMany({ orderBy: { name: 'asc' } }),
-        prisma.subject.findMany({ orderBy: { name: 'asc' } }),
-        prisma.user.findMany({
-            where: { role: 'TEACHER' },
-            orderBy: { name: 'asc' }
-        }),
-    ]);
+// ... previous code (the export default function part I just edited)
 
-    return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold">Kelola Kursus (Alokasi Guru)</h1>
+return (
+    <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="flex flex-col gap-2">
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Alokasi Kursus 📚</h1>
+            <p className="text-slate-500 font-medium">Atur pembagian kelas, mata pelajaran, dan penugasan guru pengajar.</p>
+        </div>
 
-            <AddCourseForm classes={classes} subjects={subjects} teachers={teachers} />
+        <AddCourseForm classes={classes} subjects={subjects} teachers={teachers} />
 
-            <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
-                <table className="w-full text-left">
-                    <thead className="bg-gray-50 border-b">
-                        <tr>
-                            <th className="p-4 font-medium text-gray-500">Kelas</th>
-                            <th className="p-4 font-medium text-gray-500">Mata Pelajaran</th>
-                            <th className="p-4 font-medium text-gray-500">Guru Pengajar</th>
-                            <th className="p-4 font-medium text-gray-500 text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                        {courses.map(course => (
-                            <tr key={course.id} className="hover:bg-gray-50">
-                                <td className="p-4 font-bold text-gray-700">{course.class.name}</td>
-                                <td className="p-4">{course.subject.name}</td>
-                                <td className="p-4 text-blue-600 font-medium">{course.teacher.name}</td>
-                                <td className="p-4 text-right">
-                                    <div className="flex items-center justify-end gap-2">
-                                        <EditCourseModal
-                                            course={course}
-                                            classes={classes}
-                                            subjects={subjects}
-                                            teachers={teachers}
-                                        />
-                                        <DeleteCourseButton courseId={course.id} />
-                                    </div>
-                                </td>
+        <div className="flex flex-col gap-4">
+            <CourseFilters classes={classes} subjects={subjects} teachers={teachers} />
+
+            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                                <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Kelas</th>
+                                <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Mata Pelajaran</th>
+                                <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Guru Pengajar</th>
+                                <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400 text-right">Aksi</th>
                             </tr>
-                        ))}
-                        {courses.length === 0 && (
-                            <tr>
-                                <td colSpan={4} className="p-8 text-center text-gray-500">
-                                    Belum ada alokasi kursus.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {courses.map(course => (
+                                <tr key={course.id} className="hover:bg-slate-50/50 transition-colors">
+                                    <td className="p-6">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                                <GraduationCap size={16} />
+                                            </div>
+                                            <span className="font-bold text-slate-800 text-sm">{course.class.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="p-6">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                                                <BookOpen size={16} />
+                                            </div>
+                                            <span className="font-medium text-slate-600 text-sm">{course.subject.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="p-6">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                                <User size={16} />
+                                            </div>
+                                            <span className="text-sm font-bold text-slate-800">{course.teacher.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="p-6 text-right">
+                                        <div className="flex items-center justify-end gap-2">
+                                            <EditCourseModal
+                                                course={course}
+                                                classes={classes}
+                                                subjects={subjects}
+                                                teachers={teachers}
+                                            />
+                                            <DeleteCourseButton courseId={course.id} />
+                                        </div>
+                                    </td>
+                                </tr>
+                                {
+                                    courses.length === 0 && (
+                                        <tr>
+                                            <td colSpan={4} className="py-20 text-center text-slate-400 font-bold">
+                                                Tidak ada alokasi kursus ditemukan.
+                                            </td>
+                                        </tr>
+                                    )
+                                }
+                            </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    );
+    </div>
+);
 }
