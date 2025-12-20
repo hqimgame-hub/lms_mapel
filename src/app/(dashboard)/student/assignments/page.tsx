@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { BookOpen, Calendar, Clock, CheckCircle, ChevronRight, Filter } from "lucide-react";
+import { BookOpen, Calendar, Clock, CheckCircle, ChevronRight, Filter, ClipboardList } from "lucide-react";
 import Link from "next/link";
 
 export default async function StudentAssignmentsPage() {
@@ -77,8 +77,8 @@ export default async function StudentAssignmentsPage() {
                             >
                                 <div className="flex items-center gap-5">
                                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${isDone ? 'bg-emerald-50 text-emerald-500' :
-                                            isDraft ? 'bg-amber-50 text-amber-500' :
-                                                isLate ? 'bg-red-50 text-red-500' : 'bg-slate-50 text-slate-400'
+                                        isDraft ? 'bg-amber-50 text-amber-500' :
+                                            isLate ? 'bg-red-50 text-red-500' : 'bg-slate-50 text-slate-400'
                                         }`}>
                                         {isDone ? <CheckCircle size={24} /> : isLate ? <Calendar size={24} /> : <BookOpen size={24} />}
                                     </div>
