@@ -107,8 +107,8 @@ export function EditUserModal({ user }: EditUserModalProps) {
                     {state?.message && (
                         <div className={`p-4 rounded-xl text-sm font-medium ${state.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                             {state.message}
-                            {state.errors && Object.keys(state.errors).map(key => (
-                                <p key={key} className="text-xs mt-1 font-normal">• {key}: {Array.isArray(state.errors[key]) ? state.errors[key].join(', ') : state.errors[key]}</p>
+                            {(state as any).errors && Object.keys((state as any).errors).map(key => (
+                                <p key={key} className="text-xs mt-1 font-normal">• {key}: {(state as any).errors[key]}</p>
                             ))}
                         </div>
                     )}

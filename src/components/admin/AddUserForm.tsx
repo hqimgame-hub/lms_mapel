@@ -105,7 +105,7 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                         <div className={`p-4 rounded-xl text-sm font-medium ${state.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                             {state.message}
                             {state.errors && Object.keys(state.errors).map(key => (
-                                <p key={key} className="text-xs mt-1 font-normal">• {key}: {state.errors[key]}</p>
+                                <p key={key} className="text-xs mt-1 font-normal">• {key}: {state.errors![key]}</p>
                             ))}
                         </div>
                     )}
