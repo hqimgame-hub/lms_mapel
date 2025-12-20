@@ -12,6 +12,8 @@ import {
     Square
 } from "lucide-react";
 import { Search, Filter, X } from "lucide-react";
+import { EditUserModal } from "./EditUserModal";
+import { DeleteUserButton } from "./DeleteUserButton";
 
 interface User {
     id: string;
@@ -181,6 +183,11 @@ export function UserTable({ users, currentPage, totalPages, totalCount, classes,
                                     </td>
                                     <td className="p-6">
                                         <p className="text-xs font-medium text-slate-600">{user.email || '-'}</p>
+                                    </td>
+                                    <td className="p-6">
+                                        <p className="text-xs font-black text-primary">
+                                            {user.enrollments?.[0]?.class?.name || '-'}
+                                        </p>
                                     </td>
                                     <td className="p-6">
                                         <span className={`px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase ${user.role === 'ADMIN' ? 'bg-purple-50 text-purple-600 border border-purple-100' :
