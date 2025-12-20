@@ -1,6 +1,7 @@
 'use client';
 
 import { updateClass } from "@/actions/classes";
+import { ActionState } from "@/actions/types";
 import { useActionState, useState, useEffect } from "react";
 import { School, Edit, X } from "lucide-react";
 
@@ -14,7 +15,7 @@ interface EditClassModalProps {
 
 export function EditClassModal({ classData }: EditClassModalProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [state, formAction, isPending] = useActionState(updateClass, { success: false, message: '', errors: undefined as Record<string, string[]> | undefined });
+    const [state, formAction, isPending] = useActionState(updateClass, { success: false, message: '', errors: undefined } as ActionState);
 
     useEffect(() => {
         if (state?.success) {

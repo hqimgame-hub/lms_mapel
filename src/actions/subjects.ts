@@ -3,12 +3,13 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { ActionState } from "./types";
 
 const SubjectSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
 });
 
-export async function createSubject(prevState: any, formData: FormData) {
+export async function createSubject(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const data = {
         name: formData.get('name'),
     };
@@ -39,7 +40,7 @@ export async function createSubject(prevState: any, formData: FormData) {
     }
 }
 
-export async function updateSubject(prevState: any, formData: FormData) {
+export async function updateSubject(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const id = formData.get('id') as string;
     const data = {
         name: formData.get('name'),
@@ -78,8 +79,8 @@ export async function deleteSubject(id: string) {
             where: { id }
         });
         revalidatePath('/admin/subjects');
-        return { success: true, message: "Mapel berhasil dihapus" };
+        return { success: true, message: "Mapel berhasil dihapus", errors: undefined };
     } catch (e) {
-        return { success: false, message: "Gagal menghapus mapel" };
+        return { success: false, message: "Gagal menghapus mapel", errors: undefined };
     }
 }

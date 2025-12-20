@@ -1,13 +1,14 @@
 'use client';
 
 import { createClass } from "@/actions/classes";
+import { ActionState } from "@/actions/types";
 import { useActionState } from "react";
 import { Info, PlusCircle } from "lucide-react";
 
-const initialState = {
+const initialState: ActionState = {
     message: '',
     success: false,
-    errors: undefined as Record<string, string[]> | undefined
+    errors: undefined
 };
 
 export function AddClassForm() {

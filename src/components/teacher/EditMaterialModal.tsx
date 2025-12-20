@@ -2,6 +2,7 @@
 
 import { useState, useActionState, useEffect } from "react";
 import { updateMaterial } from "@/actions/materials";
+import { ActionState } from "@/actions/types";
 import { Pencil, X, Type, AlignLeft, Link as LinkIcon, FileText } from "lucide-react";
 
 interface EditMaterialModalProps {
@@ -15,7 +16,7 @@ interface EditMaterialModalProps {
     }
 }
 
-const initialState = { message: '', success: false, errors: undefined as Record<string, string[]> | undefined };
+const initialState: ActionState = { message: '', success: false, errors: undefined };
 
 export function EditMaterialModal({ material }: EditMaterialModalProps) {
     const [isOpen, setIsOpen] = useState(false);

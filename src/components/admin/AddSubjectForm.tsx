@@ -1,13 +1,14 @@
 'use client';
 
 import { createSubject } from "@/actions/subjects";
+import { ActionState } from "@/actions/types";
 import { useActionState } from "react";
 import { Info, BookPlus } from "lucide-react";
 
-const initialState = {
+const initialState: ActionState = {
     message: '',
     success: false,
-    errors: undefined as Record<string, string[]> | undefined
+    errors: undefined
 };
 
 export function AddSubjectForm() {

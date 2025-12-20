@@ -1,13 +1,14 @@
 'use client';
 
 import { createUser } from "@/actions/users";
+import { ActionState } from "@/actions/types";
 import { useActionState, useState } from "react";
 import { Info, UserPlus, ShieldCheck, GraduationCap, Briefcase } from "lucide-react";
 
-const initialState = {
+const initialState: ActionState = {
     message: '',
     success: false,
-    errors: undefined as Record<string, string[]> | undefined
+    errors: undefined
 };
 
 export function AddUserForm({ classes = [] }: { classes?: { id: string, name: string }[] }) {

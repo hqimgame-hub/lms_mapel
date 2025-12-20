@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { redirect } from "next/navigation";
+import { ActionState } from "./types";
 
 const AssignmentSchema = z.object({
     title: z.string().min(3, "Title too short"),
@@ -23,7 +24,7 @@ export async function createAssignment(prevState: any, formData: FormData) {
     const validated = AssignmentSchema.safeParse(data);
 
     if (!validated.success) {
-        return { message: "Data tidak valid", errors: validated.error.flatten().fieldErrors };
+        return { success: false, message: "Data tidak valid", errors: validated.error.flatten().fieldErrors };
     }
 
     try {
@@ -43,14 +44,14 @@ export async function createAssignment(prevState: any, formData: FormData) {
         validated.data.courseIds.forEach(id => revalidatePath(`/teacher/courses/${id}`));
         revalidatePath('/teacher/assignments');
 
-        return { message: "Tugas berhasil dibagikan ke kelas terpilih!", success: true };
+        return { message: "Tugas berhasil dibagikan ke kelas terpilih!", success: true, errors: undefined };
     } catch (e) {
         console.error(e);
-        return { message: "Gagal membuat tugas" };
+        return { message: "Gagal membuat tugas", success: false, errors: undefined };
     }
 }
 
-export async function updateAssignment(prevState: any, formData: FormData) {
+export async function updateAssignment(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const id = formData.get('id') as string;
     const data = {
         title: formData.get('title'),
@@ -62,7 +63,7 @@ export async function updateAssignment(prevState: any, formData: FormData) {
     const validated = AssignmentSchema.safeParse(data);
 
     if (!validated.success) {
-        return { message: "Data tidak valid", errors: validated.error.flatten().fieldErrors };
+        return { success: false, message: "Data tidak valid", errors: validated.error.flatten().fieldErrors };
     }
 
     try {
@@ -79,10 +80,10 @@ export async function updateAssignment(prevState: any, formData: FormData) {
         revalidatePath(`/teacher/assignments/${id}`);
         revalidatePath('/teacher/assignments');
 
-        return { message: "Tugas berhasil diperbarui!", success: true };
+        return { message: "Tugas berhasil diperbarui!", success: true, errors: undefined };
     } catch (e) {
         console.error(e);
-        return { message: "Gagal memperbarui tugas" };
+        return { message: "Gagal memperbarui tugas", success: false, errors: undefined };
     }
 }
 
@@ -92,8 +93,8 @@ export async function deleteAssignment(id: string, courseId: string) {
             where: { id }
         });
         revalidatePath(`/teacher/courses/${courseId}`);
-        return { message: "Assignment deleted successfully" };
+        return { success: true, message: "Assignment deleted successfully", errors: undefined };
     } catch (e) {
-        return { message: "Failed to delete assignment" };
+        return { success: false, message: "Failed to delete assignment", errors: undefined };
     }
 }

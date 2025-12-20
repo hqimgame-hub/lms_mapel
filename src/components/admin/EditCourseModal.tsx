@@ -1,6 +1,7 @@
 'use client';
 
 import { updateCourse } from "@/actions/courses";
+import { ActionState } from "@/actions/types";
 import { useActionState, useState, useEffect } from "react";
 import { Layers, Edit, X } from "lucide-react";
 
@@ -18,7 +19,7 @@ interface EditCourseModalProps {
 
 export function EditCourseModal({ course, classes, subjects, teachers }: EditCourseModalProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [state, formAction, isPending] = useActionState(updateCourse, { success: false, message: '', errors: undefined as Record<string, string[]> | undefined });
+    const [state, formAction, isPending] = useActionState(updateCourse, { success: false, message: '', errors: undefined } as ActionState);
 
     useEffect(() => {
         if (state?.success) {

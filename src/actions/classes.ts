@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { ActionState } from "./types";
 
 const ClassSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
@@ -13,7 +14,7 @@ function generateClassCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
-export async function createClass(prevState: any, formData: FormData) {
+export async function createClass(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const data = {
         name: formData.get('name'),
         description: formData.get('description'),
@@ -46,7 +47,7 @@ export async function createClass(prevState: any, formData: FormData) {
     }
 }
 
-export async function updateClass(prevState: any, formData: FormData) {
+export async function updateClass(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const id = formData.get('id') as string;
     const data = {
         name: formData.get('name'),
@@ -84,9 +85,9 @@ export async function deleteClass(id: string) {
             where: { id }
         });
         revalidatePath('/admin/classes');
-        return { success: true, message: "Kelas berhasil dihapus" };
+        return { success: true, message: "Kelas berhasil dihapus", errors: undefined };
     } catch (e) {
-        return { success: false, message: "Gagal menghapus kelas" };
+        return { success: false, message: "Gagal menghapus kelas", errors: undefined };
     }
 }
 

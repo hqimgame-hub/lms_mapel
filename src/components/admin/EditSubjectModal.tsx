@@ -1,6 +1,7 @@
 'use client';
 
 import { updateSubject } from "@/actions/subjects";
+import { ActionState } from "@/actions/types";
 import { useActionState, useState, useEffect } from "react";
 import { BookOpen, Edit, X } from "lucide-react";
 
@@ -13,7 +14,7 @@ interface EditSubjectModalProps {
 
 export function EditSubjectModal({ subject }: EditSubjectModalProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [state, formAction, isPending] = useActionState(updateSubject, { success: false, message: '', errors: undefined as Record<string, string[]> | undefined });
+    const [state, formAction, isPending] = useActionState(updateSubject, { success: false, message: '', errors: undefined } as ActionState);
 
     useEffect(() => {
         if (state?.success) {

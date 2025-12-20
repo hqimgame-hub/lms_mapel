@@ -2,8 +2,9 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { ActionState } from "./types";
 
-export async function createMaterial(prevState: any, formData: FormData) {
+export async function createMaterial(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const title = formData.get('title') as string;
     const description = formData.get('description') as string;
     const type = formData.get('type') as string;
@@ -11,7 +12,7 @@ export async function createMaterial(prevState: any, formData: FormData) {
     const courseIds = formData.getAll('courseIds') as string[];
 
     if (!title || !type || !content || courseIds.length === 0) {
-        return { message: "Harap isi semua bidang wajib dan pilih minimal satu kelas", success: false };
+        return { message: "Harap isi semua bidang wajib dan pilih minimal satu kelas", success: false, errors: undefined };
     }
 
     try {
@@ -23,14 +24,14 @@ export async function createMaterial(prevState: any, formData: FormData) {
 
         courseIds.forEach(id => revalidatePath(`/teacher/courses/${id}`));
         revalidatePath('/teacher/materials');
-        return { message: "Materi berhasil dibagikan!", success: true };
+        return { message: "Materi berhasil dibagikan!", success: true, errors: undefined };
     } catch (error) {
         console.error(error);
-        return { message: "Gagal membagikan materi", success: false };
+        return { message: "Gagal membagikan materi", success: false, errors: undefined };
     }
 }
 
-export async function updateMaterial(prevState: any, formData: FormData) {
+export async function updateMaterial(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const id = formData.get('id') as string;
     const title = formData.get('title') as string;
     const description = formData.get('description') as string;
@@ -39,7 +40,7 @@ export async function updateMaterial(prevState: any, formData: FormData) {
     const courseId = formData.get('courseId') as string;
 
     if (!title || !type || !content) {
-        return { message: "Harap isi semua bidang wajib", success: false };
+        return { message: "Harap isi semua bidang wajib", success: false, errors: undefined };
     }
 
     try {
@@ -50,10 +51,10 @@ export async function updateMaterial(prevState: any, formData: FormData) {
 
         revalidatePath(`/teacher/courses/${courseId}`);
         revalidatePath('/teacher/materials');
-        return { message: "Materi berhasil diperbarui!", success: true };
+        return { message: "Materi berhasil diperbarui!", success: true, errors: undefined };
     } catch (error) {
         console.error(error);
-        return { message: "Gagal memperbarui materi", success: false };
+        return { message: "Gagal memperbarui materi", success: false, errors: undefined };
     }
 }
 

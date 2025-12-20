@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { ActionState } from "./types";
 
 const CourseSchema = z.object({
     classId: z.string(),
@@ -10,7 +11,7 @@ const CourseSchema = z.object({
     teacherId: z.string(),
 });
 
-export async function createCourse(prevState: any, formData: FormData) {
+export async function createCourse(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const data = {
         classId: formData.get('classId'),
         subjectId: formData.get('subjectId'),
@@ -45,7 +46,7 @@ export async function createCourse(prevState: any, formData: FormData) {
     }
 }
 
-export async function updateCourse(prevState: any, formData: FormData) {
+export async function updateCourse(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const id = formData.get('id') as string;
     const data = {
         classId: formData.get('classId'),
@@ -88,8 +89,8 @@ export async function deleteCourse(id: string) {
             where: { id }
         });
         revalidatePath('/admin/courses');
-        return { success: true, message: "Alokasi kursus berhasil dihapus" };
+        return { success: true, message: "Alokasi kursus berhasil dihapus", errors: undefined };
     } catch (e) {
-        return { success: false, message: "Gagal menghapus alokasi kursus" };
+        return { success: false, message: "Gagal menghapus alokasi kursus", errors: undefined };
     }
 }

@@ -14,7 +14,7 @@ export function CreateMaterial({
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCourses, setSelectedCourses] = useState<string[]>(courseId ? [courseId] : []);
-    const [state, formAction, isPending] = useActionState(createMaterial, { message: '', success: false });
+    const [state, formAction, isPending] = useActionState(createMaterial, { message: '', success: false, errors: undefined as Record<string, string[]> | undefined });
 
     // Close on success
     if (state.success && isOpen) {
@@ -106,6 +106,13 @@ export function CreateMaterial({
                     {state?.message && (
                         <div className={`p-4 rounded-2xl text-sm font-bold ${state.success ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>
                             {state.message}
+                            {(state as any).errors && Object.keys((state as any).errors).map(key => {
+                                const errorList = (state as any).errors?.[key];
+                                if (!errorList) return null;
+                                return (
+                                    <p key={key} className="mt-1 flex items-center gap-1 font-normal">• {key}: {Array.isArray(errorList) ? errorList.join(', ') : errorList}</p>
+                                );
+                            })}
                         </div>
                     )}
 

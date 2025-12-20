@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { ActionState } from "./types";
 import bcrypt from "bcryptjs";
 import { auth } from "@/auth";
 
@@ -25,7 +26,7 @@ const UserSchema = z.object({
     classId: z.string().optional(),
 });
 
-export async function createUser(prevState: any, formData: FormData) {
+export async function createUser(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const data = {
         name: formData.get('name'),
         username: formData.get('username'),
@@ -79,7 +80,7 @@ export async function createUser(prevState: any, formData: FormData) {
     }
 }
 
-export async function updateUser(prevState: any, formData: FormData) {
+export async function updateUser(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const id = formData.get('id') as string;
     const data = {
         name: formData.get('name'),
@@ -135,13 +136,13 @@ export async function deleteUser(id: string) {
             where: { id }
         });
         revalidatePath('/admin/users');
-        return { success: true, message: "Pengguna berhasil dihapus" };
+        return { success: true, message: "Pengguna berhasil dihapus", errors: undefined };
     } catch (e) {
-        return { success: false, message: "Gagal menghapus pengguna" };
+        return { success: false, message: "Gagal menghapus pengguna", errors: undefined };
     }
 }
 
-export async function registerStudent(prevState: any, formData: FormData) {
+export async function registerStudent(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const email = formData.get('email') as string;
     const classId = formData.get('classId') as string;
 
@@ -211,7 +212,7 @@ export async function registerStudent(prevState: any, formData: FormData) {
     }
 }
 
-export async function updateProfile(prevState: any, formData: FormData) {
+export async function updateProfile(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const session = await auth();
     if (!session?.user?.id) return { success: false, message: "Unauthorized" };
 
@@ -220,7 +221,7 @@ export async function updateProfile(prevState: any, formData: FormData) {
     const confirmPassword = formData.get('confirmPassword') as string;
 
     if (password && password !== confirmPassword) {
-        return { success: false, message: "Konfirmasi password tidak cocok" };
+        return { success: false, message: "Konfirmasi password tidak cocok", errors: undefined };
     }
 
     try {
@@ -234,10 +235,10 @@ export async function updateProfile(prevState: any, formData: FormData) {
             data: updateData
         });
 
-        return { success: true, message: "Profil berhasil diperbarui!" };
+        return { success: true, message: "Profil berhasil diperbarui!", errors: undefined };
     } catch (e: any) {
-        if (e.code === 'P2002') return { success: false, message: "Email sudah digunakan" };
-        return { success: false, message: "Gagal memperbarui profil" };
+        if (e.code === 'P2002') return { success: false, message: "Email sudah digunakan", errors: undefined };
+        return { success: false, message: "Gagal memperbarui profil", errors: undefined };
     }
 }
 
@@ -252,9 +253,9 @@ export async function deleteUsersBulk(ids: string[]) {
             }
         });
         revalidatePath('/admin/users');
-        return { success: true, message: `${ids.length} pengguna berhasil dihapus.` };
+        return { success: true, message: `${ids.length} pengguna berhasil dihapus.`, errors: undefined };
     } catch (e) {
         console.error(e);
-        return { success: false, message: "Gagal menghapus beberapa pengguna." };
+        return { success: false, message: "Gagal menghapus beberapa pengguna.", errors: undefined };
     }
 }

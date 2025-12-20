@@ -2,6 +2,7 @@
 
 import { useState, useActionState, useEffect } from "react";
 import { updateExam } from "@/actions/exams";
+import { ActionState } from "@/actions/types";
 import { Pencil, X, Calendar, Type, AlignLeft, Globe, Clock } from "lucide-react";
 
 interface EditExamModalProps {
@@ -18,7 +19,7 @@ interface EditExamModalProps {
     }
 }
 
-const initialState = { message: '', success: false, errors: undefined as Record<string, string[]> | undefined };
+const initialState: ActionState = { message: '', success: false, errors: undefined };
 
 export function EditExamModal({ exam }: EditExamModalProps) {
     const [isOpen, setIsOpen] = useState(false);

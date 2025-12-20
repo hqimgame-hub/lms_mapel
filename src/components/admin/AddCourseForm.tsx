@@ -1,6 +1,7 @@
 'use client';
 
 import { createCourse } from "@/actions/courses";
+import { ActionState } from "@/actions/types";
 import { useActionState } from "react";
 import { Info, Layers, UserCircle, BookOpen, Presentation } from "lucide-react";
 
@@ -10,10 +11,10 @@ interface AddCourseFormProps {
     teachers: any[];
 }
 
-const initialState = {
+const initialState: ActionState = {
     message: '',
     success: false,
-    errors: undefined as Record<string, string[]> | undefined
+    errors: undefined
 };
 
 export function AddCourseForm({ classes, subjects, teachers }: AddCourseFormProps) {

@@ -1,6 +1,7 @@
 'use client';
 
 import { updateUser } from "@/actions/users";
+import { ActionState } from "@/actions/types";
 import { useActionState, useState } from "react";
 import { User, Edit, X } from "lucide-react";
 
@@ -16,7 +17,7 @@ interface EditUserModalProps {
 
 export function EditUserModal({ user }: EditUserModalProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [state, formAction, isPending] = useActionState(updateUser, { success: false, message: '', errors: undefined as Record<string, string[]> | undefined });
+    const [state, formAction, isPending] = useActionState(updateUser, { success: false, message: '', errors: undefined } as ActionState);
 
     if (!isOpen) {
         return (
