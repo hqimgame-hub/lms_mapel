@@ -28,10 +28,10 @@ export function NavItem({ href, children, icon, label, onClick }: NavItemProps) 
             href={href}
             onClick={onClick}
             className={clsx(
-                "p-2 rounded transition-colors block text-sm font-medium",
+                "p-3 rounded-xl transition-all block text-sm font-extrabold tracking-tight",
                 isActive
-                    ? "bg-primary text-white shadow-sm"
-                    : "text-gray-600 hover:bg-white hover:text-gray-900"
+                    ? "bg-primary text-white shadow-lg shadow-primary/25 active:scale-[0.98]"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-primary active:scale-[0.98]"
             )}
         >
             {content}
