@@ -193,7 +193,7 @@ export default async function TeacherCoursePage({
                             </div>
                             <CreateMaterial courseId={course.id} />
                         </div>
-                        <MaterialList materials={course.materials} courseId={course.id} />
+                        <MaterialList materials={course.materials} courseId={course.id} isTeacher={true} />
                     </div>
                 )}
 
@@ -206,7 +206,7 @@ export default async function TeacherCoursePage({
                             </div>
                             <CreateExam courseId={course.id} />
                         </div>
-                        <ExamList exams={course.exams} courseId={course.id} />
+                        <ExamList exams={course.exams} courseId={course.id} isTeacher={true} />
                     </div>
                 )}
 

@@ -178,11 +178,11 @@ export default async function StudentCoursePage({
                 )}
 
                 {tab === 'materials' && (
-                    <MaterialList materials={course.materials} />
+                    <MaterialList materials={course.materials} courseId={courseId} />
                 )}
 
                 {tab === 'exams' && (
-                    <ExamList exams={course.exams} />
+                    <ExamList exams={course.exams} courseId={courseId} />
                 )}
             </div>
         </div>

@@ -17,9 +17,10 @@ interface Material {
 interface MaterialListProps {
     materials: Material[];
     courseId: string;
+    isTeacher?: boolean;
 }
 
-export function MaterialList({ materials, courseId }: MaterialListProps) {
+export function MaterialList({ materials, courseId, isTeacher = false }: MaterialListProps) {
     const getIcon = (type: string) => {
         switch (type) {
             case 'YOUTUBE_LINK':
@@ -51,14 +52,16 @@ export function MaterialList({ materials, courseId }: MaterialListProps) {
                         <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-start mb-1">
                                 <h3 className="font-bold text-slate-800 truncate text-lg">{material.title}</h3>
-                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <EditMaterialModal material={material} />
-                                    <DeleteButton
-                                        id={material.id}
-                                        courseId={courseId}
-                                        onDelete={deleteMaterial}
-                                    />
-                                </div>
+                                {isTeacher && (
+                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <EditMaterialModal material={material} />
+                                        <DeleteButton
+                                            id={material.id}
+                                            courseId={courseId}
+                                            onDelete={deleteMaterial}
+                                        />
+                                    </div>
+                                )}
                             </div>
                             <p className="text-sm text-slate-500 line-clamp-2 mt-1 mb-4 font-medium">
                                 {material.description || 'Tidak ada deskripsi'}

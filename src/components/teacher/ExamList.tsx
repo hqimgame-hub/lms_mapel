@@ -21,9 +21,10 @@ interface Exam {
 interface ExamListProps {
     exams: Exam[];
     courseId: string;
+    isTeacher?: boolean;
 }
 
-export function ExamList({ exams, courseId }: ExamListProps) {
+export function ExamList({ exams, courseId, isTeacher = false }: ExamListProps) {
     return (
         <div className="grid gap-4">
             {exams.map((exam) => (
@@ -51,14 +52,16 @@ export function ExamList({ exams, courseId }: ExamListProps) {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <EditExamModal exam={exam} />
-                            <DeleteButton
-                                id={exam.id}
-                                courseId={courseId}
-                                onDelete={deleteExam}
-                            />
-                        </div>
+                        {isTeacher && (
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <EditExamModal exam={exam} />
+                                <DeleteButton
+                                    id={exam.id}
+                                    courseId={courseId}
+                                    onDelete={deleteExam}
+                                />
+                            </div>
+                        )}
                         {exam.link && (
                             (() => {
                                 const now = new Date();
