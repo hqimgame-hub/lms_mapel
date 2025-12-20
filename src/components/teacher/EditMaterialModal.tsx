@@ -15,7 +15,7 @@ interface EditMaterialModalProps {
     }
 }
 
-const initialState = { message: '', success: false };
+const initialState = { message: '', success: false, errors: undefined as Record<string, string[]> | undefined };
 
 export function EditMaterialModal({ material }: EditMaterialModalProps) {
     const [isOpen, setIsOpen] = useState(false);
@@ -113,6 +113,13 @@ export function EditMaterialModal({ material }: EditMaterialModalProps) {
                             {state?.message && !state.success && (
                                 <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-bold border border-red-100 animate-shake">
                                     {state.message}
+                                    {state.errors && Object.keys(state.errors).map(key => {
+                                        const errorList = state.errors?.[key];
+                                        if (!errorList) return null;
+                                        return (
+                                            <p key={key} className="mt-1 flex items-center gap-1">• {key}: {Array.isArray(errorList) ? errorList.join(', ') : errorList}</p>
+                                        );
+                                    })}
                                 </div>
                             )}
 

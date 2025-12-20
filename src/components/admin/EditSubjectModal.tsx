@@ -1,7 +1,7 @@
 'use client';
 
 import { updateSubject } from "@/actions/subjects";
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { BookOpen, Edit, X } from "lucide-react";
 
 interface EditSubjectModalProps {
@@ -13,7 +13,13 @@ interface EditSubjectModalProps {
 
 export function EditSubjectModal({ subject }: EditSubjectModalProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [state, formAction, isPending] = useActionState(updateSubject, { success: false, message: '' });
+    const [state, formAction, isPending] = useActionState(updateSubject, { success: false, message: '', errors: undefined as Record<string, string[]> | undefined });
+
+    useEffect(() => {
+        if (state?.success) {
+            setIsOpen(false);
+        }
+    }, [state]);
 
     if (!isOpen) {
         return (
@@ -29,7 +35,7 @@ export function EditSubjectModal({ subject }: EditSubjectModalProps) {
 
     return (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-sm overflow-hidden">
                 <div className="bg-primary p-4 text-white flex items-center justify-between">
                     <h3 className="font-bold flex items-center gap-2">
                         <BookOpen size={20} />
@@ -40,12 +46,7 @@ export function EditSubjectModal({ subject }: EditSubjectModalProps) {
                     </button>
                 </div>
 
-                <form action={async (formData) => {
-                    await formAction(formData);
-                    if (state?.success) {
-                        setIsOpen(false);
-                    }
-                }} className="p-6 space-y-4">
+                <form action={formAction} className="p-6 space-y-4">
                     <input type="hidden" name="id" value={subject.id} />
 
                     <div className="space-y-1">
@@ -59,9 +60,16 @@ export function EditSubjectModal({ subject }: EditSubjectModalProps) {
                     </div>
 
                     {state?.message && (
-                        <p className={`text-sm p-3 rounded-xl ${state.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                        <div className={`text-sm p-3 rounded-xl ${state.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                             {state.message}
-                        </p>
+                            {state.errors && Object.keys(state.errors).map(key => {
+                                const errorList = state.errors?.[key];
+                                if (!errorList) return null;
+                                return (
+                                    <p key={key} className="text-xs mt-1 font-normal">• {key}: {Array.isArray(errorList) ? errorList.join(', ') : errorList}</p>
+                                );
+                            })}
+                        </div>
                     )}
 
                     <div className="flex gap-3 pt-2">

@@ -1,7 +1,7 @@
 'use client';
 
 import { updateClass } from "@/actions/classes";
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { School, Edit, X } from "lucide-react";
 
 interface EditClassModalProps {
@@ -14,7 +14,13 @@ interface EditClassModalProps {
 
 export function EditClassModal({ classData }: EditClassModalProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [state, formAction, isPending] = useActionState(updateClass, { success: false, message: '' });
+    const [state, formAction, isPending] = useActionState(updateClass, { success: false, message: '', errors: undefined as Record<string, string[]> | undefined });
+
+    useEffect(() => {
+        if (state?.success) {
+            setIsOpen(false);
+        }
+    }, [state]);
 
     if (!isOpen) {
         return (
@@ -41,12 +47,7 @@ export function EditClassModal({ classData }: EditClassModalProps) {
                     </button>
                 </div>
 
-                <form action={async (formData) => {
-                    await formAction(formData);
-                    if (state?.success) {
-                        setIsOpen(false);
-                    }
-                }} className="p-6 space-y-4">
+                <form action={formAction} className="p-6 space-y-4">
                     <input type="hidden" name="id" value={classData.id} />
 
                     <div className="space-y-1">
@@ -69,9 +70,16 @@ export function EditClassModal({ classData }: EditClassModalProps) {
                     </div>
 
                     {state?.message && (
-                        <p className={`text-sm p-3 rounded-xl ${state.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                        <div className={`text-sm p-3 rounded-xl ${state.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                             {state.message}
-                        </p>
+                            {state.errors && Object.keys(state.errors).map(key => {
+                                const errorList = state.errors?.[key];
+                                if (!errorList) return null;
+                                return (
+                                    <p key={key} className="text-xs mt-1 font-normal">• {key}: {Array.isArray(errorList) ? errorList.join(', ') : errorList}</p>
+                                );
+                            })}
+                        </div>
                     )}
 
                     <div className="flex gap-3 pt-2">

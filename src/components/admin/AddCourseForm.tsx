@@ -58,9 +58,16 @@ export function AddCourseForm({ classes, subjects, teachers }: AddCourseFormProp
                     </div>
 
                     {state?.message && (
-                        <p className={`text-sm p-3 rounded-lg ${state.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                        <div className={`text-sm p-3 rounded-lg ${state.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                             {state.message}
-                        </p>
+                            {state.errors && Object.keys(state.errors).map(key => {
+                                const errorList = state.errors?.[key];
+                                if (!errorList) return null;
+                                return (
+                                    <p key={key} className="text-xs mt-1 font-normal">• {key}: {Array.isArray(errorList) ? errorList.join(', ') : errorList}</p>
+                                );
+                            })}
+                        </div>
                     )}
 
                     <button
