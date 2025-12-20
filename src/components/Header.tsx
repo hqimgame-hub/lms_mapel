@@ -9,9 +9,8 @@ export async function Header() {
         <header className="h-16 bg-white border-b flex items-center justify-between px-4 md:px-8 sticky top-0 z-10 w-full">
             <div className="flex items-center gap-3">
                 <MobileNav role={session?.user?.role} />
-                <div className="text-lg font-semibold text-gray-700 capitalize">
-                    {/* Could be breadcrumbs, currently just a welcome text or empty */}
-                    Dashboard {session?.user?.role === 'TEACHER' ? 'Guru' : session?.user?.role === 'STUDENT' ? 'Siswa' : 'Admin'}
+                <div className="text-xl font-black text-slate-800 tracking-tight">
+                    {session?.user?.role === 'TEACHER' ? 'Dashboard Guru' : session?.user?.role === 'STUDENT' ? 'Dashboard Siswa' : 'Dashboard Admin'}
                 </div>
             </div>
             <div className="flex items-center gap-4">

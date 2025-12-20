@@ -23,55 +23,55 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                     Tambah Pengguna Baru
                 </h2>
                 <form action={formAction} className="flex flex-col gap-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1">
-                            <label className="text-sm font-medium text-slate-600">Nama Lengkap</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Lengkap</label>
                             <input
                                 name="name"
                                 placeholder="Masukkan nama lengkap"
-                                className="border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm"
+                                className="border border-slate-200 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50"
                                 required
                             />
                         </div>
-                        <div className="flex flex-col gap-1">
-                            <label className="text-sm font-medium text-slate-600">Username</label>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Username</label>
                             <input
                                 name="username"
                                 placeholder="Username untuk login"
-                                className="border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm"
+                                className="border border-slate-200 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50"
                                 required
                             />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4">
-                        <div className="flex flex-col gap-1">
-                            <label className="text-sm font-medium text-slate-600">Email (Opsional)</label>
+                    <div className="grid grid-cols-1 gap-5">
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email (Opsional)</label>
                             <input
                                 name="email"
                                 type="email"
                                 placeholder="alamat@email.com (Kosongkan jika tidak ada)"
-                                className="border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm"
+                                className="border border-slate-200 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50"
                             />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1">
-                            <label className="text-sm font-medium text-slate-600">Password</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
                             <input
                                 name="password"
                                 type="password"
                                 placeholder="••••••••"
-                                className="border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm"
+                                className="border border-slate-200 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50"
                                 required
                             />
                         </div>
-                        <div className="flex flex-col gap-1">
-                            <label className="text-sm font-medium text-slate-600">Role / Peran</label>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Role / Peran</label>
                             <select
                                 name="role"
-                                className="border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white"
+                                className="border border-slate-200 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-bold bg-white"
                                 value={selectedRole}
                                 onChange={(e) => setSelectedRole(e.target.value)}
                             >
@@ -136,8 +136,8 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                             <ShieldCheck size={16} />
                         </div>
                         <div>
-                            <p className="text-xs font-bold text-slate-800">Admin</p>
-                            <p className="text-[10px] text-slate-500">Memiliki akses penuh ke seluruh pengaturan sistem dan manajemen data.</p>
+                            <p className="text-xs font-black text-slate-800 uppercase tracking-tight">Admin</p>
+                            <p className="text-[10px] font-medium text-slate-500 leading-relaxed mt-0.5">Memiliki akses penuh ke seluruh pengaturan sistem dan manajemen data.</p>
                         </div>
                     </div>
                     <div className="flex gap-3">
@@ -145,8 +145,8 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                             <Briefcase size={16} />
                         </div>
                         <div>
-                            <p className="text-xs font-bold text-slate-800">Guru</p>
-                            <p className="text-[10px] text-slate-500">Mengelola tugas, memberikan nilai, dan memantau perkembangan siswa di kursus yang diampu.</p>
+                            <p className="text-xs font-black text-slate-800 uppercase tracking-tight">Guru</p>
+                            <p className="text-[10px] font-medium text-slate-500 leading-relaxed mt-0.5">Mengelola tugas, memberikan nilai, dan memantau perkembangan siswa di kursus yang diampu.</p>
                         </div>
                     </div>
                     <div className="flex gap-3">
@@ -154,13 +154,13 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                             <GraduationCap size={16} />
                         </div>
                         <div>
-                            <p className="text-xs font-bold text-slate-800">Siswa</p>
-                            <p className="text-[10px] text-slate-500">Mengerjakan tugas, melihat nilai, dan mengikuti materi pembelajaran.</p>
+                            <p className="text-xs font-black text-slate-800 uppercase tracking-tight">Siswa</p>
+                            <p className="text-[10px] font-medium text-slate-500 leading-relaxed mt-0.5">Mengerjakan tugas, melihat nilai, dan mengikuti materi pembelajaran.</p>
                         </div>
                     </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-slate-200">
-                    <p className="text-[10px] text-slate-400 italic">
+                <div className="mt-6 pt-4 border-t border-slate-200">
+                    <p className="text-[10px] text-slate-400 italic leading-relaxed">
                         * Admin dapat membuat akun siswa jika siswa terkendala daftar melalui email mandiri.
                     </p>
                 </div>

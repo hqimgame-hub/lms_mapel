@@ -51,8 +51,8 @@ export default async function AdminUsersPage({
                     <a
                         key={t.id}
                         href={`/admin/users?tab=${t.id}`}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all ${tab === t.id
-                            ? "bg-white text-slate-900 shadow-sm"
+                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm transition-all ${tab === t.id
+                            ? "bg-white text-primary shadow-md shadow-primary/5"
                             : "text-slate-500 hover:text-slate-700 hover:bg-slate-50/50"
                             }`}
                     >
