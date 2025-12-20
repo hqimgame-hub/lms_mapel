@@ -50,8 +50,8 @@ export default function LoginPage() {
                     <div className="bg-white/20 w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4 rotate-3">
                         <LogIn size={24} />
                     </div>
-                    <h1 className="text-2xl font-black tracking-tight">Login Portal</h1>
-                    <p className="text-blue-100 text-xs mt-1 font-medium opacity-80 uppercase tracking-widest">E-Learning Management System</p>
+                    <h1 className="text-2xl font-black tracking-tight">Login TIK & KKA</h1>
+                    <p className="text-blue-100 text-xs mt-1 font-medium opacity-80 uppercase tracking-widest">Learning Management System</p>
                 </div>
 
                 <div className="p-8">
