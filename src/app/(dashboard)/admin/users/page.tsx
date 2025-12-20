@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { AddUserForm } from "@/components/admin/AddUserForm";
 import { UserTable } from "@/components/admin/UserTable";
 import { Users, UserCog, UserCircle } from "lucide-react";
+import { getClasses } from "@/actions/classes";
 
 export default async function AdminUsersPage({
     searchParams
@@ -27,7 +28,7 @@ export default async function AdminUsersPage({
         prisma.user.count({
             where: { role: { in: roles } }
         }),
-        prisma.class.findMany({ orderBy: { name: 'asc' } })
+        getClasses()
     ]);
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);

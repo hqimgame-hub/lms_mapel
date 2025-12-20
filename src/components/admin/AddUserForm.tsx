@@ -83,22 +83,30 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                     </div>
 
                     {selectedRole === 'STUDENT' && (
-                        <div className="flex flex-col gap-1 animate-in slide-in-from-top-2 duration-300">
-                            <label className="text-sm font-bold text-slate-600 flex items-center gap-2">
-                                <GraduationCap size={16} className="text-emerald-500" />
+                        <div className="flex flex-col gap-2 animate-in slide-in-from-top-2 duration-300">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                <GraduationCap size={14} className="text-emerald-500" />
                                 Penempatan Kelas
                             </label>
                             <select
                                 name="classId"
-                                className="border border-emerald-100 bg-emerald-50/30 p-2.5 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm font-bold text-slate-700"
+                                className="border border-emerald-100 bg-emerald-50/20 p-4 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all text-sm font-black text-slate-800"
                                 required
                             >
-                                <option value="">-- Pilih Kelas --</option>
-                                {classes.map(c => (
-                                    <option key={c.id} value={c.id}>{c.name}</option>
-                                ))}
+                                <option value="">-- Pilih Kelas Untuk Siswa --</option>
+                                {classes.length > 0 ? (
+                                    classes.map(c => (
+                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    ))
+                                ) : (
+                                    <option value="" disabled>Tidak ada kelas tersedia</option>
+                                )}
                             </select>
-                            <p className="text-[10px] text-slate-400 mt-1 italic">* Siswa otomatis tergabung ke kelas ini setelah pendaftaran.</p>
+                            {classes.length === 0 && (
+                                <p className="text-[10px] text-red-500 font-bold ml-1">
+                                    Peringatan: Tidak ada data kelas di sistem. Ke tab "Kelas" untuk membuat.
+                                </p>
+                            )}
                         </div>
                     )}
 
