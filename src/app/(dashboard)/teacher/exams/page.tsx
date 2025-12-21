@@ -43,8 +43,8 @@ export default async function TeacherExamsPage() {
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tight">Manajemen Ujian</h1>
-                    <p className="text-slate-500 font-medium">Buat dan bagikan link ujian Google Form ke berbagai kelas.</p>
+                    <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Manajemen Ujian</h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium">Buat dan bagikan link ujian Google Form ke berbagai kelas.</p>
                 </div>
                 <CreateExam
                     courseId=""
@@ -57,26 +57,26 @@ export default async function TeacherExamsPage() {
 
             <div className="grid gap-4">
                 {exams.map((exam) => (
-                    <div key={exam.id} className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group">
+                    <div key={exam.id} className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group">
                         <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest">
+                                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">
                                     {exam.course.class.name}
                                 </span>
-                                <span className="px-2 py-0.5 rounded-md bg-purple-50 text-purple-600 text-[10px] font-black uppercase tracking-widest">
+                                <span className="px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[10px] font-black uppercase tracking-widest">
                                     {exam.course.subject.name}
                                 </span>
-                                <span className="px-2 py-0.5 rounded-md bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest">
+                                <span className="px-2 py-0.5 rounded-md bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest">
                                     Google Form
                                 </span>
                             </div>
-                            <h3 className="text-xl font-bold text-slate-800 group-hover:text-primary transition-colors">{exam.title}</h3>
-                            <div className="flex flex-wrap items-center gap-4 mt-3 text-slate-400 text-xs font-medium">
-                                <div className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-md">
+                            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 group-hover:text-primary transition-colors">{exam.title}</h3>
+                            <div className="flex flex-wrap items-center gap-4 mt-3 text-slate-400 dark:text-slate-500 text-xs font-medium">
+                                <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-md">
                                     <Clock size={14} />
                                     Mulai: {exam.startTime ? format(new Date(exam.startTime), 'd MMM HH:mm') : '-'}
                                 </div>
-                                <div className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-md">
+                                <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-md">
                                     <Clock size={14} />
                                     Selesai: {exam.endTime ? format(new Date(exam.endTime), 'd MMM HH:mm') : '-'}
                                 </div>
@@ -102,7 +102,7 @@ export default async function TeacherExamsPage() {
                                         href={exam.link}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center gap-2 bg-slate-100 text-slate-600 px-4 py-3 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all"
+                                        className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-4 py-3 rounded-xl font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all shadow-sm"
                                     >
                                         <ExternalLink size={16} />
                                         Buka Link
@@ -110,7 +110,7 @@ export default async function TeacherExamsPage() {
                                 )}
                                 <Link
                                     href={`/teacher/courses/${exam.courseId}?tab=exams`}
-                                    className="flex items-center gap-2 bg-slate-50 text-slate-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-primary hover:text-white transition-all whitespace-nowrap"
+                                    className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-6 py-3 rounded-xl font-bold text-sm hover:bg-primary dark:hover:bg-primary hover:text-white dark:hover:text-white transition-all whitespace-nowrap shadow-sm"
                                 >
                                     Lihat di Kelas
                                     <ChevronRight size={16} />
@@ -121,7 +121,7 @@ export default async function TeacherExamsPage() {
                 ))}
 
                 {exams.length === 0 && (
-                    <div className="text-center py-20 bg-white rounded-[2.5rem] border border-dashed border-slate-200 text-slate-400">
+                    <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 transition-colors">
                         Belum ada ujian yang dibuat. Klik tombol di atas untuk membuat ujian pertama Anda.
                     </div>
                 )}
