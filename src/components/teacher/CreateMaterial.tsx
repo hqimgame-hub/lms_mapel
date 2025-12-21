@@ -1,9 +1,14 @@
 'use client';
 
 import { useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Trash2 } from "lucide-react";
 import { createMaterial } from "@/actions/materials";
 import { useActionState } from "react";
+
+interface ContentItem {
+    type: string;
+    content: string;
+}
 
 export function CreateMaterial({
     courseId,
@@ -14,18 +19,36 @@ export function CreateMaterial({
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCourses, setSelectedCourses] = useState<string[]>(courseId ? [courseId] : []);
+    const [contentItems, setContentItems] = useState<ContentItem[]>([{ type: 'TEXT', content: '' }]);
     const [state, formAction, isPending] = useActionState(createMaterial, { message: '', success: false, errors: undefined as Record<string, string[]> | undefined });
 
-    // Close on success
+    // Close on success and reset
     if (state.success && isOpen) {
         setIsOpen(false);
         setSelectedCourses(courseId ? [courseId] : []);
+        setContentItems([{ type: 'TEXT', content: '' }]);
     }
 
     const toggleCourse = (id: string) => {
         setSelectedCourses(prev =>
             prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
         );
+    };
+
+    const addContentItem = () => {
+        setContentItems([...contentItems, { type: 'TEXT', content: '' }]);
+    };
+
+    const removeContentItem = (index: number) => {
+        if (contentItems.length > 1) {
+            setContentItems(contentItems.filter((_, i) => i !== index));
+        }
+    };
+
+    const updateContentItem = (index: number, field: 'type' | 'content', value: string) => {
+        const updated = [...contentItems];
+        updated[index][field] = value;
+        setContentItems(updated);
     };
 
     if (!isOpen) {
@@ -42,7 +65,7 @@ export function CreateMaterial({
 
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-300">
-            <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
                 <div className="bg-slate-900 dark:bg-slate-800 p-5 text-white flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
@@ -96,19 +119,60 @@ export function CreateMaterial({
                         <textarea name="description" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-slate-500/5 focus:border-slate-500 transition-all text-sm font-medium text-slate-600 dark:text-slate-400 min-h-[50px]" rows={2} placeholder="Penjelasan singkat..." />
                     </div>
 
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Tipe Materi</label>
-                        <select name="type" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-slate-500/5 focus:border-slate-500 transition-all text-sm font-bold text-slate-700 dark:text-slate-300 appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat" required>
-                            <option value="TEXT" className="dark:bg-slate-900">📝 Teks Materi</option>
-                            <option value="PDF_LINK" className="dark:bg-slate-900">📄 Link File PDF</option>
-                            <option value="YOUTUBE_LINK" className="dark:bg-slate-900">🎬 Link Video YouTube</option>
-                            <option value="EXTERNAL_LINK" className="dark:bg-slate-900">🔗 Link Eksternal</option>
-                        </select>
-                    </div>
+                    {/* Content Items */}
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                            <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Konten Materi</label>
+                            <button
+                                type="button"
+                                onClick={addContentItem}
+                                className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
+                            >
+                                <Plus size={14} />
+                                Tambah Konten
+                            </button>
+                        </div>
 
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Konten / Link</label>
-                        <textarea name="content" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-slate-500/5 focus:border-slate-500 transition-all text-xs font-mono text-slate-600 dark:text-slate-400 min-h-[80px]" rows={3} placeholder="Masukkan teks atau URL..." required />
+                        {contentItems.map((item, index) => (
+                            <div key={index} className="p-3 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800/50 space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] font-black text-slate-500 dark:text-slate-600 uppercase">Konten #{index + 1}</span>
+                                    {contentItems.length > 1 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => removeContentItem(index)}
+                                            className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors p-1"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    )}
+                                </div>
+
+                                <select
+                                    value={item.type}
+                                    onChange={(e) => updateContentItem(index, 'type', e.target.value)}
+                                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-2 rounded-xl outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-500 transition-all text-xs font-bold text-slate-700 dark:text-slate-300"
+                                >
+                                    <option value="TEXT">📝 Teks Materi</option>
+                                    <option value="PDF_LINK">📄 Link File PDF</option>
+                                    <option value="YOUTUBE_LINK">🎬 Link Video YouTube</option>
+                                    <option value="EXTERNAL_LINK">🔗 Link Eksternal</option>
+                                </select>
+
+                                <textarea
+                                    value={item.content}
+                                    onChange={(e) => updateContentItem(index, 'content', e.target.value)}
+                                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-2 rounded-xl outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-500 transition-all text-xs font-mono text-slate-600 dark:text-slate-400 min-h-[60px]"
+                                    rows={2}
+                                    placeholder={item.type === 'TEXT' ? 'Masukkan teks materi...' : 'Masukkan URL...'}
+                                    required
+                                />
+
+                                {/* Hidden inputs for form submission */}
+                                <input type="hidden" name={`contentItems[${index}][type]`} value={item.type} />
+                                <input type="hidden" name={`contentItems[${index}][content]`} value={item.content} />
+                            </div>
+                        ))}
                     </div>
 
                     {state?.message && (
@@ -127,7 +191,7 @@ export function CreateMaterial({
                         </button>
                         <button
                             type="submit"
-                            disabled={isPending || selectedCourses.length === 0}
+                            disabled={isPending || selectedCourses.length === 0 || contentItems.some(item => !item.content)}
                             className="flex-1 px-4 py-3 bg-slate-900 dark:bg-slate-950 text-white rounded-xl hover:bg-slate-800 dark:hover:bg-black disabled:opacity-50 transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-slate-900/20"
                         >
                             {isPending ? 'Membagikan...' : 'Bagikan'}

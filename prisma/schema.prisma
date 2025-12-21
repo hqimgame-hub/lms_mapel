@@ -75,15 +75,28 @@ model Enrollment {
 }
 
 model Material {
-  id          String   @id @default(cuid())
+  id          String            @id @default(cuid())
   title       String
   description String?
-  type        String   // TEXT, PDF_LINK, YOUTUBE_LINK, EXTERNAL_LINK
-  content     String   // The content itself or the link
-  createdAt   DateTime @default(now())
+  createdAt   DateTime          @default(now())
   
   courseId    String
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course      Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  contents    MaterialContent[] // Multiple content items
+}
+
+model MaterialContent {
+  id          String   @id @default(cuid())
+  type        String   // TEXT, PDF_LINK, YOUTUBE_LINK, EXTERNAL_LINK
+  content     String   // The actual content or URL
+  order       Int      // Display order
+  createdAt   DateTime @default(now())
+  
+  materialId  String
+  material    Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  
+  @@index([materialId])
 }
 
 model Exam {

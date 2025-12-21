@@ -34,6 +34,9 @@ export default async function TeacherMaterialsPage() {
                     class: true,
                     subject: true,
                 }
+            },
+            contents: {
+                orderBy: { order: 'asc' }
             }
         },
         orderBy: { createdAt: 'desc' }

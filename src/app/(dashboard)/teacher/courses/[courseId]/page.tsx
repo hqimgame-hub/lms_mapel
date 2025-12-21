@@ -44,7 +44,12 @@ export default async function TeacherCoursePage({
                 }
             },
             materials: {
-                orderBy: { createdAt: 'desc' }
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    contents: {
+                        orderBy: { order: 'asc' }
+                    }
+                }
             },
             exams: {
                 orderBy: { createdAt: 'desc' }

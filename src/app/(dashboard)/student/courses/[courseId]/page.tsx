@@ -39,7 +39,14 @@ export default async function StudentCoursePage({
                         }
                     }
                 },
-                materials: { orderBy: { createdAt: 'desc' } },
+                materials: {
+                    orderBy: { createdAt: 'desc' },
+                    include: {
+                        contents: {
+                            orderBy: { order: 'asc' }
+                        }
+                    }
+                },
                 exams: { orderBy: { createdAt: 'desc' } }
             }
         })
