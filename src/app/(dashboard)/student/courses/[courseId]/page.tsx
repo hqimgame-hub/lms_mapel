@@ -144,23 +144,23 @@ export default async function StudentCoursePage({
 
                                         <div className="flex items-center">
                                             {isGraded ? (
-                                                <span className="bg-emerald-50 text-emerald-600 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-emerald-100">
+                                                <span className="bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-emerald-100 dark:border-emerald-500/20">
                                                     Nilai: {submission.grade}/100
                                                 </span>
                                             ) : isSubmitted ? (
-                                                <span className="bg-blue-50 text-blue-600 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-blue-100">
+                                                <span className="bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-blue-100 dark:border-blue-500/20">
                                                     Terkirim
                                                 </span>
                                             ) : isDraft ? (
-                                                <span className="bg-orange-50 text-orange-600 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-orange-100">
+                                                <span className="bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-orange-100 dark:border-orange-500/20">
                                                     Draft
                                                 </span>
                                             ) : isLate ? (
-                                                <span className="bg-red-50 text-red-600 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-red-100">
+                                                <span className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-red-100 dark:border-red-500/20">
                                                     Terlambat
                                                 </span>
                                             ) : (
-                                                <span className="bg-slate-900 text-white px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest group-hover:bg-primary transition-colors">
+                                                <span className="bg-slate-900 dark:bg-slate-700 text-white px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest group-hover:bg-primary transition-colors">
                                                     Kerjakan
                                                 </span>
                                             )}

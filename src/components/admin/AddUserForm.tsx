@@ -111,7 +111,7 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                     )}
 
                     {state?.message && (
-                        <div className={`p-4 rounded-xl text-sm font-medium ${state.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                        <div className={`p-4 rounded-xl text-sm font-medium ${state.success ? 'bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400'}`}>
                             {state.message}
                             {state.errors && Object.keys(state.errors).map(key => {
                                 const errorList = state.errors?.[key];
@@ -140,7 +140,7 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                 </h3>
                 <div className="space-y-4">
                     <div className="flex gap-3">
-                        <div className="bg-purple-100 p-2 rounded-lg h-fit text-purple-600">
+                        <div className="bg-purple-100 dark:bg-purple-500/20 p-2 rounded-lg h-fit text-purple-600 dark:text-purple-400">
                             <ShieldCheck size={16} />
                         </div>
                         <div>
@@ -149,7 +149,7 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                         </div>
                     </div>
                     <div className="flex gap-3">
-                        <div className="bg-blue-100 p-2 rounded-lg h-fit text-blue-600">
+                        <div className="bg-blue-100 dark:bg-blue-500/20 p-2 rounded-lg h-fit text-blue-600 dark:text-blue-400">
                             <Briefcase size={16} />
                         </div>
                         <div>
@@ -158,7 +158,7 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                         </div>
                     </div>
                     <div className="flex gap-3">
-                        <div className="bg-green-100 p-2 rounded-lg h-fit text-green-600">
+                        <div className="bg-green-100 dark:bg-green-500/20 p-2 rounded-lg h-fit text-green-600 dark:text-green-400">
                             <GraduationCap size={16} />
                         </div>
                         <div>
