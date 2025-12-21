@@ -21,7 +21,7 @@ export function AddCourseForm({ classes, subjects, teachers }: AddCourseFormProp
     const [state, formAction, isPending] = useActionState(createCourse, initialState);
 
     return (
-        <div className="bg-white p-6 rounded-xl border shadow-sm mb-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-slate-800">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm mb-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-slate-800 dark:text-slate-200 transition-colors">
             <div className="md:col-span-2">
                 <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <Layers size={20} className="text-primary" />
@@ -32,9 +32,9 @@ export function AddCourseForm({ classes, subjects, teachers }: AddCourseFormProp
                         <label className="text-sm font-semibold flex items-center gap-2">
                             <Presentation size={16} className="text-slate-400" /> Pilih Kelas
                         </label>
-                        <select name="classId" className="border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white text-sm" required>
+                        <select name="classId" className="border border-slate-200 dark:border-slate-800 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 text-sm" required>
                             <option value="">-- Pilih Kelas --</option>
-                            {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            {classes.map(c => <option key={c.id} value={c.id} className="dark:bg-slate-900">{c.name}</option>)}
                         </select>
                     </div>
 
@@ -42,9 +42,9 @@ export function AddCourseForm({ classes, subjects, teachers }: AddCourseFormProp
                         <label className="text-sm font-semibold flex items-center gap-2">
                             <BookOpen size={16} className="text-slate-400" /> Pilih Mata Pelajaran
                         </label>
-                        <select name="subjectId" className="border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white text-sm" required>
+                        <select name="subjectId" className="border border-slate-200 dark:border-slate-800 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 text-sm" required>
                             <option value="">-- Pilih Mata Pelajaran --</option>
-                            {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                            {subjects.map(s => <option key={s.id} value={s.id} className="dark:bg-slate-900">{s.name}</option>)}
                         </select>
                     </div>
 
@@ -52,9 +52,9 @@ export function AddCourseForm({ classes, subjects, teachers }: AddCourseFormProp
                         <label className="text-sm font-semibold flex items-center gap-2">
                             <UserCircle size={16} className="text-slate-400" /> Pilih Guru Pengajar
                         </label>
-                        <select name="teacherId" className="border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white text-sm" required>
+                        <select name="teacherId" className="border border-slate-200 dark:border-slate-800 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 text-sm" required>
                             <option value="">-- Pilih Guru --</option>
-                            {teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                            {teachers.map(t => <option key={t.id} value={t.id} className="dark:bg-slate-900">{t.name}</option>)}
                         </select>
                     </div>
 
@@ -81,8 +81,8 @@ export function AddCourseForm({ classes, subjects, teachers }: AddCourseFormProp
                 </form>
             </div>
 
-            <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 h-fit">
-                <h3 className="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2">
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-[1.5rem] border border-slate-100 dark:border-slate-800 h-fit transition-colors">
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm mb-3 flex items-center gap-2">
                     <Info size={18} className="text-blue-500" />
                     Apa itu Alokasi?
                 </h3>

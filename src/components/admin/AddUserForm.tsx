@@ -16,9 +16,9 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
     const [selectedRole, setSelectedRole] = useState('STUDENT');
 
     return (
-        <div className="bg-white p-6 rounded-xl border shadow-sm mb-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm mb-8 grid grid-cols-1 md:grid-cols-3 gap-8 transition-colors">
             <div className="md:col-span-2">
-                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
+                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800 dark:text-slate-100">
                     <UserPlus size={20} className="text-primary" />
                     Tambah Pengguna Baru
                 </h2>
@@ -29,7 +29,7 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                             <input
                                 name="name"
                                 placeholder="Masukkan nama lengkap"
-                                className="border border-slate-200 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50"
+                                className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
                                 required
                             />
                         </div>
@@ -38,7 +38,7 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                             <input
                                 name="username"
                                 placeholder="Username untuk login"
-                                className="border border-slate-200 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50"
+                                className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
                                 required
                             />
                         </div>
@@ -51,7 +51,7 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                                 name="email"
                                 type="email"
                                 placeholder="alamat@email.com (Kosongkan jika tidak ada)"
-                                className="border border-slate-200 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50"
+                                className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
                             />
                         </div>
                     </div>
@@ -63,7 +63,7 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                                 name="password"
                                 type="password"
                                 placeholder="••••••••"
-                                className="border border-slate-200 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50"
+                                className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
                                 required
                             />
                         </div>
@@ -71,7 +71,7 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Role / Peran</label>
                             <select
                                 name="role"
-                                className="border border-slate-200 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-bold bg-white"
+                                className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-bold bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200"
                                 value={selectedRole}
                                 onChange={(e) => setSelectedRole(e.target.value)}
                             >
@@ -90,7 +90,7 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                             </label>
                             <select
                                 name="classId"
-                                className="border border-emerald-100 bg-emerald-50/20 p-4 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all text-sm font-black text-slate-800"
+                                className="border border-emerald-100 dark:border-emerald-500/20 bg-emerald-50/20 p-4 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all text-sm font-black text-slate-800 dark:text-emerald-400 dark:bg-emerald-500/5"
                                 required
                             >
                                 <option value="">-- Pilih Kelas Untuk Siswa --</option>
@@ -133,8 +133,8 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                 </form>
             </div>
 
-            <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 h-fit">
-                <h3 className="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2">
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-[2rem] border border-slate-100 dark:border-slate-800 h-fit transition-colors">
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm mb-3 flex items-center gap-2">
                     <Info size={18} className="text-blue-500" />
                     Penjelasan Role
                 </h3>
@@ -144,8 +144,8 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                             <ShieldCheck size={16} />
                         </div>
                         <div>
-                            <p className="text-xs font-black text-slate-800 uppercase tracking-tight">Admin</p>
-                            <p className="text-[10px] font-medium text-slate-500 leading-relaxed mt-0.5">Memiliki akses penuh ke seluruh pengaturan sistem dan manajemen data.</p>
+                            <p className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Admin</p>
+                            <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 leading-relaxed mt-0.5">Memiliki akses penuh ke seluruh pengaturan sistem dan manajemen data.</p>
                         </div>
                     </div>
                     <div className="flex gap-3">
@@ -153,8 +153,8 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                             <Briefcase size={16} />
                         </div>
                         <div>
-                            <p className="text-xs font-black text-slate-800 uppercase tracking-tight">Guru</p>
-                            <p className="text-[10px] font-medium text-slate-500 leading-relaxed mt-0.5">Mengelola tugas, memberikan nilai, dan memantau perkembangan siswa di kursus yang diampu.</p>
+                            <p className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Guru</p>
+                            <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 leading-relaxed mt-0.5">Mengelola tugas, memberikan nilai, dan memantau perkembangan siswa di kursus yang diampu.</p>
                         </div>
                     </div>
                     <div className="flex gap-3">
@@ -162,8 +162,8 @@ export function AddUserForm({ classes = [] }: { classes?: { id: string, name: st
                             <GraduationCap size={16} />
                         </div>
                         <div>
-                            <p className="text-xs font-black text-slate-800 uppercase tracking-tight">Siswa</p>
-                            <p className="text-[10px] font-medium text-slate-500 leading-relaxed mt-0.5">Mengerjakan tugas, melihat nilai, dan mengikuti materi pembelajaran.</p>
+                            <p className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Siswa</p>
+                            <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 leading-relaxed mt-0.5">Mengerjakan tugas, melihat nilai, dan mengikuti materi pembelajaran.</p>
                         </div>
                     </div>
                 </div>

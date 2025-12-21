@@ -15,9 +15,9 @@ export function AddSubjectForm() {
     const [state, formAction, isPending] = useActionState(createSubject, initialState);
 
     return (
-        <div className="bg-white p-6 rounded-xl border shadow-sm mb-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm mb-8 grid grid-cols-1 md:grid-cols-3 gap-8 transition-colors">
             <div className="md:col-span-2">
-                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
+                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800 dark:text-white">
                     <BookPlus size={20} className="text-primary" />
                     Tambah Mata Pelajaran
                 </h2>
@@ -27,7 +27,7 @@ export function AddSubjectForm() {
                         <input
                             name="name"
                             placeholder="Contoh: Matematika, Bahasa Indonesia"
-                            className="border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            className="border border-slate-200 dark:border-slate-800 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white dark:bg-slate-950 text-slate-900 dark:text-white"
                             required
                         />
                     </div>
@@ -55,8 +55,8 @@ export function AddSubjectForm() {
                 </form>
             </div>
 
-            <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 h-fit">
-                <h3 className="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2">
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-[2rem] border border-slate-100 dark:border-slate-800 h-fit transition-colors">
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm mb-3 flex items-center gap-2">
                     <Info size={18} className="text-blue-500" />
                     Tips Mapel
                 </h3>
