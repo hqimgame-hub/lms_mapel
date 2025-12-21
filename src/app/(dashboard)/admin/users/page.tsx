@@ -67,19 +67,19 @@ export default async function AdminUsersPage({
     return (
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Manajemen Akun 🛡️</h1>
-                <p className="text-slate-500 font-medium">Kelola hak akses dan data seluruh pengguna sistem.</p>
+                <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Manajemen Akun</h1>
+                <p className="text-slate-500 dark:text-slate-400 font-medium">Kelola hak akses dan data seluruh pengguna sistem.</p>
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100 rounded-[1.5rem] w-fit">
+            <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100 dark:bg-slate-800/50 rounded-[1.5rem] w-fit border border-slate-200 dark:border-slate-800 transition-colors">
                 {tabs.map((t) => (
                     <a
                         key={t.id}
                         href={`/admin/users?tab=${t.id}`}
                         className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm transition-all ${tab === t.id
-                            ? "bg-white text-primary shadow-md shadow-primary/5"
-                            : "text-slate-500 hover:text-slate-700 hover:bg-slate-50/50"
+                            ? "bg-white dark:bg-slate-900 text-primary shadow-md shadow-primary/5 border border-primary/10 dark:border-primary/20"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800/80"
                             }`}
                     >
                         {t.icon}

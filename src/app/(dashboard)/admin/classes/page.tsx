@@ -12,30 +12,30 @@ export default async function AdminClassesPage() {
     });
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold">Kelola Kelas</h1>
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Kelola Kelas</h1>
 
             <AddClassForm />
 
-            <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
-                <table className="w-full text-left">
-                    <thead className="bg-gray-50 border-b text-xs uppercase text-gray-500 font-bold">
+            <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+                <table className="w-full text-left border-collapse">
+                    <thead className="bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase text-slate-400 dark:text-slate-500 font-black tracking-widest">
                         <tr>
-                            <th className="p-4">Nama Kelas</th>
-                            <th className="p-4">Kode</th>
-                            <th className="p-4">Siswa</th>
-                            <th className="p-4">Mapel</th>
-                            <th className="p-4 text-right">Aksi</th>
+                            <th className="p-6">Nama Kelas</th>
+                            <th className="p-6">Kode</th>
+                            <th className="p-6">Siswa</th>
+                            <th className="p-6">Mapel</th>
+                            <th className="p-6 text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y">
+                    <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                         {classes.map(cls => (
-                            <tr key={cls.id} className="hover:bg-gray-50 transition-colors">
-                                <td className="p-4 font-bold text-gray-900">{cls.name}</td>
-                                <td className="p-4"><span className="font-mono bg-gray-100 px-1 rounded">{cls.code}</span></td>
-                                <td className="p-4 text-gray-600">{cls._count.students} Siswa</td>
-                                <td className="p-4 text-gray-600">{cls._count.courses} Mapel</td>
-                                <td className="p-4 text-right">
+                            <tr key={cls.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                <td className="p-6 font-bold text-slate-900 dark:text-slate-200">{cls.name}</td>
+                                <td className="p-6"><span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-600 dark:text-slate-400 text-xs">{cls.code}</span></td>
+                                <td className="p-6 text-slate-500 dark:text-slate-400 font-medium">{cls._count.students} Siswa</td>
+                                <td className="p-6 text-slate-500 dark:text-slate-400 font-medium">{cls._count.courses} Mapel</td>
+                                <td className="p-6 text-right">
                                     <div className="flex items-center justify-end gap-2">
                                         <EditClassModal classData={cls} />
                                         <DeleteClassButton id={cls.id} />
@@ -45,7 +45,7 @@ export default async function AdminClassesPage() {
                         ))}
                         {classes.length === 0 && (
                             <tr>
-                                <td colSpan={5} className="p-12 text-center text-gray-500 bg-white">
+                                <td colSpan={5} className="p-20 text-center text-slate-400 font-bold bg-white dark:bg-slate-900">
                                     Belum ada kelas. Buat kelas baru.
                                 </td>
                             </tr>
