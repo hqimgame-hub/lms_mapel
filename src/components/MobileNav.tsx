@@ -48,21 +48,21 @@ export function MobileNav({ role, userName, userEmail }: MobileNavProps) {
                 {/* Branding Header */}
                 <div className="flex justify-between items-center p-6 border-b border-slate-50 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-10 transition-colors">
                     <div className="flex flex-col">
-                        <div className="relative h-6 w-24 flex items-center">
+                        <div className="relative h-8 w-8 flex items-center">
                             {/* Logo for Light Mode (Dark Logo) */}
                             <Image
                                 src="/images/logo-light.png"
                                 alt="LMS Logo"
-                                width={80}
-                                height={24}
+                                width={32}
+                                height={32}
                                 className="dark:hidden object-contain"
                             />
                             {/* Logo for Dark Mode (White Logo) */}
                             <Image
                                 src="/images/logo-dark.png"
                                 alt="LMS Logo"
-                                width={80}
-                                height={24}
+                                width={32}
+                                height={32}
                                 className="hidden dark:block object-contain"
                             />
                         </div>
