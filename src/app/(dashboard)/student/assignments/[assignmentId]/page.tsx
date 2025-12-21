@@ -39,37 +39,37 @@ export default async function StudentAssignmentPage({ params }: { params: Promis
                 &larr; Kembali ke Kursus
             </Link>
 
-            <div className="bg-white p-8 rounded-lg border shadow-sm">
+            <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm transition-colors">
                 <div className="flex justify-between items-start mb-6">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">{assignment.title}</h1>
-                        <div className="flex gap-2 text-sm text-gray-500">
+                        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{assignment.title}</h1>
+                        <div className="flex gap-2 text-sm text-slate-500 dark:text-slate-400">
                             <span>{assignment.course.subject.name}</span>
                             <span>•</span>
                             <span>{assignment.course.teacher.name}</span>
                         </div>
                     </div>
                     <div className="text-right">
-                        <div className="text-sm text-gray-500 mb-1">Tenggat Waktu</div>
-                        <div className={`font-semibold ${new Date() > new Date(assignment.dueDate) ? 'text-red-600' : 'text-gray-900'}`}>
+                        <div className="text-sm text-slate-500 dark:text-slate-400 mb-1 font-bold uppercase tracking-widest text-[10px]">Tenggat Waktu</div>
+                        <div className={`font-semibold ${new Date() > new Date(assignment.dueDate) ? 'text-red-600' : 'text-slate-900 dark:text-white'}`}>
                             {format(assignment.dueDate, 'PPP p')}
                         </div>
                     </div>
                 </div>
 
-                <div className="prose max-w-none text-gray-700 mb-8 border-b pb-8">
-                    {assignment.description || <p className="italic text-gray-400">Tidak ada instruksi.</p>}
+                <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 mb-8 border-b dark:border-slate-800 pb-8 transition-colors">
+                    {assignment.description || <p className="italic text-slate-400 dark:text-slate-500">Tidak ada instruksi.</p>}
                 </div>
 
                 {/* Grade Display */}
                 {submission?.status === 'GRADED' && (
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8 flex items-start gap-4">
-                        <div className="bg-white p-3 rounded-full border border-green-100 shadow-sm">
-                            <div className="text-2xl font-bold text-green-700">{submission.grade}/100</div>
+                    <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-6 mb-8 flex items-start gap-4 transition-colors">
+                        <div className="bg-white dark:bg-slate-800 p-3 rounded-full border border-emerald-100 dark:border-emerald-500/20 shadow-sm">
+                            <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{submission.grade}/100</div>
                         </div>
                         <div>
-                            <div className="font-bold text-green-800 mb-1">Dinilai</div>
-                            <p className="text-green-700 text-sm">{submission.feedback || "Kerja bagus!"}</p>
+                            <div className="font-bold text-emerald-800 dark:text-emerald-300 mb-1 uppercase tracking-widest text-[10px]">Dinilai</div>
+                            <p className="text-emerald-700 dark:text-emerald-400 text-sm">{submission.feedback || "Kerja bagus!"}</p>
                         </div>
                     </div>
                 )}

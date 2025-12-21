@@ -77,8 +77,8 @@ export default async function StudentDashboardPage() {
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header Section */}
             <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Halo, {student.name}! 👋</h1>
-                <p className="text-slate-500 font-medium">Selamat datang di dashboard {currentClass.name}. Cek progres belajarmu hari ini.</p>
+                <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Halo, {student.name}!</h1>
+                <p className="text-slate-500 dark:text-slate-400 font-medium">Selamat datang di dashboard {currentClass.name}. Cek progres belajarmu hari ini.</p>
             </div>
 
             {/* Stats Grid */}

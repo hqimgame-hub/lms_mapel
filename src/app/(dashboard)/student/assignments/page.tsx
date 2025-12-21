@@ -56,8 +56,8 @@ export default async function StudentAssignmentsPage() {
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tight">Daftar Tugas 📝</h1>
-                    <p className="text-slate-500 font-medium">Lihat semua tugas dari setiap mata pelajaran di kelas {currentClass.name}.</p>
+                    <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Daftar Tugas</h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium">Lihat semua tugas dari setiap mata pelajaran di kelas {currentClass.name}.</p>
                 </div>
             </div>
 

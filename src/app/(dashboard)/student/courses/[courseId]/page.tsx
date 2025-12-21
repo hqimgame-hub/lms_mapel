@@ -59,7 +59,7 @@ export default async function StudentCoursePage({
 
     if (!enrollment) {
         return (
-            <div className="p-8 text-red-500 font-bold text-center bg-white rounded-[2.5rem] border shadow-sm">
+            <div className="p-8 text-red-500 font-bold text-center bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2.5rem] shadow-sm transition-colors">
                 Anda tidak terdaftar di kursus ini.
             </div>
         );
@@ -79,36 +79,36 @@ export default async function StudentCoursePage({
                     <ArrowLeft size={16} />
                     Dashboard
                 </Link>
-                <ChevronRight size={14} className="text-slate-300" />
-                <span className="text-slate-800">{course.subject.name}</span>
+                <ChevronRight size={14} className="text-slate-300 dark:text-slate-700" />
+                <span className="text-slate-800 dark:text-slate-200">{course.subject.name}</span>
             </nav>
 
             {/* Header */}
-            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full -mr-32 -mt-32 z-0" />
+            <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden transition-colors">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 dark:bg-slate-800/50 rounded-full -mr-32 -mt-32 z-0" />
                 <div className="relative z-10">
                     <div className="inline-block px-3 py-1 rounded-lg bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest mb-3">
                         Ruang Belajar Siswa
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight">{course.subject.name}</h1>
-                    <p className="text-slate-500 mt-2 font-medium">Guru Pengajar: <span className="text-slate-800 font-bold">{course.teacher.name}</span></p>
+                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{course.subject.name}</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Guru Pengajar: <span className="text-slate-800 dark:text-slate-200 font-bold">{course.teacher.name}</span></p>
                 </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100/50 rounded-2xl w-fit border border-slate-100">
+            <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100/50 dark:bg-slate-800/50 rounded-2xl w-fit border border-slate-100 dark:border-slate-800 transition-colors">
                 {tabs.map((t) => (
                     <Link
                         key={t.id}
                         href={`?tab=${t.id}`}
                         className={`flex items-center gap-2.5 px-6 py-3 rounded-xl font-bold text-sm transition-all ${tab === t.id
-                            ? 'bg-white text-primary shadow-md shadow-primary/5 border border-primary/10'
-                            : 'text-slate-500 hover:bg-white hover:text-slate-700'
+                            ? 'bg-white dark:bg-slate-900 text-primary shadow-md shadow-primary/5 border border-primary/10 dark:border-primary/20'
+                            : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-white'
                             }`}
                     >
                         <t.icon size={18} />
                         {t.name}
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded-md ${tab === t.id ? 'bg-primary/10 text-primary' : 'bg-slate-200 text-slate-500'
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-md ${tab === t.id ? 'bg-primary/10 text-primary' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                             }`}>
                             {t.count}
                         </span>
@@ -129,17 +129,17 @@ export default async function StudentCoursePage({
 
                             return (
                                 <Link key={assignment.id} href={`/student/assignments/${assignment.id}`} className="group">
-                                    <div className="bg-white p-7 rounded-[2rem] border border-slate-100 hover:border-primary/30 hover:shadow-xl transition-all relative overflow-hidden flex flex-col md:flex-row justify-between gap-6">
+                                    <div className="bg-white dark:bg-slate-900 p-7 rounded-[2rem] border border-slate-100 dark:border-slate-800 hover:border-primary/30 dark:hover:border-primary/50 hover:shadow-xl transition-all relative overflow-hidden flex flex-col md:flex-row justify-between gap-6">
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3 mb-2">
-                                                <h3 className="text-xl font-bold text-slate-800 group-hover:text-primary transition-colors">
+                                                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 group-hover:text-primary transition-colors">
                                                     {assignment.title}
                                                 </h3>
                                             </div>
-                                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-4">
+                                            <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest mb-4">
                                                 Tenggat: {format(assignment.dueDate, 'PPP p')}
                                             </p>
-                                            <p className="text-slate-500 text-sm line-clamp-2">{assignment.description || 'Tidak ada deskripsi'}</p>
+                                            <p className="text-slate-500 dark:text-slate-400 text-sm line-clamp-2">{assignment.description || 'Tidak ada deskripsi'}</p>
                                         </div>
 
                                         <div className="flex items-center">
@@ -170,7 +170,7 @@ export default async function StudentCoursePage({
                             );
                         })}
                         {course.assignments.length === 0 && (
-                            <div className="text-center py-20 bg-white rounded-[2.5rem] border border-dashed border-slate-200 text-slate-400 font-bold">
+                            <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 font-bold transition-colors">
                                 Belum ada tugas untuk saat ini.
                             </div>
                         )}

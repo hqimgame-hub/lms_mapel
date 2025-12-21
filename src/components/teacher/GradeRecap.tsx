@@ -30,7 +30,7 @@ export function GradeRecap({ courses }: GradeRecapProps) {
 
     if (!selectedCourse) {
         return (
-            <div className="text-center py-12 bg-white rounded-[2.5rem] border border-slate-100">
+            <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 transition-colors">
                 <p className="text-slate-400 font-bold">Tidak ada data kelas yang tersedia.</p>
             </div>
         );
@@ -73,12 +73,12 @@ export function GradeRecap({ courses }: GradeRecapProps) {
     return (
         <div className="space-y-6">
             {/* Controls */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors">
                 <div className="relative">
                     <select
                         value={selectedCourseId}
                         onChange={(e) => setSelectedCourseId(e.target.value)}
-                        className="appearance-none bg-slate-50 border-none pl-6 pr-12 py-3 rounded-2xl font-bold text-slate-700 cursor-pointer focus:ring-2 focus:ring-primary/20 outline-none"
+                        className="appearance-none bg-slate-50 dark:bg-slate-800 border-none pl-6 pr-12 py-3 rounded-2xl font-bold text-slate-700 dark:text-slate-200 cursor-pointer focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                     >
                         {courses.map(course => (
                             <option key={course.id} value={course.id}>
@@ -99,12 +99,12 @@ export function GradeRecap({ courses }: GradeRecapProps) {
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50/80 text-[10px] uppercase font-black tracking-widest text-slate-400">
+                        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[10px] uppercase font-black tracking-widest text-slate-400">
                             <tr>
-                                <th className="px-8 py-6 min-w-[200px] sticky left-0 bg-slate-50 z-10 border-r border-slate-100">Nama Siswa</th>
+                                <th className="px-8 py-6 min-w-[200px] sticky left-0 bg-slate-50 dark:bg-slate-800 z-10 border-r border-slate-100 dark:border-slate-700 transition-colors">Nama Siswa</th>
                                 {selectedCourse.assignments.map(a => (
                                     <th key={a.id} className="px-6 py-6 min-w-[150px] whitespace-nowrap">
                                         {a.title}
@@ -113,7 +113,7 @@ export function GradeRecap({ courses }: GradeRecapProps) {
                                 <th className="px-8 py-6 text-right min-w-[100px]">Rata-rata</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50">
+                        <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                             {selectedCourse.class.students.map((enrollment) => {
                                 const grades = selectedCourse.assignments.map(a => {
                                     const sub = a.submissions.find(s => s.studentId === enrollment.user.id);
@@ -125,26 +125,26 @@ export function GradeRecap({ courses }: GradeRecapProps) {
                                     : 0;
 
                                 return (
-                                    <tr key={enrollment.user.id} className="hover:bg-slate-50/50 transition-colors font-medium text-slate-600">
-                                        <td className="px-8 py-4 sticky left-0 bg-white hover:bg-slate-50 transition-colors border-r border-slate-50 font-bold text-slate-800">
+                                    <tr key={enrollment.user.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors font-medium text-slate-600 dark:text-slate-400">
+                                        <td className="px-8 py-4 sticky left-0 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border-r border-slate-50 dark:border-slate-800 font-bold text-slate-800 dark:text-slate-200">
                                             {enrollment.user.name}
                                         </td>
                                         {grades.map((grade, idx) => (
                                             <td key={idx} className="px-6 py-4">
                                                 {grade !== undefined && grade !== null ? (
-                                                    <span className={`px-2 py-1 rounded-lg font-bold text-xs ${grade >= 90 ? 'bg-emerald-50 text-emerald-600' :
-                                                            grade >= 75 ? 'bg-blue-50 text-blue-600' :
-                                                                'bg-red-50 text-red-600'
+                                                    <span className={`px-2 py-1 rounded-lg font-bold text-xs ${grade >= 90 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
+                                                        grade >= 75 ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' :
+                                                            'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400'
                                                         }`}>
                                                         {grade}
                                                     </span>
                                                 ) : (
-                                                    <span className="text-slate-300">-</span>
+                                                    <span className="text-slate-300 dark:text-slate-700">-</span>
                                                 )}
                                             </td>
                                         ))}
                                         <td className="px-8 py-4 text-right">
-                                            <span className="font-black text-slate-800">{average.toFixed(1)}</span>
+                                            <span className="font-black text-slate-800 dark:text-slate-100">{average.toFixed(1)}</span>
                                         </td>
                                     </tr>
                                 );
@@ -154,7 +154,7 @@ export function GradeRecap({ courses }: GradeRecapProps) {
                                 <tr>
                                     <td colSpan={selectedCourse.assignments.length + 2} className="px-8 py-12 text-center text-slate-400">
                                         <div className="flex flex-col items-center gap-2">
-                                            <Users size={32} className="text-slate-200" />
+                                            <Users size={32} className="text-slate-200 dark:text-slate-800" />
                                             <p>Belum ada siswa di kelas ini.</p>
                                         </div>
                                     </td>
@@ -166,7 +166,7 @@ export function GradeRecap({ courses }: GradeRecapProps) {
             </div>
 
             {/* Legenda/Info */}
-            <div className="flex gap-4 p-4 bg-slate-50/50 rounded-2xl text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="flex flex-wrap gap-4 p-4 bg-slate-50/50 dark:bg-slate-800/20 rounded-2xl text-[10px] font-bold text-slate-400 uppercase tracking-wider transition-colors">
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
                     <span>Excellent (90-100)</span>

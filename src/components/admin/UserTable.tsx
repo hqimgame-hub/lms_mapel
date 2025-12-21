@@ -109,7 +109,7 @@ export function UserTable({ users, currentPage, totalPages, totalCount, classes,
                             <select
                                 onChange={(e) => handleFilterClass(e.target.value)}
                                 className="pl-11 pr-10 py-3.5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-sm font-bold text-slate-700 dark:text-slate-300 appearance-none min-w-[160px]"
-                                defaultValue={window.location.search.includes('classId=') ? new URLSearchParams(window.location.search).get('classId') || '' : ''}
+                                defaultValue={typeof window !== 'undefined' && window.location.search.includes('classId=') ? new URLSearchParams(window.location.search).get('classId') || '' : ''}
                             >
                                 <option value="">Semua Kelas</option>
                                 {classes.map(c => (
@@ -122,11 +122,11 @@ export function UserTable({ users, currentPage, totalPages, totalCount, classes,
             </div>
 
             {/* Table Actions */}
-            <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+            <div className="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={toggleSelectAll}
-                        className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors"
+                        className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                     >
                         {selectedIds.length === users.length && users.length > 0 ? <CheckSquare size={18} className="text-primary" /> : <Square size={18} />}
                         {selectedIds.length > 0 ? `${selectedIds.length} Terpilih` : 'Pilih Semua'}
@@ -136,7 +136,7 @@ export function UserTable({ users, currentPage, totalPages, totalCount, classes,
                         <button
                             onClick={handleBulkDelete}
                             disabled={isPending}
-                            className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-100 transition-all disabled:opacity-50"
+                            className="flex items-center gap-2 bg-red-50 dark:bg-red-500/10 text-red-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-100 dark:hover:bg-red-500/20 transition-all disabled:opacity-50"
                         >
                             <Trash2 size={16} />
                             Hapus Masal
@@ -154,98 +154,101 @@ export function UserTable({ users, currentPage, totalPages, totalCount, classes,
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
-                                <th className="p-6">
-                                    <input
-                                        type="checkbox"
-                                        className="rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary dark:bg-slate-800"
-                                        checked={selectedIds.length === users.length && users.length > 0}
-                                        onChange={toggleSelectAll}
-                                    />
-                                </th>
-                                <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Pengguna</th>
-                                <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Peran</th>
+                                <th className="p-6"></th>
+                                <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Identitas</th>
+                                <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Kontak</th>
                                 <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Kelas</th>
+                                <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Peran</th>
                                 <th className="p-6 font-black text-[10px] uppercase tracking-widest text-slate-400 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                             {users.map((user) => (
-                                <tr key={user.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                <tr key={user.id} className={`hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors ${selectedIds.includes(user.id) ? 'bg-primary/5 dark:bg-primary/10' : ''}`}>
                                     <td className="p-6">
-                                        <input
-                                            type="checkbox"
-                                            className="rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary dark:bg-slate-800"
-                                            checked={selectedIds.includes(user.id)}
-                                            onChange={() => toggleSelect(user.id)}
-                                        />
+                                        <button onClick={() => toggleSelect(user.id)}>
+                                            {selectedIds.includes(user.id) ? <CheckSquare size={20} className="text-primary" /> : <Square size={20} className="text-slate-200 dark:text-slate-700" />}
+                                        </button>
                                     </td>
                                     <td className="p-6">
                                         <div className="flex items-center gap-3">
-                                            <td className="p-6">
-                                                <p className="text-xs font-black text-primary">
-                                                    {user.enrollments?.[0]?.class?.name || '-'}
-                                                </p>
-                                            </td>
-                                            <td className="p-6">
-                                                <span className={`px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase ${user.role === 'ADMIN' ? 'bg-purple-50 text-purple-600 border border-purple-100' :
-                                                    user.role === 'TEACHER' ? 'bg-blue-50 text-blue-600 border border-blue-100' :
-                                                        'bg-emerald-50 text-emerald-600 border border-emerald-100'
-                                                    }`}>
-                                                    {user.role}
-                                                </span>
-                                            </td>
-                                            <td className="p-6 text-right">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <EditUserModal user={user} />
-                                                    <DeleteUserButton id={user.id} />
-                                                </div>
-                                            </td>
-                                        </tr>
+                                            <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500">
+                                                <User size={20} />
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-slate-800 dark:text-slate-200 text-sm">{user.name}</p>
+                                                <p className="text-[10px] font-mono text-slate-400">{user.username}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="p-6">
+                                        <p className="text-xs font-medium text-slate-600 dark:text-slate-400">{user.email || '-'}</p>
+                                    </td>
+                                    <td className="p-6">
+                                        <p className="text-xs font-black text-primary">
+                                            {user.enrollments?.[0]?.class?.name || '-'}
+                                        </p>
+                                    </td>
+                                    <td className="p-6">
+                                        <span className={`px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase ${user.role === 'ADMIN' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-800' :
+                                            user.role === 'TEACHER' ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800' :
+                                                'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800'
+                                            }`}>
+                                            {user.role}
+                                        </span>
+                                    </td>
+                                    <td className="p-6 text-right">
+                                        <div className="flex items-center justify-end gap-2">
+                                            <EditUserModal user={user} />
+                                            <DeleteUserButton id={user.id} />
+                                        </div>
+                                    </td>
+                                </tr>
                             ))}
-                                        {users.length === 0 && (
-                                            <tr>
-                                                <td colSpan={6} className="py-20 text-center text-slate-400 font-bold">
-                                                    Tidak ada data ditemukan.
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
+                            {users.length === 0 && (
+                                <tr>
+                                    <td colSpan={6} className="py-20 text-center text-slate-400 font-bold">
+                                        Tidak ada data ditemukan.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
                 </div>
 
-                        {/* Pagination */}
-                        {totalPages > 1 && (
-                            <div className="p-6 border-t border-slate-50 bg-slate-50/30 flex justify-between items-center">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                    Halaman {currentPage} dari {totalPages}
-                                </p>
-                                <div className="flex gap-2">
-                                    <button
-                                        disabled={currentPage <= 1}
-                                        onClick={() => {
-                                            const url = new URL(window.location.href);
-                                            url.searchParams.set('page', (currentPage - 1).toString());
-                                            window.location.href = url.toString();
-                                        }}
-                                        className="p-2 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-primary disabled:opacity-50 transition-all shadow-sm"
-                                    >
-                                        <ChevronLeft size={20} />
-                                    </button>
-                                    <button
-                                        disabled={currentPage >= totalPages}
-                                        onClick={() => {
-                                            const url = new URL(window.location.href);
-                                            url.searchParams.set('page', (currentPage + 1).toString());
-                                            window.location.href = url.toString();
-                                        }}
-                                        className="p-2 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-primary disabled:opacity-50 transition-all shadow-sm"
-                                    >
-                                        <ChevronRight size={20} />
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                </div>
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="p-6 border-t border-slate-50 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/50 flex justify-between items-center">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Halaman {currentPage} dari {totalPages}
+                        </p>
+                        <div className="flex gap-2">
+                            <button
+                                disabled={currentPage <= 1}
+                                onClick={() => {
+                                    const url = new URL(window.location.href);
+                                    url.searchParams.set('page', (currentPage - 1).toString());
+                                    window.location.href = url.toString();
+                                }}
+                                className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400 hover:text-primary disabled:opacity-50 transition-all shadow-sm"
+                            >
+                                <ChevronLeft size={20} />
+                            </button>
+                            <button
+                                disabled={currentPage >= totalPages}
+                                onClick={() => {
+                                    const url = new URL(window.location.href);
+                                    url.searchParams.set('page', (currentPage + 1).toString());
+                                    window.location.href = url.toString();
+                                }}
+                                className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400 hover:text-primary disabled:opacity-50 transition-all shadow-sm"
+                            >
+                                <ChevronRight size={20} />
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
-            );
+        </div>
+    );
 }
