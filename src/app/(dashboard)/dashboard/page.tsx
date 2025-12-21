@@ -158,105 +158,105 @@ export default async function DashboardPage() {
                             <div className="text-3xl font-black text-slate-800 dark:text-white">{adminData.totalStudents}</div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all group">
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="bg-emerald-50 p-3 rounded-2xl text-emerald-600 group-hover:scale-110 transition-transform">
+                                <div className="bg-emerald-50 dark:bg-emerald-500/10 p-3 rounded-2xl text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
                                     <UserCheck size={24} />
                                 </div>
-                                <Activity size={16} className="text-slate-200" />
+                                <Activity size={16} className="text-slate-200 dark:text-slate-700" />
                             </div>
-                            <div className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Total Guru</div>
-                            <div className="text-3xl font-black text-slate-800">{adminData.totalTeachers}</div>
+                            <div className="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider mb-1">Total Guru</div>
+                            <div className="text-3xl font-black text-slate-800 dark:text-white">{adminData.totalTeachers}</div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all group">
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="bg-violet-50 p-3 rounded-2xl text-violet-600 group-hover:scale-110 transition-transform">
+                                <div className="bg-violet-50 dark:bg-violet-500/10 p-3 rounded-2xl text-violet-600 dark:text-violet-400 group-hover:scale-110 transition-transform">
                                     <School size={24} />
                                 </div>
-                                <Activity size={16} className="text-slate-200" />
+                                <Activity size={16} className="text-slate-200 dark:text-slate-700" />
                             </div>
-                            <div className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Total Kelas</div>
-                            <div className="text-3xl font-black text-slate-800">{adminData.totalClasses}</div>
+                            <div className="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider mb-1">Total Kelas</div>
+                            <div className="text-3xl font-black text-slate-800 dark:text-white">{adminData.totalClasses}</div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all group">
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="bg-amber-50 p-3 rounded-2xl text-amber-600 group-hover:scale-110 transition-transform">
+                                <div className="bg-amber-50 dark:bg-amber-500/10 p-3 rounded-2xl text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform">
                                     <BookMarked size={24} />
                                 </div>
-                                <Activity size={16} className="text-slate-200" />
+                                <Activity size={16} className="text-slate-200 dark:text-slate-700" />
                             </div>
-                            <div className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Total Mapel</div>
-                            <div className="text-3xl font-black text-slate-800">{adminData.totalSubjects}</div>
+                            <div className="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider mb-1">Total Mapel</div>
+                            <div className="text-3xl font-black text-slate-800 dark:text-white">{adminData.totalSubjects}</div>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Quick Actions */}
                         <div className="lg:col-span-2 space-y-6">
-                            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                                <h3 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2">
+                            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                                <h3 className="text-lg font-black text-slate-800 dark:text-white mb-6 flex items-center gap-2">
                                     <PlusCircle size={20} className="text-primary" />
                                     Aksi Cepat Manajemen
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <Link href="/admin/users" className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all group">
+                                    <Link href="/admin/users" className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all group">
                                         <div className="flex items-center gap-3">
-                                            <div className="bg-white p-2.5 rounded-xl shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
+                                            <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
                                                 <UserPlus size={18} />
                                             </div>
-                                            <span className="font-bold text-slate-700 text-sm">Kelola Pengguna</span>
+                                            <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">Kelola Pengguna</span>
                                         </div>
-                                        <ArrowRight size={16} className="text-slate-300 group-hover:text-primary transition-colors" />
+                                        <ArrowRight size={16} className="text-slate-300 dark:text-slate-600 group-hover:text-primary transition-colors" />
                                     </Link>
-                                    <Link href="/admin/classes" className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all group">
+                                    <Link href="/admin/classes" className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all group">
                                         <div className="flex items-center gap-3">
-                                            <div className="bg-white p-2.5 rounded-xl shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
+                                            <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
                                                 <Layers size={18} />
                                             </div>
-                                            <span className="font-bold text-slate-700 text-sm">Kelola Kelas</span>
+                                            <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">Kelola Kelas</span>
                                         </div>
-                                        <ArrowRight size={16} className="text-slate-300 group-hover:text-primary transition-colors" />
+                                        <ArrowRight size={16} className="text-slate-300 dark:text-slate-600 group-hover:text-primary transition-colors" />
                                     </Link>
-                                    <Link href="/admin/subjects" className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all group">
+                                    <Link href="/admin/subjects" className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all group">
                                         <div className="flex items-center gap-3">
-                                            <div className="bg-white p-2.5 rounded-xl shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
+                                            <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
                                                 <BookPlus size={18} />
                                             </div>
-                                            <span className="font-bold text-slate-700 text-sm">Kelola Mapel</span>
+                                            <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">Kelola Mapel</span>
                                         </div>
-                                        <ArrowRight size={16} className="text-slate-300 group-hover:text-primary transition-colors" />
+                                        <ArrowRight size={16} className="text-slate-300 dark:text-slate-600 group-hover:text-primary transition-colors" />
                                     </Link>
-                                    <Link href="/admin/courses" className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all group">
+                                    <Link href="/admin/courses" className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all group">
                                         <div className="flex items-center gap-3">
-                                            <div className="bg-white p-2.5 rounded-xl shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
+                                            <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
                                                 <Layers size={18} />
                                             </div>
-                                            <span className="font-bold text-slate-700 text-sm">Alokasi Kursus</span>
+                                            <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">Alokasi Kursus</span>
                                         </div>
-                                        <ArrowRight size={16} className="text-slate-300 group-hover:text-primary transition-colors" />
+                                        <ArrowRight size={16} className="text-slate-300 dark:text-slate-600 group-hover:text-primary transition-colors" />
                                     </Link>
                                 </div>
                             </div>
                         </div>
 
                         {/* Recent Activity (Placeholder/Simulated) */}
-                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                            <h3 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2">
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                            <h3 className="text-lg font-black text-slate-800 dark:text-white mb-6 flex items-center gap-2">
                                 <Activity size={20} className="text-primary" />
                                 Pengguna Terbaru
                             </h3>
                             <div className="space-y-4">
                                 {adminData.recentUsers.map(u => (
-                                    <div key={u.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition-colors">
+                                    <div key={u.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-slate-400 text-xs uppercase">
+                                            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-400 dark:text-slate-500 text-xs uppercase">
                                                 {u.name.substring(0, 2)}
                                             </div>
                                             <div>
-                                                <p className="text-xs font-bold text-slate-800 leading-none mb-1">{u.name}</p>
-                                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                                                <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-none mb-1">{u.name}</p>
+                                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
                                                     {u.role.toLowerCase()}
                                                 </span>
                                             </div>
@@ -293,25 +293,25 @@ export default async function DashboardPage() {
                     </div>
 
                     <div className="space-y-6">
-                        <h3 className="text-2xl font-black text-slate-800 flex items-center gap-3">
+                        <h3 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-3">
                             <div className="w-2 h-8 bg-primary rounded-full" />
                             Kelas Saya
                         </h3>
                         {myCourses.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {myCourses.map(course => (
-                                    <div key={course.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group overflow-hidden relative">
-                                        <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-500" />
+                                    <div key={course.id} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group overflow-hidden relative">
+                                        <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-500" />
                                         <div className="relative z-10">
-                                            <div className="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest mb-4">
+                                            <div className="inline-block px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest mb-4">
                                                 {course.class.name}
                                             </div>
-                                            <h4 className="text-xl font-bold text-slate-800 mb-2 truncate">{course.subject.name}</h4>
-                                            <div className="flex items-center gap-2 text-slate-400 mb-6">
+                                            <h4 className="text-xl font-bold text-slate-800 dark:text-white mb-2 truncate">{course.subject.name}</h4>
+                                            <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 mb-6">
                                                 <UserCircle size={14} />
                                                 <span className="text-xs font-medium">{course.teacher.name}</span>
                                             </div>
-                                            <Link href={`/student/courses/${course.id}`} className="flex items-center justify-center gap-2 w-full bg-slate-900 text-white py-3.5 rounded-2xl font-bold text-sm group-hover:bg-primary transition-colors">
+                                            <Link href={`/student/courses/${course.id}`} className="flex items-center justify-center gap-2 w-full bg-slate-900 dark:bg-slate-800 text-white py-3.5 rounded-2xl font-bold text-sm group-hover:bg-primary transition-colors">
                                                 Masuk Kelas
                                                 <ArrowRight size={16} />
                                             </Link>
@@ -320,12 +320,12 @@ export default async function DashboardPage() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[2rem] border border-dashed border-slate-200 text-center px-6">
-                                <div className="bg-slate-50 p-6 rounded-full text-slate-300 mb-4">
+                            <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 rounded-[2rem] border border-dashed border-slate-200 dark:border-slate-800 text-center px-6 transition-colors">
+                                <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-full text-slate-300 dark:text-slate-600 mb-4">
                                     <BookMarked size={48} />
                                 </div>
-                                <h4 className="text-lg font-bold text-slate-800 mb-2">Belum Ada Kelas Terdaftar</h4>
-                                <p className="text-slate-400 text-sm max-w-xs">Mulai dengan memasukkan kode kelas yang Anda terima dari guru pengajar.</p>
+                                <h4 className="text-lg font-bold text-slate-800 dark:text-white mb-2">Belum Ada Kelas Terdaftar</h4>
+                                <p className="text-slate-400 dark:text-slate-500 text-sm max-w-xs">Mulai dengan memasukkan kode kelas yang Anda terima dari guru pengajar.</p>
                             </div>
                         )}
                     </div>
@@ -336,28 +336,28 @@ export default async function DashboardPage() {
                 <div className="space-y-8">
                     {/* Teacher Quick Stats */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all group">
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="bg-emerald-50 p-3 rounded-2xl text-emerald-600 group-hover:scale-110 transition-transform">
+                                <div className="bg-emerald-50 dark:bg-emerald-500/10 p-3 rounded-2xl text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
                                     <School size={24} />
                                 </div>
-                                <Activity size={16} className="text-slate-200" />
+                                <Activity size={16} className="text-slate-200 dark:text-slate-700" />
                             </div>
-                            <div className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Total Kelas</div>
-                            <div className="text-3xl font-black text-slate-800">{teacherCourses.length}</div>
+                            <div className="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider mb-1">Total Kelas</div>
+                            <div className="text-3xl font-black text-slate-800 dark:text-white">{teacherCourses.length}</div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all group">
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="bg-blue-50 p-3 rounded-2xl text-blue-600 group-hover:scale-110 transition-transform">
+                                <div className="bg-blue-50 dark:bg-blue-500/10 p-3 rounded-2xl text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
                                     <ClipboardList size={24} />
                                 </div>
                                 {totalPending > 0 && <div className="bg-red-500 w-2.5 h-2.5 rounded-full animate-ping" />}
                             </div>
-                            <div className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Perlu Dinilai</div>
-                            <div className="text-3xl font-black text-slate-800 flex items-baseline gap-2">
+                            <div className="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider mb-1">Perlu Dinilai</div>
+                            <div className="text-3xl font-black text-slate-800 dark:text-white flex items-baseline gap-2">
                                 {totalPending}
-                                <span className="text-xs font-bold text-slate-400 uppercase tracking-tighter">Pengumpulan</span>
+                                <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Pengumpulan</span>
                             </div>
                         </div>
 
@@ -374,40 +374,40 @@ export default async function DashboardPage() {
                     </div>
 
                     <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-2xl font-black text-slate-800 flex items-center gap-3">
+                        <h3 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-3">
                             <div className="w-2 h-8 bg-emerald-500 rounded-full" />
                             Kelas yang Diajar
                         </h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {teacherCourses.map(course => (
-                            <div key={course.id} className="bg-white p-7 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group border-b-4 border-b-emerald-500">
+                            <div key={course.id} className="bg-white dark:bg-slate-900 p-7 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all group border-b-4 border-b-emerald-500 transition-colors">
                                 <div className="flex items-start justify-between mb-6">
-                                    <div className="inline-block px-3 py-1 rounded-lg bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-widest">
+                                    <div className="inline-block px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-widest">
                                         {course.class.name}
                                     </div>
-                                    <div className="text-slate-300">
+                                    <div className="text-slate-300 dark:text-slate-700">
                                         <Layers size={20} />
                                     </div>
                                 </div>
-                                <h4 className="text-xl font-bold text-slate-800 mb-2">{course.subject.name}</h4>
-                                <div className="flex items-center gap-2 text-slate-400 mb-8 text-sm">
+                                <h4 className="text-xl font-bold text-slate-800 dark:text-white mb-2">{course.subject.name}</h4>
+                                <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 mb-8 text-sm">
                                     <Activity size={16} />
                                     <span>{course._count.assignments} Tugas Aktif</span>
                                 </div>
-                                <Link href={`/teacher/courses/${course.id}`} className="flex items-center justify-center gap-2 w-full bg-emerald-50 text-emerald-700 py-4 rounded-2xl font-bold text-sm hover:bg-emerald-500 hover:text-white transition-all shadow-sm">
+                                <Link href={`/teacher/courses/${course.id}`} className="flex items-center justify-center gap-2 w-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 py-4 rounded-2xl font-bold text-sm hover:bg-emerald-500 hover:text-white transition-all shadow-sm">
                                     Detail & Kelola
                                     <ArrowRight size={16} />
                                 </Link>
                             </div>
                         ))}
                         {teacherCourses.length === 0 && (
-                            <div className="col-span-1 md:col-span-3 flex flex-col items-center justify-center py-20 bg-white rounded-[2rem] border border-dashed border-slate-200 text-center px-6">
-                                <div className="bg-slate-50 p-6 rounded-full text-slate-300 mb-4">
+                            <div className="col-span-1 md:col-span-3 flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 rounded-[2rem] border border-dashed border-slate-200 dark:border-slate-800 text-center px-6 transition-colors">
+                                <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-full text-slate-300 dark:text-slate-600 mb-4">
                                     <UserCheck size={48} />
                                 </div>
-                                <h4 className="text-lg font-bold text-slate-800 mb-2">Belum Ditugaskan</h4>
-                                <p className="text-slate-400 text-sm max-w-xs">Anda belum ditugaskan untuk mengajar di kelas manapun. Hubungi Admin untuk alokasi kursus.</p>
+                                <h4 className="text-lg font-bold text-slate-800 dark:text-white mb-2">Belum Ditugaskan</h4>
+                                <p className="text-slate-400 dark:text-slate-500 text-sm max-w-xs">Anda belum ditugaskan untuk mengajar di kelas manapun. Hubungi Admin untuk alokasi kursus.</p>
                             </div>
                         )}
                     </div>

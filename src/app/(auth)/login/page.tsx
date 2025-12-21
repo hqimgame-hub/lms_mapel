@@ -54,13 +54,13 @@ export default function LoginPage() {
 
                     <div className="relative z-10">
                         <div className="mb-4 flex justify-center">
-                            <div className="relative w-full h-16 flex items-center justify-center">
+                            <div className="relative w-full h-12 flex items-center justify-center">
                                 {/* Logo for Light Mode (Dark Logo) */}
                                 <Image
                                     src="/images/logo-light.png"
                                     alt="LMS Logo"
-                                    width={180}
-                                    height={60}
+                                    width={140}
+                                    height={40}
                                     className="dark:hidden object-contain"
                                     priority
                                 />
@@ -68,8 +68,8 @@ export default function LoginPage() {
                                 <Image
                                     src="/images/logo-dark.png"
                                     alt="LMS Logo"
-                                    width={180}
-                                    height={60}
+                                    width={140}
+                                    height={40}
                                     className="hidden dark:block object-contain"
                                     priority
                                 />

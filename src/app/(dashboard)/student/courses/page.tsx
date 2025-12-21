@@ -58,37 +58,37 @@ export default async function StudentCoursesPage() {
                     <Link
                         key={course.id}
                         href={`/student/courses/${course.id}`}
-                        className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all group flex flex-col gap-6"
+                        className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 p-8 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all group flex flex-col gap-6 transition-colors"
                     >
                         <div className="flex justify-between items-start">
-                            <div className="bg-primary/5 p-4 rounded-3xl text-primary group-hover:scale-110 transition-transform">
+                            <div className="bg-primary/5 dark:bg-primary/10 p-4 rounded-3xl text-primary dark:text-primary group-hover:scale-110 transition-transform">
                                 <BookOpen size={32} />
                             </div>
-                            <div className="bg-slate-50 p-2 rounded-full text-slate-300 group-hover:bg-primary group-hover:text-white transition-all">
+                            <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-full text-slate-300 dark:text-slate-600 group-hover:bg-primary group-hover:text-white transition-all">
                                 <ChevronRight size={20} />
                             </div>
                         </div>
 
                         <div>
-                            <h3 className="text-2xl font-black text-slate-800 group-hover:text-primary transition-colors tracking-tight leading-tight mb-2">
+                            <h3 className="text-2xl font-black text-slate-800 dark:text-white group-hover:text-primary transition-colors tracking-tight leading-tight mb-2">
                                 {course.subject.name}
                             </h3>
-                            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{course.teacher.name}</p>
+                            <p className="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{course.teacher.name}</p>
                         </div>
 
-                        <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
+                        <div className="pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="text-center">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Materi</p>
-                                    <p className="font-black text-slate-800">{course._count.materials}</p>
+                                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Materi</p>
+                                    <p className="font-black text-slate-800 dark:text-slate-200">{course._count.materials}</p>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Tugas</p>
-                                    <p className="font-black text-slate-800">{course._count.assignments}</p>
+                                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Tugas</p>
+                                    <p className="font-black text-slate-800 dark:text-slate-200">{course._count.assignments}</p>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Ujian</p>
-                                    <p className="font-black text-slate-800">{course._count.exams}</p>
+                                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Ujian</p>
+                                    <p className="font-black text-slate-800 dark:text-slate-200">{course._count.exams}</p>
                                 </div>
                             </div>
                         </div>
@@ -97,13 +97,13 @@ export default async function StudentCoursesPage() {
             </div>
 
             {courses.length === 0 && (
-                <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-[3rem] p-20 text-center flex flex-col items-center gap-4">
-                    <div className="bg-white p-6 rounded-full shadow-sm text-slate-300">
+                <div className="bg-slate-50 dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[3rem] p-20 text-center flex flex-col items-center gap-4 transition-colors">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-full shadow-sm text-slate-300 dark:text-slate-600">
                         <GraduationCap size={48} />
                     </div>
                     <div>
-                        <h3 className="text-xl font-black text-slate-800">Belum ada mata pelajaran</h3>
-                        <p className="text-slate-400 font-medium">Mata pelajaran untuk kelasmu belum dikonfigurasi oleh guru.</p>
+                        <h3 className="text-xl font-black text-slate-800 dark:text-white">Belum ada mata pelajaran</h3>
+                        <p className="text-slate-400 dark:text-slate-500 font-medium">Mata pelajaran untuk kelasmu belum dikonfigurasi oleh guru.</p>
                     </div>
                 </div>
             )}

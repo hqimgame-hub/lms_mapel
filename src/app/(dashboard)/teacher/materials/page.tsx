@@ -43,8 +43,8 @@ export default async function TeacherMaterialsPage() {
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tight">Manajemen Materi</h1>
-                    <p className="text-slate-500 font-medium">Kumpulkan dan bagikan bahan ajar ke berbagai kelas.</p>
+                    <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Manajemen Materi</h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium">Kumpulkan dan bagikan bahan ajar ke berbagai kelas.</p>
                 </div>
                 <CreateMaterial
                     courseId=""
@@ -57,21 +57,21 @@ export default async function TeacherMaterialsPage() {
 
             <div className="grid gap-4">
                 {materials.map((material) => (
-                    <div key={material.id} className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group">
+                    <div key={material.id} className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group">
                         <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest">
+                                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">
                                     {material.course.class.name}
                                 </span>
-                                <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest">
+                                <span className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest">
                                     {material.course.subject.name}
                                 </span>
-                                <span className="px-2 py-0.5 rounded-md bg-orange-50 text-orange-600 text-[10px] font-black uppercase tracking-widest">
+                                <span className="px-2 py-0.5 rounded-md bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-widest">
                                     {material.type}
                                 </span>
                             </div>
-                            <h3 className="text-xl font-bold text-slate-800 group-hover:text-primary transition-colors">{material.title}</h3>
-                            <div className="flex items-center gap-4 mt-3 text-slate-400 text-xs font-medium">
+                            <h3 className="text-xl font-bold text-slate-800 dark:text-white group-hover:text-primary transition-colors">{material.title}</h3>
+                            <div className="flex items-center gap-4 mt-3 text-slate-400 dark:text-slate-500 text-xs font-medium">
                                 <div className="flex items-center gap-1.5">
                                     <Calendar size={14} />
                                     Dibuat: {format(new Date(material.createdAt), 'PPP')}
@@ -90,7 +90,7 @@ export default async function TeacherMaterialsPage() {
                             </div>
                             <Link
                                 href={`/teacher/courses/${material.courseId}?tab=materials`}
-                                className="flex items-center gap-2 bg-slate-50 text-slate-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-primary hover:text-white transition-all whitespace-nowrap"
+                                className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-6 py-3 rounded-xl font-bold text-sm hover:bg-primary hover:text-white transition-all whitespace-nowrap"
                             >
                                 Lihat di Kelas
                                 <ChevronRight size={16} />
@@ -100,7 +100,7 @@ export default async function TeacherMaterialsPage() {
                 ))}
 
                 {materials.length === 0 && (
-                    <div className="text-center py-20 bg-white rounded-[2.5rem] border border-dashed border-slate-200 text-slate-400">
+                    <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500">
                         Belum ada materi yang dibuat. Klik tombol di atas untuk membagikan materi pertama Anda.
                     </div>
                 )}
