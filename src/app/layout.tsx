@@ -17,15 +17,19 @@ export const metadata: Metadata = {
   description: "LMS khusus mata pelajaran TIK dan KKA",
 };
 
+import { Providers } from "@/components/Providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${plusJakarta.variable} font-sans antialiased text-slate-900 bg-slate-50`}>
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} ${plusJakarta.variable} font-sans antialiased text-slate-900 bg-slate-50 dark:bg-slate-950 dark:text-slate-50`}>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

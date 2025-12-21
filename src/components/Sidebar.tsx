@@ -7,9 +7,9 @@ export async function Sidebar() {
     const role = session?.user?.role;
 
     return (
-        <div className="w-72 h-full bg-white border-r p-6 flex-col hidden md:flex shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-            <div className="flex flex-col mb-10 px-1">
-                <div className="text-lg font-black text-slate-800 tracking-tighter leading-none uppercase">LMS TIK & KKA</div>
+        <div className="w-72 h-full bg-white dark:bg-slate-900 border-r dark:border-slate-800 p-6 flex-col hidden md:flex shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-colors duration-300">
+            <div className="flex flex-col">
+                <div className="text-lg font-black text-slate-800 dark:text-slate-100 tracking-tighter leading-none uppercase">LMS TIK & KKA</div>
                 <div className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mt-1.5">Digital Learning Platform</div>
             </div>
 
@@ -56,10 +56,10 @@ export async function Sidebar() {
                 )}
             </nav>
 
-            <div className="mt-auto pt-6 border-t bg-slate-50 mb-0">
+            <div className="mt-auto pt-6 border-t dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 mb-0 transition-colors">
                 <div className="px-2">
-                    <div className="text-sm font-medium truncate">{session?.user?.name || session?.user?.email}</div>
-                    <div className="text-xs text-gray-500 capitalize mb-3">{role?.toLowerCase()}</div>
+                    <div className="text-sm font-medium truncate dark:text-slate-200">{session?.user?.name || session?.user?.email}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 capitalize mb-3">{role?.toLowerCase()}</div>
 
                     <form
                         action={async () => {

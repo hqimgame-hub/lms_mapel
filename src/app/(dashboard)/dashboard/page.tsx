@@ -134,12 +134,12 @@ export default async function DashboardPage() {
         <div className="space-y-8 pb-10">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tight">Ringkasan Dashboard</h1>
-                    <p className="text-slate-500 font-medium">Selamat datang kembali, <span className="text-primary font-bold">{session?.user?.name}</span></p>
+                    <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Ringkasan Dashboard</h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium">Selamat datang kembali, <span className="text-primary font-bold">{session?.user?.name}</span></p>
                 </div>
-                <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border shadow-sm w-fit">
+                <div className="flex items-center gap-2 bg-white dark:bg-slate-900 px-4 py-2 rounded-2xl border dark:border-slate-800 shadow-sm w-fit transition-colors">
                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Sesi: {session?.user?.role}</span>
+                    <span className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Sesi: {session?.user?.role}</span>
                 </div>
             </header>
 
@@ -147,15 +147,15 @@ export default async function DashboardPage() {
                 <div className="space-y-8">
                     {/* Stat Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all group">
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="bg-blue-50 p-3 rounded-2xl text-blue-600 group-hover:scale-110 transition-transform">
+                                <div className="bg-blue-50 dark:bg-blue-500/10 p-3 rounded-2xl text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
                                     <Users size={24} />
                                 </div>
-                                <Activity size={16} className="text-slate-200" />
+                                <Activity size={16} className="text-slate-200 dark:text-slate-700" />
                             </div>
-                            <div className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Total Siswa</div>
-                            <div className="text-3xl font-black text-slate-800">{adminData.totalStudents}</div>
+                            <div className="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider mb-1">Total Siswa</div>
+                            <div className="text-3xl font-black text-slate-800 dark:text-white">{adminData.totalStudents}</div>
                         </div>
 
                         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all group">
