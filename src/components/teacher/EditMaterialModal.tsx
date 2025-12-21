@@ -39,105 +39,94 @@ export function EditMaterialModal({ material }: EditMaterialModalProps) {
             </button>
 
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-in fade-in duration-300">
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-lg shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-300">
-                        <div className="p-8 border-b flex justify-between items-center bg-slate-50/50">
-                            <div>
-                                <h2 className="text-xl font-black text-slate-800 tracking-tight">Edit Materi 📚</h2>
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Perbarui bahan ajar</p>
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-300">
+                    <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
+                        <div className="bg-primary dark:bg-primary/90 p-5 text-white flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
+                                    <FileText size={18} />
+                                </div>
+                                <h3 className="font-bold text-sm tracking-tight">Edit Materi</h3>
                             </div>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-3 hover:bg-white rounded-2xl text-slate-400 hover:text-slate-600 transition-all shadow-sm"
+                                className="hover:bg-white/20 p-2 rounded-xl transition-colors"
                             >
-                                <X size={20} />
+                                <X size={18} />
                             </button>
                         </div>
 
-                        <form action={formAction} className="p-8 space-y-6">
+                        <form action={formAction} className="p-5 space-y-3.5 max-h-[85vh] overflow-y-auto">
                             <input type="hidden" name="id" value={material.id} />
                             <input type="hidden" name="courseId" value={material.courseId} />
 
-                            <div className="space-y-2">
-                                <label className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                                    <Type size={14} /> Judul Materi
-                                </label>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Judul Materi</label>
                                 <input
                                     name="title"
                                     defaultValue={material.title}
-                                    className="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 outline-none font-bold text-slate-700 transition-all"
+                                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-sm font-bold text-slate-700 dark:text-slate-300 shadow-inner"
+                                    placeholder="Masukkan judul materi"
                                     required
                                 />
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                                    <AlignLeft size={14} /> Deskripsi
-                                </label>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Deskripsi</label>
                                 <textarea
                                     name="description"
                                     defaultValue={material.description || ''}
-                                    className="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 outline-none font-medium text-slate-600 min-h-[100px] transition-all"
+                                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-sm font-medium text-slate-600 dark:text-slate-400 min-h-[60px]"
+                                    placeholder="Opsional"
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Tipe Materi</label>
-                                    <select
-                                        name="type"
-                                        defaultValue={material.type}
-                                        className="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 outline-none font-bold text-slate-700 transition-all bg-white"
-                                        required
-                                    >
-                                        <option value="TEXT">📝 Teks Materi</option>
-                                        <option value="YOUTUBE_LINK">🎥 Video YouTube</option>
-                                        <option value="PDF_LINK">📄 Link PDF/Dokumen</option>
-                                        <option value="EXTERNAL_LINK">🌐 Link Eksternal</option>
-                                    </select>
-                                </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Tipe Materi</label>
+                                <select
+                                    name="type"
+                                    defaultValue={material.type}
+                                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-sm font-bold text-slate-700 dark:text-slate-300 appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat"
+                                    required
+                                >
+                                    <option value="TEXT" className="dark:bg-slate-900">📝 Teks Materi</option>
+                                    <option value="YOUTUBE_LINK" className="dark:bg-slate-900">🎥 Video YouTube</option>
+                                    <option value="PDF_LINK" className="dark:bg-slate-900">📄 Link PDF/Dokumen</option>
+                                    <option value="EXTERNAL_LINK" className="dark:bg-slate-900">🌐 Link Eksternal</option>
+                                </select>
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                                    <LinkIcon size={14} /> Konten / Link
-                                </label>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Konten / Link</label>
                                 <textarea
                                     name="content"
                                     defaultValue={material.content}
-                                    placeholder="Isi teks materi atau tempel link di sini..."
-                                    className="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 outline-none font-mono text-xs text-slate-600 min-h-[120px] transition-all"
+                                    placeholder="Isi teks materi atau tempel link..."
+                                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-xs font-mono text-slate-600 dark:text-slate-400 min-h-[100px]"
                                     required
                                 />
                             </div>
 
                             {state?.message && !state.success && (
-                                <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-bold border border-red-100 animate-shake">
+                                <div className="p-3 rounded-xl text-[11px] font-bold bg-red-50/50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 text-red-600 dark:text-red-400 animate-shake">
                                     {state.message}
-                                    {state.errors && Object.keys(state.errors).map(key => {
-                                        const errorList = state.errors?.[key];
-                                        if (!errorList) return null;
-                                        return (
-                                            <p key={key} className="mt-1 flex items-center gap-1">• {key}: {Array.isArray(errorList) ? errorList.join(', ') : errorList}</p>
-                                        );
-                                    })}
                                 </div>
                             )}
 
-                            <div className="pt-4 flex gap-3">
+                            <div className="flex gap-3 pt-3">
                                 <button
                                     type="button"
                                     onClick={() => setIsOpen(false)}
-                                    className="flex-1 p-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all"
+                                    className="flex-1 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800 font-black text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
                                 >
                                     Batal
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isPending}
-                                    className="flex-1 bg-primary text-white p-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-lg active:scale-95 disabled:opacity-50"
+                                    className="flex-1 px-4 py-3 rounded-xl bg-primary text-white font-black text-[10px] uppercase tracking-widest hover:bg-blue-600 dark:hover:bg-blue-500 shadow-lg shadow-primary/20 transition-all disabled:opacity-50"
                                 >
-                                    {isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
+                                    {isPending ? 'Menyimpan...' : 'Simpan'}
                                 </button>
                             </div>
                         </form>

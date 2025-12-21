@@ -10,21 +10,21 @@ export async function Sidebar() {
     return (
         <div className="w-72 h-full bg-white dark:bg-slate-900 border-r dark:border-slate-800 p-6 flex-col hidden md:flex shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-colors duration-300">
             <div className="flex flex-col mb-8">
-                <div className="relative w-full h-12 flex items-center">
+                <div className="relative w-full h-10 flex items-center">
                     {/* Logo for Light Mode (Dark Logo) */}
                     <Image
                         src="/images/logo-light.png"
                         alt="LMS Logo"
-                        width={140}
-                        height={40}
+                        width={110}
+                        height={32}
                         className="dark:hidden object-contain"
                     />
                     {/* Logo for Dark Mode (White Logo) */}
                     <Image
                         src="/images/logo-dark.png"
                         alt="LMS Logo"
-                        width={140}
-                        height={40}
+                        width={110}
+                        height={32}
                         className="hidden dark:block object-contain"
                     />
                 </div>
