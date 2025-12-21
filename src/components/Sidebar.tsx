@@ -1,5 +1,6 @@
 import { auth, signOut } from '@/auth';
 import { NavItem } from './NavItem';
+import Image from 'next/image';
 import { BookOpen, LayoutDashboard, Layers, Users, Home, PlusCircle } from 'lucide-react';
 
 export async function Sidebar() {
@@ -8,9 +9,26 @@ export async function Sidebar() {
 
     return (
         <div className="w-72 h-full bg-white dark:bg-slate-900 border-r dark:border-slate-800 p-6 flex-col hidden md:flex shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-colors duration-300">
-            <div className="flex flex-col">
-                <div className="text-lg font-black text-slate-800 dark:text-slate-100 tracking-tighter leading-none uppercase">LMS TIK & KKA</div>
-                <div className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mt-1.5">Digital Learning Platform</div>
+            <div className="flex flex-col mb-8">
+                <div className="relative w-full h-12 flex items-center">
+                    {/* Logo for Light Mode (Dark Logo) */}
+                    <Image
+                        src="/images/logo-light.png"
+                        alt="LMS Logo"
+                        width={140}
+                        height={40}
+                        className="dark:hidden object-contain"
+                    />
+                    {/* Logo for Dark Mode (White Logo) */}
+                    <Image
+                        src="/images/logo-dark.png"
+                        alt="LMS Logo"
+                        width={140}
+                        height={40}
+                        className="hidden dark:block object-contain"
+                    />
+                </div>
+                <div className="text-[9px] font-black text-primary/40 dark:text-primary/30 uppercase tracking-[0.3em] mt-2 ml-0.5">Digital Learning Platform</div>
             </div>
 
             <nav className="flex flex-col gap-2">

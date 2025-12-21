@@ -1,6 +1,7 @@
 'use client';
 
 import { Menu, X, Home, BookOpen, LayoutDashboard, Layers, Users, PlusCircle, LogOut } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
@@ -41,18 +42,35 @@ export function MobileNav({ role, userName, userEmail }: MobileNavProps) {
 
             {/* Drawer */}
             <div className={clsx(
-                "fixed inset-y-0 left-0 w-[280px] bg-white z-50 shadow-2xl transition-transform duration-300 ease-in-out transform flex flex-col",
+                "fixed inset-y-0 left-0 w-[280px] bg-white dark:bg-slate-900 z-50 shadow-2xl transition-transform duration-300 ease-in-out transform flex flex-col",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 {/* Branding Header */}
-                <div className="flex justify-between items-center p-6 border-b border-slate-50 bg-white sticky top-0 z-10">
+                <div className="flex justify-between items-center p-6 border-b border-slate-50 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-10 transition-colors">
                     <div className="flex flex-col">
-                        <div className="text-sm font-black text-slate-800 tracking-tighter leading-none uppercase">LMS TIK & KKA</div>
-                        <div className="text-[8px] font-bold text-primary/60 uppercase tracking-widest mt-1">Digital Learning Platform</div>
+                        <div className="relative h-8 w-32 flex items-center">
+                            {/* Logo for Light Mode (Dark Logo) */}
+                            <Image
+                                src="/images/logo-light.png"
+                                alt="LMS Logo"
+                                width={100}
+                                height={30}
+                                className="dark:hidden object-contain"
+                            />
+                            {/* Logo for Dark Mode (White Logo) */}
+                            <Image
+                                src="/images/logo-dark.png"
+                                alt="LMS Logo"
+                                width={100}
+                                height={30}
+                                className="hidden dark:block object-contain"
+                            />
+                        </div>
+                        <div className="text-[8px] font-black text-primary/40 dark:text-primary/30 uppercase tracking-[0.2em] mt-1 ml-0.5">Digital Learning Platform</div>
                     </div>
                     <button
                         onClick={() => setIsOpen(false)}
-                        className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-all"
+                        className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all"
                     >
                         <X size={20} />
                     </button>
@@ -104,14 +122,14 @@ export function MobileNav({ role, userName, userEmail }: MobileNavProps) {
                 </div>
 
                 {/* Footer with User Info & Logout */}
-                <div className="mt-auto p-4 border-t border-slate-50 bg-slate-50/50">
+                <div className="mt-auto p-4 border-t border-slate-50 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 transition-colors">
                     <div className="flex items-center gap-3 mb-4 px-2">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-black text-sm shadow-inner">
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-black text-sm shadow-inner transition-colors">
                             {userName?.[0] || 'U'}
                         </div>
                         <div className="flex flex-col overflow-hidden">
-                            <div className="text-sm font-black text-slate-800 truncate">{userName || 'User'}</div>
-                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tight truncate">{role?.toLowerCase()}</div>
+                            <div className="text-sm font-black text-slate-800 dark:text-slate-200 truncate">{userName || 'User'}</div>
+                            <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight truncate">{role?.toLowerCase()}</div>
                         </div>
                     </div>
 
