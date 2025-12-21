@@ -8,7 +8,11 @@ export async function Header() {
     return (
         <header className="h-16 bg-white border-b flex items-center justify-between px-4 md:px-8 sticky top-0 z-10 w-full">
             <div className="flex items-center gap-3">
-                <MobileNav role={session?.user?.role} />
+                <MobileNav
+                    role={session?.user?.role}
+                    userName={session?.user?.name}
+                    userEmail={session?.user?.email}
+                />
                 <div className="text-xl font-black text-slate-800 tracking-tight">
                     {session?.user?.role === 'TEACHER' ? 'Dashboard Guru' : session?.user?.role === 'STUDENT' ? 'Dashboard Siswa' : 'Dashboard Admin'}
                 </div>
