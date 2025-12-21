@@ -42,7 +42,7 @@ export default async function AdminCoursesPage({
     return (
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Alokasi Kursus 📚</h1>
+                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Alokasi Kursus</h1>
                 <p className="text-slate-500 font-medium">Atur pembagian kelas, mata pelajaran, dan penugasan guru pengajar.</p>
             </div>
 

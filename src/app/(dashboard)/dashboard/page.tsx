@@ -22,13 +22,7 @@ export default async function DashboardPage() {
     const session = await auth();
     if (!session?.user) return redirect('/login');
 
-    if (session.user.role === 'ADMIN') redirect('/admin/users'); // Or a specific admin dash if created
-    if (session.user.role === 'TEACHER') redirect('/teacher/assignments'); // Or teacher home
     if (session.user.role === 'STUDENT') redirect('/student');
-
-    // ... rest of the code is technically unreachable now but I'll keep it or move it if needed
-    // Actually, I should probably move the logic to the respective pages instead of redirecting if I want to keep the UI.
-    // But since I already created /student, redirecting is cleaner.
 
     // Fetch teaching courses (if teacher)
     const teacherCourses = session.user.role === 'TEACHER'
@@ -140,7 +134,7 @@ export default async function DashboardPage() {
         <div className="space-y-8 pb-10">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tight">Dashboard Overview</h1>
+                    <h1 className="text-3xl font-black text-slate-800 tracking-tight">Ringkasan Dashboard</h1>
                     <p className="text-slate-500 font-medium">Selamat datang kembali, <span className="text-primary font-bold">{session?.user?.name}</span></p>
                 </div>
                 <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border shadow-sm w-fit">
@@ -279,7 +273,7 @@ export default async function DashboardPage() {
                 <div className="space-y-8">
                     <div className="bg-gradient-to-br from-primary to-blue-700 p-8 rounded-[2rem] shadow-xl shadow-primary/20 text-white relative overflow-hidden">
                         <div className="relative z-10 max-w-lg">
-                            <h3 className="text-2xl font-black mb-3">Gabung Kelas Bareng Teman!</h3>
+                            <h3 className="text-2xl font-black mb-3">Gabung Kelas Baru</h3>
                             <p className="text-blue-100 text-sm mb-6 leading-relaxed">Punya kode kelas dari guru? Masukkan kodenya di sini untuk langsung masuk ke ruang belajar virtual Anda.</p>
                             <form action={joinClass} className="flex gap-2 max-w-sm">
                                 <input

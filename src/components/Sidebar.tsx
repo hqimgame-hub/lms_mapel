@@ -8,14 +8,9 @@ export async function Sidebar() {
 
     return (
         <div className="w-72 h-full bg-white border-r p-6 flex-col hidden md:flex shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-            <div className="flex items-center gap-3 mb-10 px-1">
-                <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20 rotate-3">
-                    <span className="text-xl font-black italic tracking-tighter">L</span>
-                </div>
-                <div className="flex flex-col">
-                    <div className="text-lg font-black text-slate-800 tracking-tighter leading-none">LMS TIK & KKA</div>
-                    <div className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mt-1">Digital Learning</div>
-                </div>
+            <div className="flex flex-col mb-10 px-1">
+                <div className="text-lg font-black text-slate-800 tracking-tighter leading-none uppercase">LMS TIK & KKA</div>
+                <div className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mt-1.5">Digital Learning Platform</div>
             </div>
 
             <nav className="flex flex-col gap-2">

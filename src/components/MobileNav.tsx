@@ -46,14 +46,9 @@ export function MobileNav({ role, userName, userEmail }: MobileNavProps) {
             )}>
                 {/* Branding Header */}
                 <div className="flex justify-between items-center p-6 border-b border-slate-50 bg-white sticky top-0 z-10">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20 rotate-3">
-                            <span className="text-sm font-black italic tracking-tighter">L</span>
-                        </div>
-                        <div className="flex flex-col">
-                            <div className="text-sm font-black text-slate-800 tracking-tighter leading-none uppercase">LMS TIK & KKA</div>
-                            <div className="text-[8px] font-bold text-primary/60 uppercase tracking-widest mt-1">Digital Learning</div>
-                        </div>
+                    <div className="flex flex-col">
+                        <div className="text-sm font-black text-slate-800 tracking-tighter leading-none uppercase">LMS TIK & KKA</div>
+                        <div className="text-[8px] font-bold text-primary/60 uppercase tracking-widest mt-1">Digital Learning Platform</div>
                     </div>
                     <button
                         onClick={() => setIsOpen(false)}
