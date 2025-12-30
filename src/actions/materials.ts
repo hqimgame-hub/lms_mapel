@@ -8,6 +8,7 @@ export async function createMaterial(prevState: ActionState, formData: FormData)
     const title = formData.get('title') as string;
     const description = formData.get('description') as string;
     const courseIds = formData.getAll('courseIds') as string[];
+    const published = formData.get('published') === 'on'; // Checkbox value
 
     // Get all content items (format: contentItems[0][type], contentItems[0][content], etc.)
     const contentItems: { type: string; content: string }[] = [];
@@ -32,6 +33,7 @@ export async function createMaterial(prevState: ActionState, formData: FormData)
                     title,
                     description,
                     courseId,
+                    published,
                     contents: {
                         create: contentItems.map((item, idx) => ({
                             type: item.type,
@@ -57,6 +59,7 @@ export async function updateMaterial(prevState: ActionState, formData: FormData)
     const title = formData.get('title') as string;
     const description = formData.get('description') as string;
     const courseId = formData.get('courseId') as string;
+    const published = formData.get('published') === 'on';
 
     // Get all content items
     const contentItems: { type: string; content: string }[] = [];
@@ -80,6 +83,7 @@ export async function updateMaterial(prevState: ActionState, formData: FormData)
             data: {
                 title,
                 description,
+                published,
                 contents: {
                     deleteMany: {}, // Delete all existing content items
                     create: contentItems.map((item, idx) => ({

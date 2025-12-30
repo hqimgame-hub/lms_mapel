@@ -13,6 +13,7 @@ export async function createExam(prevState: ActionState, formData: FormData): Pr
     const duration = formData.get('duration') ? parseInt(formData.get('duration') as string) : null;
     // Use endTime as dueDate if available, or fallback to manual due date input which is hidden
     const dueDate = endTime || (formData.get('dueDate') ? new Date(formData.get('dueDate') as string) : null);
+    const published = formData.get('published') === 'on';
 
     const courseIds = formData.getAll('courseIds') as string[];
 
@@ -31,6 +32,7 @@ export async function createExam(prevState: ActionState, formData: FormData): Pr
                     startTime,
                     endTime,
                     duration,
+                    published,
                     type: 'GFORM',
                     courseId
                 }
@@ -56,6 +58,7 @@ export async function updateExam(prevState: ActionState, formData: FormData): Pr
     const duration = formData.get('duration') ? parseInt(formData.get('duration') as string) : null;
     const dueDate = endTime || (formData.get('dueDate') ? new Date(formData.get('dueDate') as string) : null);
     const courseId = formData.get('courseId') as string;
+    const published = formData.get('published') === 'on';
 
     if (!title || !link) {
         return { message: "Harap isi semua bidang wajib", success: false, errors: undefined };
@@ -64,7 +67,7 @@ export async function updateExam(prevState: ActionState, formData: FormData): Pr
     try {
         await prisma.exam.update({
             where: { id },
-            data: { title, description, link, dueDate, startTime, endTime, duration }
+            data: { title, description, link, dueDate, startTime, endTime, duration, published }
         });
 
         revalidatePath(`/teacher/courses/${courseId}`);

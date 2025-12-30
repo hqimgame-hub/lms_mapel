@@ -11,6 +11,7 @@ const AssignmentSchema = z.object({
     description: z.string().optional(),
     dueDate: z.string().transform((str) => new Date(str)),
     courseIds: z.array(z.string()).min(1, "Pilih setidaknya satu kelas"),
+    published: z.boolean().default(true),
 });
 
 export async function createAssignment(prevState: any, formData: FormData) {
@@ -19,6 +20,7 @@ export async function createAssignment(prevState: any, formData: FormData) {
         description: formData.get('description'),
         dueDate: formData.get('dueDate'),
         courseIds: formData.getAll('courseIds'),
+        published: formData.get('published') === 'on',
     };
 
     const validated = AssignmentSchema.safeParse(data);
@@ -36,6 +38,7 @@ export async function createAssignment(prevState: any, formData: FormData) {
                     description: validated.data.description || null,
                     dueDate: validated.data.dueDate,
                     courseId: courseId,
+                    published: validated.data.published,
                 }
             })
         ));
@@ -58,6 +61,7 @@ export async function updateAssignment(prevState: ActionState, formData: FormDat
         description: formData.get('description'),
         dueDate: formData.get('dueDate'),
         courseIds: [formData.get('courseId') as string],
+        published: formData.get('published') === 'on',
     };
 
     const validated = AssignmentSchema.safeParse(data);
@@ -73,6 +77,7 @@ export async function updateAssignment(prevState: ActionState, formData: FormDat
                 title: validated.data.title,
                 description: validated.data.description || null,
                 dueDate: validated.data.dueDate,
+                published: validated.data.published,
             }
         });
 

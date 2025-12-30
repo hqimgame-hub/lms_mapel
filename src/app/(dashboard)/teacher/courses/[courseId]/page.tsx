@@ -142,6 +142,11 @@ export default async function TeacherCoursePage({
                                                 <ClipboardList size={20} />
                                             </div>
                                             <h3 className="text-lg font-bold text-slate-800">{assignment.title}</h3>
+                                            {!assignment.published && (
+                                                <span className="bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
+                                                    Draft
+                                                </span>
+                                            )}
                                             {new Date(assignment.dueDate) < new Date() && (
                                                 <span className="bg-red-50 text-red-500 text-[10px] px-2.5 py-1 rounded-lg font-black uppercase tracking-widest border border-red-100">Ditutup</span>
                                             )}

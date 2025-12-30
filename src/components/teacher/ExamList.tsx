@@ -15,6 +15,7 @@ interface Exam {
     endTime: Date | null;
     duration: number | null;
     courseId: string;
+    published: boolean;
     createdAt: Date;
 }
 
@@ -39,6 +40,12 @@ export function ExamList({ exams, courseId, isTeacher = false }: ExamListProps) 
                                 <span className="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
                                     {exam.type}
                                 </span>
+
+                                {!exam.published && (
+                                    <span className="bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
+                                        Draft
+                                    </span>
+                                )}
                             </div>
                             <p className="text-slate-500 dark:text-slate-400 text-sm mb-4 font-medium">{exam.description || 'Tidak ada deskripsi'}</p>
 
@@ -101,17 +108,20 @@ export function ExamList({ exams, courseId, isTeacher = false }: ExamListProps) 
                         )}
                     </div>
                 </div>
-            ))}
+            ))
+            }
 
-            {exams.length === 0 && (
-                <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800 transition-colors">
-                    <div className="bg-slate-50 dark:bg-slate-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 dark:text-slate-600">
-                        <ClipboardList size={40} />
+            {
+                exams.length === 0 && (
+                    <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800 transition-colors">
+                        <div className="bg-slate-50 dark:bg-slate-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 dark:text-slate-600">
+                            <ClipboardList size={40} />
+                        </div>
+                        <h4 className="text-lg font-bold text-slate-800 dark:text-white mb-1">Belum Ada Ujian</h4>
+                        <p className="text-slate-400 dark:text-slate-500 text-sm max-w-xs mx-auto">Buat link ujian Google Form atau instruksi ujian lainnya untuk siswa.</p>
                     </div>
-                    <h4 className="text-lg font-bold text-slate-800 dark:text-white mb-1">Belum Ada Ujian</h4>
-                    <p className="text-slate-400 dark:text-slate-500 text-sm max-w-xs mx-auto">Buat link ujian Google Form atau instruksi ujian lainnya untuk siswa.</p>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }
