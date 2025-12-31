@@ -41,11 +41,7 @@ export function ExamList({ exams, courseId, isTeacher = false }: ExamListProps) 
                                     {exam.type}
                                 </span>
 
-                                {!exam.published && (
-                                    <span className="bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
-                                        Draft
-                                    </span>
-                                )}
+
                             </div>
                             <p className="text-slate-500 dark:text-slate-400 text-sm mb-4 font-medium">{exam.description || 'Tidak ada deskripsi'}</p>
 

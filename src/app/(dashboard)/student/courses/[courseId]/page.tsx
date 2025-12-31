@@ -32,7 +32,6 @@ export default async function StudentCoursePage({
                 class: true,
                 teacher: true,
                 assignments: {
-                    where: { published: true },
                     orderBy: { dueDate: 'desc' },
                     include: {
                         submissions: {
@@ -41,7 +40,6 @@ export default async function StudentCoursePage({
                     }
                 },
                 materials: {
-                    where: { published: true },
                     orderBy: { createdAt: 'desc' },
                     include: {
                         contents: {
@@ -50,7 +48,6 @@ export default async function StudentCoursePage({
                     }
                 },
                 exams: {
-                    where: { published: true },
                     orderBy: { createdAt: 'desc' }
                 }
             }
