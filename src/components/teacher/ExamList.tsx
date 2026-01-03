@@ -40,6 +40,11 @@ export function ExamList({ exams, courseId, isTeacher = false }: ExamListProps) 
                                 <span className="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
                                     {exam.type}
                                 </span>
+                                {!exam.published && (
+                                    <span className="bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
+                                        Draft
+                                    </span>
+                                )}
 
 
                             </div>

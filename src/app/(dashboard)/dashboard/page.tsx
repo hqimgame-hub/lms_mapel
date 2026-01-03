@@ -49,7 +49,7 @@ export default async function DashboardPage() {
 
     // Calculate total pending submissions for teacher
     const totalPending = teacherCourses.reduce((acc, course) => {
-        return acc + course.assignments.reduce((sum, assign) => sum + assign._count.submissions, 0);
+        return acc + (course.assignments || []).reduce((sum, assign) => sum + (assign._count?.submissions || 0), 0);
     }, 0);
 
     // Admin Stats & Recent Data

@@ -66,7 +66,11 @@ export function MaterialList({ materials, courseId, isTeacher = false }: Materia
                             <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2">
                                     <h3 className="font-bold text-slate-800 dark:text-slate-200 text-lg">{material.title}</h3>
-
+                                    {!material.published && (
+                                        <span className="bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
+                                            Draft
+                                        </span>
+                                    )}
                                 </div>
                                 <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 font-medium">
                                     {material.description || 'Tidak ada deskripsi'}
