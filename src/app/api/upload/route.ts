@@ -40,10 +40,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
         }
 
-        // Safety check: Limit file size to 5MB
-        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+        // Safety check: Limit file size to 10MB
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
         if (file.size > MAX_FILE_SIZE) {
-            return NextResponse.json({ error: "Ukuran file terlalu besar (Maksimal 5MB)" }, { status: 400 });
+            return NextResponse.json({ error: "Ukuran file terlalu besar (Maksimal 10MB)" }, { status: 400 });
         }
 
         const bytes = await file.arrayBuffer();

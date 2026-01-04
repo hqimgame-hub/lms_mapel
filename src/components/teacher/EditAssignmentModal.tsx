@@ -75,10 +75,21 @@ export function EditAssignmentModal({ assignment }: EditAssignmentModalProps) {
                                 <textarea
                                     name="description"
                                     defaultValue={assignment.description || ''}
-                                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all text-sm font-medium text-slate-600 dark:text-slate-400 min-h-[50px]"
-                                    rows={2}
-                                    placeholder="Instruksi tugas..."
+                                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-sm font-medium text-slate-600 dark:text-slate-400 min-h-[100px]"
+                                    rows={4}
+                                    placeholder="Instruksi..."
                                 />
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Link Lampiran (Opsional)</label>
+                                <input
+                                    name="attachmentUrl"
+                                    defaultValue={assignment.attachmentUrl || ''}
+                                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-sm font-bold text-slate-700 dark:text-slate-300 placeholder:text-slate-400"
+                                    placeholder="https://..."
+                                />
+                                <p className="text-[9px] text-slate-400 ml-1">Tautkan link Google Drive, YouTube, atau dokumen eksternal lainnya.</p>
                             </div>
 
                             <div className="space-y-1">

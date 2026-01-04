@@ -129,6 +129,7 @@ model Assignment {
   course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   
   submissions Submission[]
+  attachmentUrl String?
 }
 
 model Submission {

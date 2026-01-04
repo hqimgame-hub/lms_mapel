@@ -59,6 +59,21 @@ export default async function StudentAssignmentPage({ params }: { params: Promis
 
                 <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 mb-8 border-b dark:border-slate-800 pb-8 transition-colors">
                     {assignment.description || <p className="italic text-slate-400 dark:text-slate-500">Tidak ada instruksi.</p>}
+
+                    {assignment.attachmentUrl && (
+                        <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                            <h4 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Lampiran Guru</h4>
+                            <a
+                                href={assignment.attachmentUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 text-primary font-bold hover:underline"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+                                Buka Lampiran / Materi
+                            </a>
+                        </div>
+                    )}
                 </div>
 
                 {/* Grade Display */}

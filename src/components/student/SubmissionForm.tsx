@@ -27,33 +27,7 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
 
     const [currentContent, setCurrentContent] = useState(initialContent || '');
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
 
-        setUploading(true);
-        const formData = new FormData();
-        formData.append("file", file);
-
-        try {
-            const res = await fetch("/api/upload", {
-                method: "POST",
-                body: formData,
-            });
-            const data = await res.json();
-            if (data.success) {
-                setFileUrl(data.url);
-                setFileName(data.name);
-            } else {
-                alert(data.error || "Gagal mengunggah file");
-            }
-        } catch (error) {
-            console.error(error);
-            alert("Terjadi kesalahan saat mengunggah");
-        } finally {
-            setUploading(false);
-        }
-    };
 
     const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
@@ -112,58 +86,47 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                     )}
                 </div>
 
-                {/* File Upload Section */}
+                {/* Link Submission Section */}
                 <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm border-dashed">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Lampiran Dokumen (Word/PDF/Excel)</label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Link Tugas (Google Drive / Docs / Canva / YouTube)</label>
 
-                    {fileUrl ? (
-                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 animate-in fade-in slide-in-from-top-2 duration-300">
-                            <div className="flex items-center gap-3 overflow-hidden">
-                                <div className="bg-white p-2.5 rounded-xl border border-slate-100 shadow-sm shrink-0">
-                                    <Download className="text-primary" size={20} />
-                                </div>
-                                <div className="overflow-hidden">
-                                    <p className="font-bold text-slate-700 text-sm truncate">{fileName}</p>
-                                    <a href={fileUrl} download={fileName} className="text-[10px] text-primary font-black uppercase tracking-widest hover:underline">Unduh File</a>
-                                </div>
-                            </div>
-                            {!isLocked && (
-                                <button
-                                    type="button"
-                                    onClick={() => { setFileUrl(''); setFileName(''); }}
-                                    className="p-2 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                                >
-                                    Hapus
-                                </button>
-                            )}
-                        </div>
-                    ) : (
-                        <div className="relative group">
+                    <div className="space-y-3">
+                        <div className="relative">
                             <input
-                                type="file"
-                                onChange={handleFileUpload}
-                                disabled={isLocked || uploading}
-                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                                accept=".doc,.docx,.pdf,.xls,.xlsx"
+                                type="url"
+                                value={fileUrl}
+                                onChange={(e) => {
+                                    setFileUrl(e.target.value);
+                                    // Auto-set filename based on url if empty
+                                    if (!fileName && e.target.value) {
+                                        setFileName("Link Tugas");
+                                    }
+                                }}
+                                disabled={isLocked}
+                                placeholder="Tempel link tugasmu di sini (https://...)"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 pl-12 font-medium text-slate-700 focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all outline-none"
                             />
-                            <div className="flex flex-col items-center justify-center py-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200 group-hover:border-primary/30 group-hover:bg-primary/5 transition-all">
-                                {uploading ? (
-                                    <>
-                                        <Loader2 className="animate-spin text-primary mb-2" size={24} />
-                                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Mengunggah...</p>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm mb-3 text-slate-400 group-hover:text-primary transition-colors">
-                                            <Share2 size={24} />
-                                        </div>
-                                        <p className="text-sm font-bold text-slate-600">Pilih berkas dari komputer</p>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Word, PDF, atau Excel</p>
-                                    </>
-                                )}
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                <Share2 size={20} />
                             </div>
                         </div>
-                    )}
+
+                        <div className="flex gap-2 items-center">
+                            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                                <Monitor size={16} />
+                            </div>
+                            <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                                Tips: Upload tugasmu ke Google Drive/OneDrive, lalu copy linknya (pastikan akses "Anyone with the link" aktif) dan paste di atas.
+                            </p>
+                        </div>
+
+                        {fileUrl && (
+                            <div className="mt-2 p-3 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-100 flex items-center gap-3 text-sm font-bold animate-in fade-in slide-in-from-top-2">
+                                <CheckCircle size={16} />
+                                Link siap diserahkan!
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {state?.message && (

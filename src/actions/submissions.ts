@@ -54,56 +54,13 @@ export async function saveSubmission(prevState: any, formData: FormData) {
         const status = action === 'SUBMIT' ? 'SUBMITTED' : 'DRAFT';
         const submittedAt = action === 'SUBMIT' ? new Date() : null;
 
-        // Logic for Google Drive Upload on Submit
+        // Logic for Link Submission
         let finalFileUrl = fileUrl !== undefined ? fileUrl : existing?.fileUrl;
         let finalFileName = fileName !== undefined ? fileName : existing?.fileName;
 
-        if (status === 'SUBMITTED' && finalFileUrl && finalFileUrl.startsWith('/uploads/')) {
-            const absolutePath = join(process.cwd(), 'public', finalFileUrl);
-
-            // Upload to Google Drive
-            // Determine mime type roughly
-            const ext = finalFileName?.split('.').pop()?.toLowerCase();
-            let mimeType = 'application/octet-stream';
-            if (ext === 'pdf') mimeType = 'application/pdf';
-            if (ext === 'docx') mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-            if (ext === 'xlsx') mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-
-            console.log(`Mengunggah ke Google Drive: ${finalFileName}...`);
-
-            // Organize file into Assignment specific folder
-            // We need to fetch assignment title. Since we don't have it easily here without querying,
-            // we will query it.
-            let folderId = undefined;
-            try {
-                const assignment = await prisma.assignment.findUnique({
-                    where: { id: assignmentId },
-                    select: { title: true } // Only get title
-                });
-                if (assignment?.title) {
-                    const sanitizedTitle = assignment.title.replace(/[\/\\:"*?<>|]+/g, "-").trim();
-                    folderId = await getOrCreateFolder(sanitizedTitle);
-                }
-            } catch (e) {
-                console.error("Error organizing folder:", e);
-                // Fallback to root folder if error
-            }
-
-            const driveResult = await uploadToDrive(absolutePath, finalFileName || 'Tugas Siswa', mimeType, folderId || undefined);
-
-            if (driveResult) {
-                console.log("Upload GDrive Berhasil:", driveResult.webViewLink);
-                finalFileUrl = driveResult.webViewLink; // Update URL to Drive Link
-
-                // Optional: Delete local file immediately to save space
-                try {
-                    await unlink(absolutePath);
-                } catch (e) {
-                    console.error("Gagal menghapus file lokal setelah upload drive:", e);
-                }
-            } else {
-                console.error("Gagal upload ke GDrive, tetap menggunakan file lokal.");
-            }
+        // Ensure URL is valid if provided
+        if (finalFileUrl && !finalFileUrl.startsWith('http')) {
+            // Basic sanitation/validation could go here
         }
 
         await prisma.submission.upsert({
