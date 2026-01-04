@@ -112,6 +112,8 @@ export function CreateAssignment({
                             <input
                                 type="checkbox"
                                 name="published"
+                                value="on"
+                                defaultChecked
                                 className="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary dark:bg-slate-900"
                             />
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200">

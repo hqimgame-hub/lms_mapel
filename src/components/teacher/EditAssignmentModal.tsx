@@ -11,6 +11,7 @@ interface EditAssignmentModalProps {
         description: string | null;
         dueDate: Date;
         courseId: string;
+        published: boolean;
     }
 }
 
@@ -96,6 +97,21 @@ export function EditAssignmentModal({ assignment }: EditAssignmentModalProps) {
                                     {state.message}
                                 </div>
                             )}
+
+                            <div className="flex items-center gap-2 pt-2">
+                                <label className="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+                                    <input
+                                        type="checkbox"
+                                        name="published"
+                                        value="on"
+                                        defaultChecked={assignment.published}
+                                        className="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary dark:bg-slate-900"
+                                    />
+                                    <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200">
+                                        Tampilkan ke Siswa?
+                                    </span>
+                                </label>
+                            </div>
 
                             <div className="flex gap-3 pt-3">
                                 <button
