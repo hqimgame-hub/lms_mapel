@@ -108,13 +108,26 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                     </td>
                                     <td className="p-4 text-sm">
                                         {isSubmitted ? (
-                                            sub?.content ? (
-                                                <div className="max-w-xs truncate" title={sub.content}>
-                                                    {sub.content}
-                                                </div>
-                                            ) : (
-                                                <span className="text-gray-400 italic">Tidak ada konten</span>
-                                            )
+                                            <div className="space-y-1">
+                                                {sub?.fileUrl && (
+                                                    <a
+                                                        href={sub.fileUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-primary font-bold hover:underline flex items-center gap-1.5"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+                                                        Buka Tugas
+                                                    </a>
+                                                )}
+                                                {sub?.content ? (
+                                                    <div className="max-w-xs truncate text-slate-600" title={sub.content}>
+                                                        {sub.content}
+                                                    </div>
+                                                ) : (
+                                                    !sub?.fileUrl && <span className="text-gray-400 italic">Tidak ada konten</span>
+                                                )}
+                                            </div>
                                         ) : isDraft ? (
                                             <span className="text-gray-400 italic text-xs">Konten draft disembunyikan</span>
                                         ) : (
