@@ -94,21 +94,21 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
 
                 {/* Internal Draft Upload Section */}
                 {!isLocked && (
-                    <div className="bg-amber-50 p-6 rounded-3xl border border-amber-100 shadow-sm border-dashed">
+                    <div className="bg-amber-50 dark:bg-amber-950/30 p-6 rounded-3xl border border-amber-100 dark:border-amber-800 shadow-sm border-dashed">
                         <div className="flex justify-between items-start mb-3">
-                            <label className="text-[10px] font-black text-amber-600 uppercase tracking-widest block">
+                            <label className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest block">
                                 <Upload size={14} className="inline mr-1 mb-0.5" />
                                 Backup File (Lab Mode)
                             </label>
                             {tempFileName && (
-                                <span className="text-[10px] font-bold text-amber-600 bg-amber-100 px-2 py-1 rounded-lg border border-amber-200">
+                                <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/50 px-2 py-1 rounded-lg border border-amber-200 dark:border-amber-700">
                                     Tersimpan: {tempFileName}
                                 </span>
                             )}
                         </div>
 
                         <div className="flex flex-col gap-3">
-                            <p className="text-xs text-amber-700/80 font-medium leading-relaxed">
+                            <p className="text-xs text-amber-700/80 dark:text-amber-400/80 font-medium leading-relaxed">
                                 Mode Lab: Upload file kerjamu di sini agar bisa didownload lagi di rumah. (Gunakan ini jika tidak bisa login Google Drive di Lab).
                             </p>
 
@@ -116,7 +116,7 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                                 <input
                                     type="file"
                                     name="backupFile"
-                                    className="block w-full text-sm text-slate-500
+                                    className="block w-full text-sm text-slate-500 dark:text-slate-400
                                     file:mr-4 file:py-2.5 file:px-4
                                     file:rounded-xl file:border-0
                                     file:text-xs file:font-black file:uppercase file:tracking-widest
@@ -131,7 +131,7 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                                     type="button"
                                     onClick={downloadDraftFile}
                                     disabled={downloading}
-                                    className="flex items-center justify-center gap-2 p-3 bg-white text-amber-700 rounded-xl text-xs font-black uppercase tracking-widest border border-amber-200 hover:bg-amber-50 transition-all w-full md:w-auto self-start"
+                                    className="flex items-center justify-center gap-2 p-3 bg-white dark:bg-slate-700 text-amber-700 dark:text-amber-400 rounded-xl text-xs font-black uppercase tracking-widest border border-amber-200 dark:border-amber-600 hover:bg-amber-50 dark:hover:bg-slate-600 transition-all w-full md:w-auto self-start shadow-sm"
                                 >
                                     {downloading ? <Loader2 className="animate-spin" size={14} /> : <Download size={14} />}
                                     Download "{tempFileName}"

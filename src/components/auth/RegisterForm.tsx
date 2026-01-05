@@ -17,21 +17,21 @@ export function RegisterForm({ classes }: { classes: { id: string, name: string 
     return (
         <form action={formAction} className="flex flex-col gap-5">
             <div className="flex flex-col gap-1">
-                <label className="text-sm font-semibold text-slate-700">Nama Lengkap</label>
+                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Nama Lengkap</label>
                 <input
                     name="name"
                     placeholder="Masukkan nama lengkap Anda"
-                    className="border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-3 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     required
                 />
             </div>
 
             <div className="flex flex-col gap-1">
-                <label className="text-sm font-semibold text-slate-700">Pilih Kelas</label>
+                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Pilih Kelas</label>
                 <div className="relative">
                     <select
                         name="classId"
-                        className="w-full border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none bg-white"
+                        className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-3 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none"
                         required
                         defaultValue=""
                     >
@@ -42,7 +42,7 @@ export function RegisterForm({ classes }: { classes: { id: string, name: string 
                             </option>
                         ))}
                     </select>
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-slate-500">
                         <School size={18} />
                     </div>
                 </div>
@@ -53,33 +53,33 @@ export function RegisterForm({ classes }: { classes: { id: string, name: string 
             </div>
 
             <div className="flex flex-col gap-1">
-                <label className="text-sm font-semibold text-slate-700">Email Utama</label>
+                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Email Utama</label>
                 <input
                     name="email"
                     type="email"
                     placeholder="nama@email.com"
-                    className="border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-3 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     required
                 />
             </div>
 
             <div className="flex flex-col gap-1">
-                <label className="text-sm font-semibold text-slate-700">Username</label>
+                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Username</label>
                 <input
                     name="username"
                     placeholder="Pilih username unik"
-                    className="border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-3 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     required
                 />
             </div>
 
             <div className="flex flex-col gap-1">
-                <label className="text-sm font-semibold text-slate-700">Password</label>
+                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Password</label>
                 <input
                     name="password"
                     type="password"
                     placeholder="Minimal 6 karakter"
-                    className="border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-3 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     required
                 />
             </div>
