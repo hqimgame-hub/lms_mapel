@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { Providers } from "@/components/Providers";
+import { IdleTimer } from "@/components/auth/IdleTimer";
 
 export default function RootLayout({
   children,
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${plusJakarta.variable} font-sans antialiased`}>
         <Providers>
+          <IdleTimer />
           {children}
         </Providers>
       </body>
