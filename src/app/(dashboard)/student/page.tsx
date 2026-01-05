@@ -62,14 +62,22 @@ export default async function StudentDashboardPage() {
         c.assignments.map(a => ({ ...a, subject: c.subject.name }))
     );
 
+    const isRealDraft = (sub: any) => {
+        return sub?.status === 'DRAFT' && (sub.content || sub.fileUrl || sub.tempFileName);
+    };
+
+    const isDone = (sub: any) => {
+        return sub?.status === 'SUBMITTED' || sub?.status === 'GRADED';
+    };
+
     const stats = {
-        todo: allAssignments.filter(a => a.submissions.length === 0).length,
-        draft: allAssignments.filter(a => a.submissions[0]?.status === 'DRAFT').length,
-        done: allAssignments.filter(a => a.submissions[0]?.status === 'SUBMITTED' || a.submissions[0]?.status === 'GRADED').length,
+        todo: allAssignments.filter(a => a.submissions.length === 0 || (a.submissions[0]?.status === 'DRAFT' && !isRealDraft(a.submissions[0]))).length,
+        draft: allAssignments.filter(a => a.submissions.length > 0 && isRealDraft(a.submissions[0])).length,
+        done: allAssignments.filter(a => a.submissions.length > 0 && isDone(a.submissions[0])).length,
     };
 
     const upcomingAssignments = allAssignments
-        .filter(a => a.submissions.length === 0 || a.submissions[0]?.status === 'DRAFT')
+        .filter(a => a.submissions.length === 0 || (a.submissions[0]?.status === 'DRAFT' && !isRealDraft(a.submissions[0])) || isRealDraft(a.submissions[0]))
         .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
         .slice(0, 5);
 
@@ -124,7 +132,7 @@ export default async function StudentDashboardPage() {
                     <div className="flex flex-col gap-4">
                         {upcomingAssignments.length > 0 ? (
                             upcomingAssignments.map((assignment) => {
-                                const isDraft = assignment.submissions[0]?.status === 'DRAFT';
+                                const isDraft = isRealDraft(assignment.submissions[0]);
                                 return (
                                     <Link
                                         key={assignment.id}
