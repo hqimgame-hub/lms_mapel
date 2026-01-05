@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 import { GradeForm } from "@/components/teacher/GradeForm";
+import { AnswerModal } from "@/components/teacher/AnswerModal";
 import Link from "next/link";
 import { format } from "date-fns";
 
@@ -108,7 +109,7 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                     </td>
                                     <td className="p-4 text-sm">
                                         {isSubmitted ? (
-                                            <div className="space-y-1">
+                                            <div className="space-y-2">
                                                 {sub?.fileUrl && (
                                                     <a
                                                         href={sub.fileUrl}
@@ -121,8 +122,16 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                                     </a>
                                                 )}
                                                 {sub?.content ? (
-                                                    <div className="max-w-xs truncate text-slate-600" title={sub.content}>
-                                                        {sub.content}
+                                                    <div className="space-y-1">
+                                                        <div className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+                                                            {sub.content}
+                                                        </div>
+                                                        <AnswerModal
+                                                            studentName={student.name}
+                                                            assignmentTitle={assignment.title}
+                                                            content={sub.content}
+                                                            submittedAt={sub.submittedAt}
+                                                        />
                                                     </div>
                                                 ) : (
                                                     !sub?.fileUrl && <span className="text-gray-400 italic">Tidak ada konten</span>
