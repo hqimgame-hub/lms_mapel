@@ -30,6 +30,16 @@ export default async function StudentAssignmentPage({ params }: { params: Promis
                 studentId: session?.user?.id!,
                 assignmentId
             }
+        },
+        select: {
+            id: true,
+            status: true,
+            grade: true,
+            feedback: true,
+            content: true,
+            fileUrl: true,
+            fileName: true,
+            tempFileName: true
         }
     });
 
@@ -95,6 +105,8 @@ export default async function StudentAssignmentPage({ params }: { params: Promis
                     initialContent={submission?.content}
                     initialFileUrl={submission?.fileUrl}
                     initialFileName={submission?.fileName}
+                    // @ts-ignore
+                    initialTempFileName={submission?.tempFileName}
                     status={submission?.status}
                 />
             </div>

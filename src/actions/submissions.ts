@@ -1,12 +1,9 @@
 'use server';
 
 import { prisma } from "@/lib/prisma";
-import { readdir, unlink } from "fs/promises";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { z } from "zod";
-import { uploadToDrive, getOrCreateFolder } from "@/lib/drive";
-import { join } from "path";
 
 const SubmissionSchema = z.object({
     assignmentId: z.string(),
@@ -39,6 +36,26 @@ export async function saveSubmission(prevState: any, formData: FormData) {
     const { assignmentId, content, fileUrl, fileName, action } = validated.data;
     const studentId = session.user.id;
 
+    // Handle Backup File Upload
+    const backupFile = formData.get('backupFile') as File | null;
+    let tempFileBase64: string | undefined = undefined;
+    let tempFileName: string | undefined = undefined;
+
+    if (backupFile && backupFile.size > 0) {
+        if (backupFile.size > 4 * 1024 * 1024) { // 4MB Limit
+            return { message: "File backup terlalu besar (Maks 4MB)" };
+        }
+
+        try {
+            const buffer = Buffer.from(await backupFile.arrayBuffer());
+            tempFileBase64 = `data:${backupFile.type};base64,${buffer.toString('base64')}`;
+            tempFileName = backupFile.name;
+        } catch (error) {
+            console.error("Error processing backup file:", error);
+            return { message: "Gagal memproses file backup" };
+        }
+    }
+
     try {
         // Check if already submitted finalized
         const existing = await prisma.submission.findUnique({
@@ -63,6 +80,8 @@ export async function saveSubmission(prevState: any, formData: FormData) {
             // Basic sanitation/validation could go here
         }
 
+        const shouldUseNewTempFile = tempFileBase64 !== undefined;
+
         await prisma.submission.upsert({
             where: {
                 studentId_assignmentId: { studentId, assignmentId }
@@ -74,27 +93,64 @@ export async function saveSubmission(prevState: any, formData: FormData) {
                 fileUrl: finalFileUrl || null,
                 fileName: finalFileName || null,
                 status,
-                submittedAt
+                submittedAt,
+                // @ts-ignore: Prisms types might not update instantly in IDE cache
+                tempFile: tempFileBase64 || null,
+                tempFileName: tempFileName || null
             },
             update: {
                 content: content || '',
                 fileUrl: finalFileUrl,
                 fileName: finalFileName,
                 status,
-                submittedAt: submittedAt || existing?.submittedAt
+                submittedAt: submittedAt || existing?.submittedAt,
+                // Only update tempFile if a new one is uploaded
+                ...(shouldUseNewTempFile ? {
+                    tempFile: tempFileBase64,
+                    tempFileName: tempFileName
+                } : {})
             }
         });
 
         revalidatePath(`/student/assignments/${assignmentId}`);
         revalidatePath(`/student/courses`);
 
+        const msg = action === 'SUBMIT'
+            ? "Tugas berhasil diserahkan!"
+            : (tempFileName ? "Draft & Backup File berhasil disimpan!" : "Draft berhasil disimpan!");
+
         return {
-            message: action === 'SUBMIT' ? "Assignment Submitted!" : "Draft Saved Successfully",
+            message: msg,
             success: true
         };
 
     } catch (e) {
         console.error(e);
-        return { message: "Failed to save submission" };
+        return { message: "Gagal menyimpan submission" };
     }
+}
+
+export async function getDraftFile(assignmentId: string) {
+    const session = await auth();
+    if (!session?.user?.id) return { error: "Unauthorized" };
+
+    const submission = await prisma.submission.findUnique({
+        where: {
+            studentId_assignmentId: {
+                studentId: session.user.id,
+                assignmentId
+            }
+        },
+        select: {
+            tempFile: true,
+            tempFileName: true
+        }
+    });
+
+    if (!submission?.tempFile) return { error: "No draft file found" };
+
+    return {
+        file: submission.tempFile,
+        name: submission.tempFileName
+    };
 }

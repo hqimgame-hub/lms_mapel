@@ -139,6 +139,8 @@ model Submission {
   fileName     String?          // Original name of the uploaded file
   status       String           @default("DRAFT")
   submittedAt  DateTime?
+  tempFile     String?          @db.Text // Base64 encoded file content (Draft only)
+  tempFileName String?          // Filename for the draft
   grade        Int?
   feedback     String?
   

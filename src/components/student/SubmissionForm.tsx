@@ -1,36 +1,43 @@
 'use client';
 
-import { saveSubmission } from "@/actions/submissions";
+import { saveSubmission, getDraftFile } from "@/actions/submissions";
 import { useState, useActionState, useEffect } from "react";
-import { Save, Send, Clock, CheckCircle, Smartphone, Download, Copy, Monitor, QrCode, Mail, Loader2, Share2 } from "lucide-react";
+import { Save, Send, Clock, CheckCircle, Smartphone, Download, Copy, Monitor, QrCode, Mail, Loader2, Share2, Upload, FileText } from "lucide-react";
 
 interface SubmissionFormProps {
     assignmentId: string;
     initialContent?: string | null;
     initialFileUrl?: string | null;
     initialFileName?: string | null;
+    initialTempFileName?: string | null;
     status?: string; // DRAFT or SUBMITTED etc
     dueDate: Date;
 }
 
-export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, initialFileName, status, dueDate }: SubmissionFormProps) {
+export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, initialFileName, initialTempFileName, status, dueDate }: SubmissionFormProps) {
     const [state, formAction, isPending] = useActionState(saveSubmission, { message: '', success: false });
     const [showShare, setShowShare] = useState(false);
     const [showEmailModal, setShowEmailModal] = useState(false);
     const [sendingEmail, setSendingEmail] = useState(false);
-    const [uploading, setUploading] = useState(false);
+    const [downloading, setDownloading] = useState(false);
     const [copied, setCopied] = useState(false);
 
     // File states
     const [fileUrl, setFileUrl] = useState(initialFileUrl || '');
     const [fileName, setFileName] = useState(initialFileName || '');
+    const [tempFileName, setTempFileName] = useState(initialTempFileName || '');
 
     const [currentContent, setCurrentContent] = useState(initialContent || '');
 
-
-
     const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
+
+    useEffect(() => {
+        if (state.success && state.message?.includes("Backup File berhasil disimpan")) {
+            // Need to reload to reflect the new tempFileName if it was just uploaded
+            // But for now, we can assume if upload was successful, we might want to manually set a state or let revalidatePath handle it (which might refresh the page)
+        }
+    }, [state]);
 
     const downloadTxt = () => {
         const element = document.createElement("a");
@@ -41,14 +48,30 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
         element.click();
     };
 
-    const copyToClipboard = () => {
-        navigator.clipboard.writeText(currentContent);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+    const downloadDraftFile = async () => {
+        try {
+            setDownloading(true);
+            const result = await getDraftFile(assignmentId);
+            if (result.error || !result.file) {
+                alert("Gagal mengunduh file backup: " + (result.error || "File tidak ditemukan"));
+                return;
+            }
+
+            const link = document.createElement("a");
+            link.href = result.file; // Base64 url
+            link.download = result.name || `backup-${assignmentId}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (e) {
+            console.error(e);
+            alert("Terjadi kesalahan saat mengunduh file.");
+        } finally {
+            setDownloading(false);
+        }
     };
 
     const isLocked = status === 'SUBMITTED' || status === 'GRADED';
-    const isLate = !isLocked && new Date() > new Date(dueDate);
 
     return (
         <div className="bg-slate-50/50 rounded-[2rem] p-8 border border-slate-100 flex flex-col gap-6">
@@ -68,6 +91,55 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                 <input type="hidden" name="assignmentId" value={assignmentId} />
                 <input type="hidden" name="fileUrl" value={fileUrl} />
                 <input type="hidden" name="fileName" value={fileName} />
+
+                {/* Internal Draft Upload Section */}
+                {!isLocked && (
+                    <div className="bg-amber-50 p-6 rounded-3xl border border-amber-100 shadow-sm border-dashed">
+                        <div className="flex justify-between items-start mb-3">
+                            <label className="text-[10px] font-black text-amber-600 uppercase tracking-widest block">
+                                <Upload size={14} className="inline mr-1 mb-0.5" />
+                                Backup File (Lab Mode)
+                            </label>
+                            {tempFileName && (
+                                <span className="text-[10px] font-bold text-amber-600 bg-amber-100 px-2 py-1 rounded-lg border border-amber-200">
+                                    Tersimpan: {tempFileName}
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                            <p className="text-xs text-amber-700/80 font-medium leading-relaxed">
+                                Mode Lab: Upload file kerjamu di sini agar bisa didownload lagi di rumah. (Gunakan ini jika tidak bisa login Google Drive di Lab).
+                            </p>
+
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="file"
+                                    name="backupFile"
+                                    className="block w-full text-sm text-slate-500
+                                    file:mr-4 file:py-2.5 file:px-4
+                                    file:rounded-xl file:border-0
+                                    file:text-xs file:font-black file:uppercase file:tracking-widest
+                                    file:bg-amber-600 file:text-white
+                                    file:cursor-pointer hover:file:bg-amber-700
+                                    transition-all"
+                                />
+                            </div>
+
+                            {tempFileName && (
+                                <button
+                                    type="button"
+                                    onClick={downloadDraftFile}
+                                    disabled={downloading}
+                                    className="flex items-center justify-center gap-2 p-3 bg-white text-amber-700 rounded-xl text-xs font-black uppercase tracking-widest border border-amber-200 hover:bg-amber-50 transition-all w-full md:w-auto self-start"
+                                >
+                                    {downloading ? <Loader2 className="animate-spin" size={14} /> : <Download size={14} />}
+                                    Download "{tempFileName}"
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                )}
 
                 <div className="relative group">
                     <textarea
