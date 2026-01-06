@@ -34,10 +34,17 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
 
     useEffect(() => {
         if (state.success && state.message?.includes("Backup File berhasil disimpan")) {
-            // Need to reload to reflect the new tempFileName if it was just uploaded
-            // But for now, we can assume if upload was successful, we might want to manually set a state or let revalidatePath handle it (which might refresh the page)
+            // Optional: Show specific toast/alert if needed
         }
     }, [state]);
+
+    // Sync state with server data (important after revalidatePath)
+    useEffect(() => {
+        if (initialTempFileName) setTempFileName(initialTempFileName);
+        if (initialFileUrl) setFileUrl(initialFileUrl);
+        if (initialFileName) setFileName(initialFileName);
+        if (initialContent) setCurrentContent(initialContent);
+    }, [initialTempFileName, initialFileUrl, initialFileName, initialContent]);
 
     const downloadTxt = () => {
         const element = document.createElement("a");
