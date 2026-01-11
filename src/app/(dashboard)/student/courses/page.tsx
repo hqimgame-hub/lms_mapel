@@ -23,13 +23,9 @@ export default async function StudentCoursesPage() {
                                 include: {
                                     subject: true,
                                     teacher: true,
-                                    _count: {
-                                        select: {
-                                            materials: true,
-                                            assignments: true,
-                                            exams: true
-                                        }
-                                    }
+                                    materials: { where: { published: true }, select: { id: true } },
+                                    assignments: { where: { published: true }, select: { id: true } },
+                                    exams: { where: { published: true }, select: { id: true } },
                                 }
                             }
                         }
@@ -80,15 +76,15 @@ export default async function StudentCoursesPage() {
                             <div className="flex items-center gap-4">
                                 <div className="text-center">
                                     <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Materi</p>
-                                    <p className="font-black text-slate-800 dark:text-slate-200">{course._count.materials}</p>
+                                    <p className="font-black text-slate-800 dark:text-slate-200">{course.materials.length}</p>
                                 </div>
                                 <div className="text-center">
                                     <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Tugas</p>
-                                    <p className="font-black text-slate-800 dark:text-slate-200">{course._count.assignments}</p>
+                                    <p className="font-black text-slate-800 dark:text-slate-200">{course.assignments.length}</p>
                                 </div>
                                 <div className="text-center">
                                     <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Ujian</p>
-                                    <p className="font-black text-slate-800 dark:text-slate-200">{course._count.exams}</p>
+                                    <p className="font-black text-slate-800 dark:text-slate-200">{course.exams.length}</p>
                                 </div>
                             </div>
                         </div>
