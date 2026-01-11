@@ -47,6 +47,8 @@ export async function createMaterial(prevState: ActionState, formData: FormData)
 
         courseIds.forEach(id => revalidatePath(`/teacher/courses/${id}`));
         revalidatePath('/teacher/materials');
+        revalidatePath('/student');
+        revalidatePath('/student/courses');
         return { message: "Materi berhasil dibagikan!", success: true, errors: undefined };
     } catch (error) {
         console.error(error);

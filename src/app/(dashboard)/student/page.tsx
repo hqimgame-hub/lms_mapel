@@ -30,6 +30,7 @@ export default async function StudentDashboardPage() {
                                 include: {
                                     subject: true,
                                     assignments: {
+                                        where: { published: true },
                                         include: {
                                             submissions: {
                                                 where: { studentId: session.user.id }

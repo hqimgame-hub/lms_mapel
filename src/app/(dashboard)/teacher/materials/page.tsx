@@ -69,9 +69,6 @@ export default async function TeacherMaterialsPage() {
                                 <span className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest">
                                     {material.course.subject.name}
                                 </span>
-                                <span className="px-2 py-0.5 rounded-md bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-widest">
-                                    {material.type}
-                                </span>
                             </div>
                             <h3 className="text-xl font-bold text-slate-800 dark:text-white group-hover:text-primary transition-colors">{material.title}</h3>
                             <div className="flex items-center gap-4 mt-3 text-slate-400 dark:text-slate-500 text-xs font-medium">

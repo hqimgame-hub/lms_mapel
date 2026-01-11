@@ -41,6 +41,8 @@ export async function createExam(prevState: ActionState, formData: FormData): Pr
 
         courseIds.forEach(id => revalidatePath(`/teacher/courses/${id}`));
         revalidatePath('/teacher/exams');
+        revalidatePath('/student');
+        revalidatePath('/student/courses');
         return { message: "Ujian berhasil dibagikan!", success: true, errors: undefined };
     } catch (error) {
         console.error(error);

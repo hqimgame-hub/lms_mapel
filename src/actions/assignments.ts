@@ -49,6 +49,8 @@ export async function createAssignment(prevState: any, formData: FormData) {
         // Revalidate all affected course pages
         validated.data.courseIds.forEach(id => revalidatePath(`/teacher/courses/${id}`));
         revalidatePath('/teacher/assignments');
+        revalidatePath('/student');
+        revalidatePath('/student/assignments');
 
         return { message: "Tugas berhasil dibagikan ke kelas terpilih!", success: true, errors: undefined };
     } catch (e) {
@@ -89,6 +91,8 @@ export async function updateAssignment(prevState: ActionState, formData: FormDat
         revalidatePath(`/teacher/courses/${data.courseIds[0]}`);
         revalidatePath(`/teacher/assignments/${id}`);
         revalidatePath('/teacher/assignments');
+        revalidatePath('/student');
+        revalidatePath('/student/assignments');
 
         return { message: "Tugas berhasil diperbarui!", success: true, errors: undefined };
     } catch (e) {
