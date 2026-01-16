@@ -7,6 +7,7 @@ import { CreateAssignment } from "@/components/teacher/CreateAssignment";
 import { EditAssignmentModal } from "@/components/teacher/EditAssignmentModal";
 import { DeleteButton } from "@/components/teacher/DeleteButton";
 import { deleteAssignment } from "@/actions/assignments";
+import { AssignmentsListClient } from "@/components/teacher/AssignmentsListClient";
 
 export default async function TeacherAssignmentsPage() {
     const session = await auth();
@@ -58,57 +59,7 @@ export default async function TeacherAssignmentsPage() {
                 />
             </div>
 
-            <div className="grid gap-4">
-                {assignments.map((assignment) => (
-                    <div key={assignment.id} className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group">
-                        <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                                    {assignment.course.class.name}
-                                </span>
-                                <span className="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-widest">
-                                    {assignment.course.subject.name}
-                                </span>
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-800 dark:text-white group-hover:text-primary transition-colors">{assignment.title}</h3>
-                            <div className="flex items-center gap-4 mt-3 text-slate-400 dark:text-slate-500 text-xs font-medium">
-                                <div className="flex items-center gap-1.5">
-                                    <Calendar size={14} />
-                                    Tenggat: {format(new Date(assignment.dueDate), 'PPP')}
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                    <Layers size={14} />
-                                    {assignment._count.submissions} Pengumpulan
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-1">
-                                <EditAssignmentModal assignment={assignment} />
-                                <DeleteButton
-                                    id={assignment.id}
-                                    courseId={assignment.courseId}
-                                    onDelete={deleteAssignment}
-                                />
-                            </div>
-                            <Link
-                                href={`/teacher/assignments/${assignment.id}`}
-                                className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-6 py-3 rounded-xl font-bold text-sm hover:bg-primary hover:text-white transition-all whitespace-nowrap"
-                            >
-                                Detail & Menilai
-                                <ChevronRight size={16} />
-                            </Link>
-                        </div>
-                    </div>
-                ))}
-
-                {assignments.length === 0 && (
-                    <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500">
-                        Belum ada tugas yang dibuat. Klik tombol di atas untuk membuat tugas pertama Anda.
-                    </div>
-                )}
-            </div>
+            <AssignmentsListClient initialAssignments={assignments} />
         </div>
     );
 }
