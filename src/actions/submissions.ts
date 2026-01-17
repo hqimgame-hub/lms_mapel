@@ -154,3 +154,33 @@ export async function getDraftFile(assignmentId: string) {
         name: submission.tempFileName
     };
 }
+
+export async function returnSubmission(submissionId: string, assignmentId: string) {
+    const session = await auth();
+    if (!session?.user?.id || session.user.role !== 'TEACHER') {
+        return { message: "Unauthorized", success: false };
+    }
+
+    try {
+        await prisma.submission.update({
+            where: { id: submissionId },
+            data: {
+                status: 'DRAFT',
+                submittedAt: null,
+                grade: null,
+                feedback: null
+            }
+        });
+
+        revalidatePath(`/teacher/assignments/${assignmentId}`);
+        revalidatePath(`/student/assignments/${assignmentId}`);
+
+        return {
+            message: "Tugas berhasil dikembalikan ke siswa.",
+            success: true
+        };
+    } catch (e) {
+        console.error(e);
+        return { message: "Gagal mengembalikan tugas", success: false };
+    }
+}
