@@ -7,7 +7,8 @@ import {
     Clock,
     AlertCircle,
     BookOpen,
-    ArrowRight
+    ArrowRight,
+    RotateCcw
 } from "lucide-react";
 import Link from "next/link";
 
@@ -73,7 +74,8 @@ export default async function StudentDashboardPage() {
 
     const stats = {
         todo: allAssignments.filter(a => a.submissions.length === 0 || (a.submissions[0]?.status === 'DRAFT' && !isRealDraft(a.submissions[0]))).length,
-        draft: allAssignments.filter(a => a.submissions.length > 0 && isRealDraft(a.submissions[0])).length,
+        draft: allAssignments.filter(a => a.submissions.length > 0 && (isRealDraft(a.submissions[0]) && a.submissions[0].status !== 'RETURNED')).length,
+        returned: allAssignments.filter(a => a.submissions.length > 0 && a.submissions[0].status === 'RETURNED').length,
         done: allAssignments.filter(a => a.submissions.length > 0 && isDone(a.submissions[0])).length,
     };
 
@@ -111,6 +113,15 @@ export default async function StudentDashboardPage() {
                     </div>
                 </div>
                 <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-5 hover:shadow-md transition-shadow group">
+                    <div className="bg-red-50 dark:bg-red-500/10 p-4 rounded-2xl text-red-500 group-hover:scale-110 transition-transform">
+                        <RotateCcw size={28} />
+                    </div>
+                    <div>
+                        <p className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Dikembalikan</p>
+                        <h3 className="text-3xl font-black text-slate-800 dark:text-slate-200">{stats.returned}</h3>
+                    </div>
+                </div>
+                <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-5 hover:shadow-md transition-shadow group">
                     <div className="bg-emerald-50 dark:bg-emerald-500/10 p-4 rounded-2xl text-emerald-500 group-hover:scale-110 transition-transform">
                         <CheckCircle size={28} />
                     </div>
@@ -133,23 +144,27 @@ export default async function StudentDashboardPage() {
                     <div className="flex flex-col gap-4">
                         {upcomingAssignments.length > 0 ? (
                             upcomingAssignments.map((assignment) => {
-                                const isDraft = isRealDraft(assignment.submissions[0]);
+                                const sub = assignment.submissions[0];
+                                const isDraft = isRealDraft(sub);
+                                const isReturned = sub?.status === 'RETURNED';
                                 return (
                                     <Link
                                         key={assignment.id}
                                         href={`/student/assignments/${assignment.id}`}
-                                        className="bg-white dark:bg-slate-900 p-5 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 hover:border-primary/30 dark:hover:border-primary/50 transition-all group flex items-center justify-between"
+                                        className={`bg-white dark:bg-slate-900 p-5 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 hover:border-primary/30 dark:hover:border-primary/50 transition-all group flex items-center justify-between ${isReturned ? 'border-red-200 dark:border-red-900/50 bg-red-50/10' : ''}`}
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className={`p-3 rounded-2xl ${isDraft ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-500' : 'bg-slate-50 dark:bg-slate-800 text-slate-400'}`}>
-                                                <BookOpen size={20} />
+                                            <div className={`p-3 rounded-2xl ${isReturned ? 'bg-red-50 dark:bg-red-500/10 text-red-500' : isDraft ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-500' : 'bg-slate-50 dark:bg-slate-800 text-slate-400'}`}>
+                                                {isReturned ? <RotateCcw size={20} /> : <BookOpen size={20} />}
                                             </div>
                                             <div className="flex flex-col">
                                                 <h4 className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-primary transition-colors">{assignment.title}</h4>
                                                 <p className="text-xs font-medium text-slate-400 dark:text-slate-500">{assignment.subject} • Tenggat: {new Date(assignment.dueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
                                             </div>
                                         </div>
-                                        {isDraft && (
+                                        {isReturned ? (
+                                            <span className="px-3 py-1 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 text-[10px] font-black rounded-full uppercase tracking-tighter">Dikembalikan</span>
+                                        ) : isDraft && (
                                             <span className="px-3 py-1 bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-black rounded-full uppercase tracking-tighter">Draft</span>
                                         )}
                                     </Link>

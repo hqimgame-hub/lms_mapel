@@ -10,7 +10,8 @@ import {
     ClipboardList,
     GraduationCap,
     ChevronRight,
-    ArrowLeft
+    ArrowLeft,
+    RotateCcw
 } from "lucide-react";
 
 export default async function StudentCoursePage({
@@ -136,8 +137,9 @@ export default async function StudentCoursePage({
                             const submission = assignment.submissions[0];
                             const isSubmitted = submission?.status === 'SUBMITTED' || submission?.status === 'GRADED';
                             const isDraft = submission?.status === 'DRAFT';
+                            const isReturned = submission?.status === 'RETURNED';
                             const isGraded = submission?.status === 'GRADED';
-                            const isLate = !isSubmitted && new Date() > new Date(assignment.dueDate);
+                            const isLate = !isSubmitted && !isReturned && new Date() > new Date(assignment.dueDate);
 
                             return (
                                 <Link key={assignment.id} href={`/student/assignments/${assignment.id}`} className="group">
@@ -166,6 +168,10 @@ export default async function StudentCoursePage({
                                             ) : isDraft ? (
                                                 <span className="bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-orange-100 dark:border-orange-500/20">
                                                     Draft
+                                                </span>
+                                            ) : isReturned ? (
+                                                <span className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-red-100 dark:border-red-500/20">
+                                                    Dikembalikan
                                                 </span>
                                             ) : isLate ? (
                                                 <span className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest border border-red-100 dark:border-red-500/20">

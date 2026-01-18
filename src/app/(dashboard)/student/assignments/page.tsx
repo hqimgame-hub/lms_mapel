@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { BookOpen, Calendar, Clock, CheckCircle, ChevronRight, Filter, ClipboardList } from "lucide-react";
+import { BookOpen, Calendar, Clock, CheckCircle, ChevronRight, Filter, ClipboardList, RotateCcw } from "lucide-react";
 import Link from "next/link";
 
 export default async function StudentAssignmentsPage() {
