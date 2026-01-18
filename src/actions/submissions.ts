@@ -162,25 +162,32 @@ export async function returnSubmission(submissionId: string, assignmentId: strin
     }
 
     try {
-        await prisma.submission.update({
+        console.log(`Returning submission ${submissionId} for assignment ${assignmentId}`);
+
+        const updated = await prisma.submission.update({
             where: { id: submissionId },
             data: {
-                status: 'DRAFT',
+                status: 'RETURNED',
                 submittedAt: null,
                 grade: null,
                 feedback: null
             }
         });
 
+        console.log(`Successfully updated submission status to RETURNED for ${updated.id}`);
+
+        // Revalidate all possible paths
         revalidatePath(`/teacher/assignments/${assignmentId}`);
         revalidatePath(`/student/assignments/${assignmentId}`);
+        revalidatePath(`/student/assignments`);
+        revalidatePath(`/student/courses`);
 
         return {
             message: "Tugas berhasil dikembalikan ke siswa.",
             success: true
         };
     } catch (e) {
-        console.error(e);
-        return { message: "Gagal mengembalikan tugas", success: false };
+        console.error("Error in returnSubmission:", e);
+        return { message: "Gagal mengembalikan tugas. Silakan coba lagi.", success: false };
     }
 }

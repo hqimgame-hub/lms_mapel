@@ -68,7 +68,8 @@ export default async function StudentAssignmentsPage() {
                         const submission = assignment.submissions[0];
                         const isDone = submission?.status === 'SUBMITTED' || submission?.status === 'GRADED';
                         const isDraft = submission?.status === 'DRAFT';
-                        const isLate = !isDone && new Date() > new Date(assignment.dueDate);
+                        const isReturned = submission?.status === 'RETURNED';
+                        const isLate = !isDone && !isReturned && new Date() > new Date(assignment.dueDate);
 
                         return (
                             <Link
@@ -79,9 +80,10 @@ export default async function StudentAssignmentsPage() {
                                 <div className="flex items-center gap-5">
                                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${isDone ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 dark:text-emerald-400' :
                                         isDraft ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-500 dark:text-amber-400' :
-                                            isLate ? 'bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500'
+                                            isReturned ? 'bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400' :
+                                                isLate ? 'bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500'
                                         }`}>
-                                        {isDone ? <CheckCircle size={24} /> : isLate ? <Calendar size={24} /> : <BookOpen size={24} />}
+                                        {isDone ? <CheckCircle size={24} /> : isReturned ? <RotateCcw size={24} /> : isLate ? <Calendar size={24} /> : <BookOpen size={24} />}
                                     </div>
                                     <div className="flex flex-col">
                                         <div className="flex items-center gap-2 mb-1">
@@ -91,6 +93,9 @@ export default async function StudentAssignmentsPage() {
                                             )}
                                             {isDraft && (
                                                 <span className="text-[10px] font-black bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full uppercase tracking-tighter">Draft</span>
+                                            )}
+                                            {isReturned && (
+                                                <span className="text-[10px] font-black bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full uppercase tracking-tighter">Dikembalikan</span>
                                             )}
                                             {isLate && (
                                                 <span className="text-[10px] font-black bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full uppercase tracking-tighter">Terlambat</span>

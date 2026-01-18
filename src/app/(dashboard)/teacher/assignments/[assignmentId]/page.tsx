@@ -76,6 +76,7 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                     {students.map(student => {
                         const sub = submissionMap.get(student.id);
                         const isDraft = sub?.status === 'DRAFT';
+                        const isReturned = sub?.status === 'RETURNED';
                         const isSubmitted = sub?.status === 'SUBMITTED' || sub?.status === 'GRADED';
                         const isGraded = sub?.status === 'GRADED';
                         const isLate = isSubmitted && sub?.submittedAt ? new Date(sub.submittedAt) > new Date(assignment.dueDate) : false;
@@ -96,6 +97,8 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                             </span>
                                         ) : isDraft ? (
                                             <span className="bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">Draft</span>
+                                        ) : isReturned ? (
+                                            <span className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">Dikembalikan</span>
                                         ) : (
                                             <span className="bg-slate-100 dark:bg-slate-800 text-slate-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">Belum</span>
                                         )}
@@ -105,7 +108,7 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl space-y-3">
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Jawaban</p>
-                                        {isSubmitted ? (
+                                        {(isSubmitted || isReturned) ? (
                                             <div className="space-y-2">
                                                 {sub?.fileUrl && (
                                                     <a href={sub.fileUrl} target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl flex items-center gap-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors">
@@ -129,6 +132,11 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                         <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Penilaian</p>
                                         {isSubmitted ? (
                                             <GradeForm submissionId={sub!.id} assignmentId={assignmentId} initialGrade={sub!.grade} initialFeedback={sub!.feedback} />
+                                        ) : isReturned ? (
+                                            <div className="flex flex-col gap-2">
+                                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Tunggu Revisi</span>
+                                                <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} text="Kembalikan Lagi" />
+                                            </div>
                                         ) : (
                                             <div className="text-xs font-bold text-slate-300 dark:text-slate-600">Terbuka saat siswa mengumpulkan</div>
                                         )}
@@ -154,6 +162,7 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                             {students.map(student => {
                                 const sub = submissionMap.get(student.id);
                                 const isDraft = sub?.status === 'DRAFT';
+                                const isReturned = sub?.status === 'RETURNED';
                                 const isSubmitted = sub?.status === 'SUBMITTED' || sub?.status === 'GRADED';
                                 const isGraded = sub?.status === 'GRADED';
                                 const isLate = isSubmitted && sub?.submittedAt ? new Date(sub.submittedAt) > new Date(assignment.dueDate) : false;
@@ -173,12 +182,14 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                                 </span>
                                             ) : isDraft ? (
                                                 <span className="bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Draft</span>
+                                            ) : isReturned ? (
+                                                <span className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Dikembalikan</span>
                                             ) : (
                                                 <span className="bg-slate-100 dark:bg-slate-800 text-slate-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Belum</span>
                                             )}
                                         </td>
                                         <td className="p-6">
-                                            {isSubmitted ? (
+                                            {(isSubmitted || isReturned) ? (
                                                 <div className="flex flex-col gap-2">
                                                     {sub?.fileUrl && (
                                                         <a href={sub.fileUrl} target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline flex items-center gap-1.5 text-xs">
@@ -198,6 +209,11 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                         <td className="p-6">
                                             {isSubmitted ? (
                                                 <GradeForm submissionId={sub!.id} assignmentId={assignmentId} initialGrade={sub!.grade} initialFeedback={sub!.feedback} />
+                                            ) : isReturned ? (
+                                                <div className="flex flex-col gap-2">
+                                                    <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Tunggu Revisi</span>
+                                                    <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} text="Kembalikan Lagi" />
+                                                </div>
                                             ) : (
                                                 <span className="text-[10px] font-black text-slate-200 dark:text-slate-800 uppercase tracking-widest">Belum Tersedia</span>
                                             )}

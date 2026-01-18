@@ -2,7 +2,7 @@
 
 import { saveSubmission, getDraftFile } from "@/actions/submissions";
 import { useState, useActionState, useEffect } from "react";
-import { Save, Send, Clock, CheckCircle, Smartphone, Download, Copy, Monitor, QrCode, Mail, Loader2, Share2, Upload, FileText } from "lucide-react";
+import { Save, Send, Clock, CheckCircle, Smartphone, Download, Copy, Monitor, QrCode, Mail, Loader2, Share2, Upload, FileText, RotateCcw } from "lucide-react";
 
 interface SubmissionFormProps {
     assignmentId: string;
@@ -87,6 +87,9 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                     Jawaban Anda
                     {status === 'DRAFT' && (
                         <span className="text-[10px] font-black bg-amber-100 text-amber-600 px-3 py-1 rounded-full uppercase tracking-widest border border-amber-200">Draft Disimpan</span>
+                    )}
+                    {status === 'RETURNED' && (
+                        <span className="text-[10px] font-black bg-red-100 text-red-600 px-3 py-1 rounded-full uppercase tracking-widest border border-red-200">Perlu Perbaikan (Dikembalikan)</span>
                     )}
                     {isLocked && (
                         <span className="text-[10px] font-black bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full uppercase tracking-widest border border-emerald-200">Diserahkan</span>
@@ -207,6 +210,18 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                         )}
                     </div>
                 </div>
+
+                {status === 'RETURNED' && (
+                    <div className="p-5 bg-red-50 border-2 border-red-100 rounded-3xl flex items-start gap-4 animate-in slide-in-from-top-4 duration-500">
+                        <div className="p-3 bg-white rounded-2xl text-red-500 shadow-sm">
+                            <RotateCcw size={24} />
+                        </div>
+                        <div>
+                            <h4 className="font-black text-red-900 leading-tight">Tugas Dikembalikan</h4>
+                            <p className="text-red-600 text-xs font-medium mt-1">Guru mengembalikan tugas ini untuk diperbaiki. Silakan edit dan kirim kembali.</p>
+                        </div>
+                    </div>
+                )}
 
                 {state?.message && (
                     <div className={`p-4 rounded-2xl text-sm font-bold animate-in fade-in zoom-in duration-200 ${state.success ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>

@@ -7,18 +7,19 @@ import { RotateCcw, Loader2 } from "lucide-react";
 interface ReturnSubmissionButtonProps {
     submissionId: string;
     assignmentId: string;
+    text?: string;
 }
 
-export function ReturnSubmissionButton({ submissionId, assignmentId }: ReturnSubmissionButtonProps) {
+export function ReturnSubmissionButton({ submissionId, assignmentId, text }: ReturnSubmissionButtonProps) {
     const [state, formAction, isPending] = useActionState(returnSubmission.bind(null, submissionId, assignmentId), { message: '', success: false });
 
     return (
-        <form action={formAction}>
+        <form action={formAction} className="inline-block">
             <button
                 type="submit"
                 disabled={isPending}
                 title="Kembalikan ke Siswa (Jadikan Draft)"
-                className="p-2.5 text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-xl transition-all disabled:opacity-50"
+                className={`flex items-center gap-2 p-2.5 text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-xl transition-all disabled:opacity-50 ${text ? 'px-4 py-2 border border-orange-200 dark:border-orange-500/30 text-xs font-black uppercase tracking-widest' : ''}`}
                 onClick={(e) => {
                     if (!confirm("Kembalikan tugas ini ke siswa? Status akan menjadi Draft dan nilai akan dihapus.")) {
                         e.preventDefault();
@@ -28,7 +29,10 @@ export function ReturnSubmissionButton({ submissionId, assignmentId }: ReturnSub
                 {isPending ? (
                     <Loader2 className="animate-spin" size={16} />
                 ) : (
-                    <RotateCcw size={16} />
+                    <>
+                        <RotateCcw size={16} />
+                        {text && <span>{text}</span>}
+                    </>
                 )}
             </button>
             {state?.message && !state.success && (
