@@ -80,9 +80,7 @@ export function GradeForm({ submissionId, initialGrade, initialFeedback, assignm
                     </button>
                 )}
 
-                {!initialGrade && (
-                    <ReturnSubmissionButton submissionId={submissionId} assignmentId={assignmentId} />
-                )}
+                <ReturnSubmissionButton submissionId={submissionId} assignmentId={assignmentId} />
             </div>
         </form>
     );
