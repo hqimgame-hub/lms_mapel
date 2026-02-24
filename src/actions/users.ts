@@ -242,6 +242,124 @@ export async function updateProfile(prevState: ActionState, formData: FormData):
     }
 }
 
+// ─── TEACHER-SCOPED ACTIONS ───────────────────────────────────────────────────
+
+/**
+ * Mendapatkan semua siswa di semua kelas yang diajarkan guru tersebut.
+ * Dikelompokkan per kelas.
+ */
+export async function getTeacherStudents(teacherId: string) {
+    const courses = await prisma.course.findMany({
+        where: { teacherId },
+        select: {
+            class: {
+                select: {
+                    id: true,
+                    name: true,
+                    students: {
+                        select: {
+                            user: {
+                                select: { id: true, name: true, username: true, email: true }
+                            }
+                        },
+                        orderBy: { user: { name: 'asc' } }
+                    }
+                }
+            }
+        }
+    });
+
+    // Deduplicate kelas (guru bisa mengajar >1 mapel di kelas yang sama)
+    const classMap = new Map<string, { id: string; name: string; students: { id: string; name: string; username: string; email: string | null }[] }>();
+    for (const course of courses) {
+        const cls = course.class;
+        if (!classMap.has(cls.id)) {
+            classMap.set(cls.id, {
+                id: cls.id,
+                name: cls.name,
+                students: cls.students.map(e => e.user)
+            });
+        }
+    }
+    return Array.from(classMap.values());
+}
+
+const TeacherUpdateStudentSchema = z.object({
+    studentId: z.string().min(1),
+    name: z.string().min(3, "Nama minimal 3 karakter"),
+    email: z.union([
+        z.string().email("Format email tidak valid"),
+        z.literal(''),
+        z.null(),
+        z.undefined()
+    ]).optional(),
+    newPassword: z.union([
+        z.string().min(6, "Password minimal 6 karakter"),
+        z.literal(''),
+        z.null(),
+        z.undefined()
+    ]).optional(),
+});
+
+/**
+ * Guru dapat mengupdate data siswa di kelasnya (nama, email, reset password).
+ * Tidak bisa ubah username/role. Hanya siswa di kelasnya yang bisa diubah.
+ */
+export async function updateStudentByTeacher(prevState: ActionState, formData: FormData): Promise<ActionState> {
+    const session = await auth();
+    if (!session?.user?.id || session.user.role !== 'TEACHER') {
+        return { success: false, message: "Akses ditolak. Hanya guru yang dapat melakukan ini." };
+    }
+    const teacherId = session.user.id;
+
+    const data = {
+        studentId: formData.get('studentId') as string,
+        name: formData.get('name'),
+        email: formData.get('email') || undefined,
+        newPassword: formData.get('newPassword') || undefined,
+    };
+
+    const validated = TeacherUpdateStudentSchema.safeParse(data);
+    if (!validated.success) {
+        return { success: false, message: "Data tidak valid", errors: validated.error.flatten().fieldErrors };
+    }
+
+    // Verifikasi: apakah siswa ini benar-benar di kelas yang diajar guru ini?
+    const enrollment = await prisma.enrollment.findFirst({
+        where: {
+            userId: validated.data.studentId,
+            class: {
+                courses: { some: { teacherId } }
+            }
+        }
+    });
+
+    if (!enrollment) {
+        return { success: false, message: "Siswa tidak ditemukan di kelas Anda." };
+    }
+
+    try {
+        const updateData: any = {
+            name: validated.data.name,
+            email: validated.data.email || null,
+        };
+        if (validated.data.newPassword && validated.data.newPassword.length >= 6) {
+            updateData.password = await bcrypt.hash(validated.data.newPassword, 10);
+        }
+
+        await prisma.user.update({
+            where: { id: validated.data.studentId },
+            data: updateData,
+        });
+
+        revalidatePath('/teacher/students');
+        return { success: true, message: "Data siswa berhasil diperbarui!", errors: undefined };
+    } catch (e: any) {
+        if (e.code === 'P2002') return { success: false, message: "Email sudah digunakan akun lain.", errors: undefined };
+        return { success: false, message: "Gagal memperbarui data siswa.", errors: undefined };
+    }
+}
+
 export async function deleteUsersBulk(ids: string[]) {
     const session = await auth();
     if (session?.user?.role !== 'ADMIN') return { success: false, message: "Unauthorized" };

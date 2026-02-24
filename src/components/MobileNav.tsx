@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, X, Home, BookOpen, LayoutDashboard, Layers, Users, PlusCircle, LogOut } from "lucide-react";
+import { Menu, X, Home, BookOpen, LayoutDashboard, Layers, Users, PlusCircle, LogOut, UserCheck } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -105,6 +105,7 @@ export function MobileNav({ role, userName, userEmail }: MobileNavProps) {
                                 <div className="flex flex-col gap-1">
                                     <NavItem href="/teacher/grading" icon={<Users size={18} />} label="Penilaian" onClick={() => setIsOpen(false)} />
                                     <NavItem href="/teacher/recap" icon={<LayoutDashboard size={18} />} label="Rekap Nilai" onClick={() => setIsOpen(false)} />
+                                    <NavItem href="/teacher/students" icon={<UserCheck size={18} />} label="Data Siswa" onClick={() => setIsOpen(false)} />
                                 </div>
                             </>
                         )}
