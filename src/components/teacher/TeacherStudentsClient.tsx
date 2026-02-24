@@ -3,7 +3,7 @@
 import { useState, useActionState, useEffect } from "react";
 import { updateStudentByTeacher } from "@/actions/users";
 import { ActionState } from "@/actions/types";
-import { Search, Users, X, KeyRound, User, Mail, Eye, EyeOff, CheckCircle, AlertCircle, Pencil } from "lucide-react";
+import { Search, Users, X, KeyRound, User, Mail, Eye, EyeOff, CheckCircle, AlertCircle, Pencil, ChevronDown } from "lucide-react";
 
 type Student = {
     id: string;
@@ -200,26 +200,23 @@ export function TeacherStudentsClient({ classes }: { classes: ClassGroup[] }) {
             </div>
 
             <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 overflow-hidden">
-                {/* Class tabs */}
-                {classes.length > 1 && (
-                    <div className="flex gap-2 p-4 border-b border-slate-100 dark:border-slate-800 overflow-x-auto">
-                        {classes.map(cls => (
-                            <button
-                                key={cls.id}
-                                onClick={() => { setActiveClass(cls.id); setSearch(''); }}
-                                className={`px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${activeClass === cls.id
-                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                    }`}
-                            >
-                                Kelas {cls.name}
-                                <span className={`ml-2 text-[10px] font-black px-1.5 py-0.5 rounded-md ${activeClass === cls.id ? 'bg-white/20' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'}`}>
-                                    {cls.students.length}
-                                </span>
-                            </button>
-                        ))}
+                {/* Class dropdown */}
+                <div className="p-4 border-b border-slate-100 dark:border-slate-800">
+                    <div className="relative">
+                        <select
+                            value={activeClass}
+                            onChange={e => { setActiveClass(e.target.value); setSearch(''); }}
+                            className="w-full appearance-none bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-bold text-sm px-4 py-3 pr-10 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer"
+                        >
+                            {classes.map(cls => (
+                                <option key={cls.id} value={cls.id}>
+                                    Kelas {cls.name} — {cls.students.length} siswa
+                                </option>
+                            ))}
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                     </div>
-                )}
+                </div>
 
                 {/* Search bar */}
                 <div className="p-4 border-b border-slate-100 dark:border-slate-800">
