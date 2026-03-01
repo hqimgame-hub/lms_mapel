@@ -16,7 +16,6 @@ interface Material {
     title: string;
     description: string | null;
     courseId: string;
-    courseId: string;
     published: boolean;
     createdAt: Date;
     contents: MaterialContent[];

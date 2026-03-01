@@ -99,16 +99,28 @@ export default async function StudentAssignmentPage({ params }: { params: Promis
                     </div>
                 )}
 
-                <SubmissionForm
-                    assignmentId={assignment.id}
-                    dueDate={assignment.dueDate}
-                    initialContent={submission?.content}
-                    initialFileUrl={submission?.fileUrl}
-                    initialFileName={submission?.fileName}
-                    // @ts-ignore
-                    initialTempFileName={submission?.tempFileName}
-                    status={submission?.status}
-                />
+                {assignment.type === 'OFFLINE' ? (
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6 text-center mt-8">
+                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Penilaian Langsung oleh Guru</h3>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm max-w-md mx-auto">
+                            Tugas ini dinilai secara langsung (misalnya: tugas di buku tulis tertulis atau praktik/presentasi di kelas). Anda tidak perlu mengunggah file apa pun di sistem ini.
+                        </p>
+                    </div>
+                ) : (
+                    <SubmissionForm
+                        assignmentId={assignment.id}
+                        dueDate={assignment.dueDate}
+                        initialContent={submission?.content}
+                        initialFileUrl={submission?.fileUrl}
+                        initialFileName={submission?.fileName}
+                        // @ts-ignore
+                        initialTempFileName={submission?.tempFileName}
+                        status={submission?.status}
+                    />
+                )}
             </div>
         </div>
     );

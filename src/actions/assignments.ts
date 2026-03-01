@@ -11,6 +11,7 @@ const AssignmentSchema = z.object({
     description: z.string().optional(),
     dueDate: z.string().transform((str) => new Date(str)),
     courseIds: z.array(z.string()).min(1, "Pilih setidaknya satu kelas"),
+    type: z.enum(['ONLINE', 'OFFLINE']).default('ONLINE'),
     published: z.boolean().default(true),
     attachmentUrl: z.string().optional().nullable(),
 });
@@ -21,6 +22,7 @@ export async function createAssignment(prevState: any, formData: FormData) {
         description: formData.get('description'),
         dueDate: formData.get('dueDate'),
         courseIds: formData.getAll('courseIds'),
+        type: formData.get('type') || 'ONLINE',
         published: formData.get('published') === 'on',
         attachmentUrl: formData.get('attachmentUrl'),
     };
@@ -40,6 +42,7 @@ export async function createAssignment(prevState: any, formData: FormData) {
                     description: validated.data.description || null,
                     dueDate: validated.data.dueDate,
                     courseId: courseId,
+                    type: validated.data.type,
                     published: validated.data.published,
                     attachmentUrl: validated.data.attachmentUrl || null,
                 }
@@ -66,6 +69,7 @@ export async function updateAssignment(prevState: ActionState, formData: FormDat
         description: formData.get('description'),
         dueDate: formData.get('dueDate'),
         courseIds: [formData.get('courseId') as string],
+        type: formData.get('type') || 'ONLINE',
         published: formData.get('published') === 'on',
         attachmentUrl: formData.get('attachmentUrl'),
     };
@@ -83,6 +87,7 @@ export async function updateAssignment(prevState: ActionState, formData: FormDat
                 title: validated.data.title,
                 description: validated.data.description || null,
                 dueDate: validated.data.dueDate,
+                type: validated.data.type,
                 published: validated.data.published,
                 attachmentUrl: validated.data.attachmentUrl || null,
             }

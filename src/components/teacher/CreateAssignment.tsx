@@ -97,6 +97,15 @@ export function CreateAssignment({
                     </div>
 
                     <div className="space-y-1">
+                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Tipe Tugas</label>
+                        <select name="type" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-sm font-bold text-slate-700 dark:text-slate-300 shadow-inner">
+                            <option value="ONLINE">Pengumpulan Online (Siswa Upload File)</option>
+                            <option value="OFFLINE">Penilaian Langsung (Tugas Offline/Praktik)</option>
+                        </select>
+                        <p className="text-[9px] text-slate-400 ml-1 mt-1">Pilih Penilaian Langsung jika tugas dikerjakan di buku tulis/presentasi.</p>
+                    </div>
+
+                    <div className="space-y-1">
                         <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Link Lampiran (Opsional)</label>
                         <input name="attachmentUrl" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-sm font-bold text-slate-700 dark:text-slate-300 placeholder:text-slate-400" placeholder="https://..." />
                         <p className="text-[9px] text-slate-400 ml-1">Tautkan link Google Drive, YouTube, atau dokumen eksternal lainnya.</p>

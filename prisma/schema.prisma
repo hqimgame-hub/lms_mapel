@@ -123,6 +123,7 @@ model Assignment {
   title       String
   description String?
   published   Boolean  @default(true)
+  type        String   @default("ONLINE") // ONLINE or OFFLINE
   dueDate     DateTime
   
   courseId    String
