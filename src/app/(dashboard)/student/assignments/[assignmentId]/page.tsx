@@ -116,7 +116,6 @@ export default async function StudentAssignmentPage({ params }: { params: Promis
                         initialContent={submission?.content}
                         initialFileUrl={submission?.fileUrl}
                         initialFileName={submission?.fileName}
-                        // @ts-ignore
                         initialTempFileName={submission?.tempFileName}
                         status={submission?.status}
                     />

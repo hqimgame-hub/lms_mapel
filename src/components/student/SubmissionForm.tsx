@@ -15,7 +15,7 @@ interface SubmissionFormProps {
 }
 
 export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, initialFileName, initialTempFileName, status, dueDate }: SubmissionFormProps) {
-    const [state, formAction, isPending] = useActionState(saveSubmission, { message: '', success: false });
+    const [state, formAction, isPending] = useActionState(saveSubmission, { message: '', success: false, tempFileName: null });
     const [showShare, setShowShare] = useState(false);
     const [showEmailModal, setShowEmailModal] = useState(false);
     const [sendingEmail, setSendingEmail] = useState(false);
@@ -33,17 +33,20 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
 
     useEffect(() => {
-        if (state.success && state.message?.includes("Backup File berhasil disimpan")) {
-            // Optional: Show specific toast/alert if needed
+        if (state.success) {
+            // Update tempFileName badge immediately from action response
+            if ('tempFileName' in state && state.tempFileName !== undefined) {
+                setTempFileName(state.tempFileName ?? '');
+            }
         }
     }, [state]);
 
     // Sync state with server data (important after revalidatePath)
     useEffect(() => {
-        if (initialTempFileName) setTempFileName(initialTempFileName);
-        if (initialFileUrl) setFileUrl(initialFileUrl);
-        if (initialFileName) setFileName(initialFileName);
-        if (initialContent) setCurrentContent(initialContent);
+        setTempFileName(initialTempFileName ?? '');
+        setFileUrl(initialFileUrl ?? '');
+        setFileName(initialFileName ?? '');
+        setCurrentContent(initialContent ?? '');
     }, [initialTempFileName, initialFileUrl, initialFileName, initialContent]);
 
     const downloadTxt = () => {

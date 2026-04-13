@@ -16,7 +16,7 @@ const SubmissionSchema = z.object({
 export async function saveSubmission(prevState: any, formData: FormData) {
     const session = await auth();
     if (!session?.user?.id || session.user.role !== 'STUDENT') {
-        return { message: "Unauthorized" };
+        return { message: "Unauthorized", success: false, tempFileName: null };
     }
 
     const data = {
@@ -30,7 +30,7 @@ export async function saveSubmission(prevState: any, formData: FormData) {
     const validated = SubmissionSchema.safeParse(data);
 
     if (!validated.success) {
-        return { message: "Invalid input", errors: validated.error.flatten().fieldErrors };
+        return { message: "Invalid input", errors: validated.error.flatten().fieldErrors, success: false, tempFileName: null };
     }
 
     const { assignmentId, content, fileUrl, fileName, action } = validated.data;
@@ -43,7 +43,7 @@ export async function saveSubmission(prevState: any, formData: FormData) {
 
     if (backupFile && backupFile.size > 0) {
         if (backupFile.size > 4 * 1024 * 1024) { // 4MB Limit
-            return { message: "File backup terlalu besar (Maks 4MB)" };
+            return { message: "File backup terlalu besar (Maks 4MB)", success: false, tempFileName: null };
         }
 
         try {
@@ -52,7 +52,7 @@ export async function saveSubmission(prevState: any, formData: FormData) {
             tempFileName = backupFile.name;
         } catch (error) {
             console.error("Error processing backup file:", error);
-            return { message: "Gagal memproses file backup" };
+            return { message: "Gagal memproses file backup", success: false, tempFileName: null };
         }
     }
 
@@ -65,7 +65,7 @@ export async function saveSubmission(prevState: any, formData: FormData) {
         });
 
         if (existing?.status === 'SUBMITTED' || existing?.status === 'GRADED') {
-            return { message: "Assignment already submitted. Cannot modify." };
+            return { message: "Assignment already submitted. Cannot modify.", success: false, tempFileName: null };
         }
 
         const status = action === 'SUBMIT' ? 'SUBMITTED' : 'DRAFT';
@@ -119,14 +119,25 @@ export async function saveSubmission(prevState: any, formData: FormData) {
             ? "Tugas berhasil diserahkan!"
             : (tempFileName ? "Draft & Backup File berhasil disimpan!" : "Draft berhasil disimpan!");
 
+        // Fetch saved tempFileName to return to client (so badge updates instantly)
+        const savedTempFileName = tempFileName ?? (
+            !shouldUseNewTempFile
+                ? (await prisma.submission.findUnique({
+                    where: { studentId_assignmentId: { studentId, assignmentId } },
+                    select: { tempFileName: true }
+                }))?.tempFileName ?? null
+                : null
+        );
+
         return {
             message: msg,
-            success: true
+            success: true,
+            tempFileName: savedTempFileName ?? null,
         };
 
     } catch (e) {
         console.error(e);
-        return { message: "Gagal menyimpan submission" };
+        return { message: "Gagal menyimpan submission", success: false, tempFileName: null };
     }
 }
 
