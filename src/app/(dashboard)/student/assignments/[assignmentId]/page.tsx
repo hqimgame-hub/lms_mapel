@@ -99,6 +99,19 @@ export default async function StudentAssignmentPage({ params }: { params: Promis
                     </div>
                 )}
 
+                {/* Catatan Guru saat tugas dikembalikan */}
+                {submission?.status === 'RETURNED' && submission?.feedback && (
+                    <div className="bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 rounded-2xl p-6 mb-8 flex items-start gap-4 transition-colors">
+                        <div className="bg-white dark:bg-slate-800 p-3 rounded-full border border-orange-100 dark:border-orange-500/20 shadow-sm text-orange-500 dark:text-orange-400 text-xl">
+                            💬
+                        </div>
+                        <div>
+                            <div className="font-bold text-orange-800 dark:text-orange-300 mb-1 uppercase tracking-widest text-[10px]">Catatan dari Guru</div>
+                            <p className="text-orange-700 dark:text-orange-400 text-sm">{submission.feedback}</p>
+                        </div>
+                    </div>
+                )}
+
                 {assignment.type === 'OFFLINE' ? (
                     <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6 text-center mt-8">
                         <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 mb-4">

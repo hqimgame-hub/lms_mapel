@@ -180,8 +180,8 @@ export async function returnSubmission(submissionId: string, assignmentId: strin
             data: {
                 status: 'RETURNED',
                 submittedAt: null,
-                grade: null,
-                feedback: null
+                grade: null
+                // feedback dipertahankan agar catatan guru tetap terlihat oleh siswa
             }
         });
 
