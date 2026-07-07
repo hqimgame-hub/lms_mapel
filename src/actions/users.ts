@@ -377,3 +377,66 @@ export async function deleteUsersBulk(ids: string[]) {
         return { success: false, message: "Gagal menghapus beberapa pengguna.", errors: undefined };
     }
 }
+
+export async function deleteAllStudents() {
+    const session = await auth();
+    if (session?.user?.role !== 'ADMIN') return { success: false, message: "Unauthorized" };
+
+    try {
+        const result = await prisma.user.deleteMany({
+            where: {
+                role: 'STUDENT'
+            }
+        });
+        revalidatePath('/admin/users');
+        return { success: true, message: `Semua data siswa (${result.count} orang) berhasil dihapus beserta seluruh riwayat pengerjaan tugas dan kelas mereka.`, errors: undefined };
+    } catch (e) {
+        console.error(e);
+        return { success: false, message: "Gagal menghapus semua siswa.", errors: undefined };
+    }
+}
+
+export async function promoteStudentsBulk(studentIds: string[], targetClassId: string | null) {
+    const session = await auth();
+    if (session?.user?.role !== 'ADMIN') return { success: false, message: "Unauthorized" };
+
+    if (!studentIds || studentIds.length === 0) {
+        return { success: false, message: "Pilih minimal satu siswa untuk dipindahkan." };
+    }
+
+    try {
+        await prisma.$transaction(async (tx) => {
+            // 1. Hapus pendaftaran kelas lama (Enrollment) untuk siswa-siswa terpilih
+            await tx.enrollment.deleteMany({
+                where: {
+                    userId: { in: studentIds }
+                }
+            });
+
+            // 2. Jika targetClassId diisi (bukan Kelulusan/Alumni), buat pendaftaran baru
+            if (targetClassId) {
+                const enrollmentsData = studentIds.map(id => ({
+                    userId: id,
+                    classId: targetClassId
+                }));
+                
+                await tx.enrollment.createMany({
+                    data: enrollmentsData
+                });
+            }
+        });
+
+        revalidatePath('/admin/users');
+        revalidatePath('/admin/classes');
+        
+        const actionMessage = targetClassId 
+            ? `Berhasil memindahkan ${studentIds.length} siswa ke kelas baru.` 
+            : `Berhasil memproses kelulusan ${studentIds.length} siswa (keanggotaan kelas telah dikosongkan).`;
+            
+        return { success: true, message: actionMessage, errors: undefined };
+    } catch (e) {
+        console.error("Failed to promote students:", e);
+        return { success: false, message: "Gagal memproses kenaikan kelas siswa.", errors: undefined };
+    }
+}
+

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from "react";
-import { deleteUsersBulk } from "@/actions/users";
+import { deleteUsersBulk, deleteAllStudents } from "@/actions/users";
 import {
     Trash2,
     ChevronLeft,
@@ -35,12 +35,15 @@ interface UserTableProps {
     totalCount: number;
     classes: { id: string, name: string }[];
     showFilters?: boolean;
+    limit: number;
 }
 
-export function UserTable({ users, currentPage, totalPages, totalCount, classes, showFilters }: UserTableProps) {
+export function UserTable({ users, currentPage, totalPages, totalCount, classes, showFilters, limit }: UserTableProps) {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [isPending, startTransition] = useTransition();
     const [searchTerm, setSearchTerm] = useState("");
+    const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
+    const [confirmPhrase, setConfirmPhrase] = useState("");
 
     const toggleSelectAll = () => {
         if (selectedIds.length === users.length) {
@@ -87,6 +90,30 @@ export function UserTable({ users, currentPage, totalPages, totalCount, classes,
         window.location.href = url.toString();
     };
 
+    const handleLimitChange = (newLimit: string) => {
+        const url = new URL(window.location.href);
+        url.searchParams.set('limit', newLimit);
+        url.searchParams.set('page', '1');
+        window.location.href = url.toString();
+    };
+
+    const handleDeleteAllStudents = async () => {
+        if (confirmPhrase !== "HAPUS SEMUA SISWA") return;
+        
+        setIsDeleteAllModalOpen(false);
+        setConfirmPhrase("");
+
+        startTransition(async () => {
+            const result = await deleteAllStudents();
+            if (result.success) {
+                setSelectedIds([]);
+                alert(result.message);
+            } else {
+                alert(result.message);
+            }
+        });
+    };
+
     return (
         <div className="flex flex-col gap-4">
             {/* Search & Filters */}
@@ -102,8 +129,22 @@ export function UserTable({ users, currentPage, totalPages, totalCount, classes,
                     />
                 </form>
 
-                {showFilters && (
-                    <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                    <div className="relative">
+                        <select
+                            value={limit.toString()}
+                            onChange={(e) => handleLimitChange(e.target.value)}
+                            className="pl-4 pr-10 py-3.5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-sm font-bold text-slate-700 dark:text-slate-300 min-w-[120px]"
+                        >
+                            <option value="10">10 per hal</option>
+                            <option value="25">25 per hal</option>
+                            <option value="50">50 per hal</option>
+                            <option value="100">100 per hal</option>
+                            <option value="250">250 per hal</option>
+                        </select>
+                    </div>
+
+                    {showFilters && (
                         <div className="relative">
                             <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                             <select
@@ -117,13 +158,13 @@ export function UserTable({ users, currentPage, totalPages, totalCount, classes,
                                 ))}
                             </select>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
             {/* Table Actions */}
-            <div className="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors">
+                <div className="flex items-center gap-4 flex-wrap">
                     <button
                         onClick={toggleSelectAll}
                         className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
@@ -140,6 +181,17 @@ export function UserTable({ users, currentPage, totalPages, totalCount, classes,
                         >
                             <Trash2 size={16} />
                             Hapus Masal
+                        </button>
+                    )}
+
+                    {showFilters && (
+                        <button
+                            onClick={() => setIsDeleteAllModalOpen(true)}
+                            disabled={isPending}
+                            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all disabled:opacity-50 shadow-md shadow-red-500/10"
+                        >
+                            <Trash2 size={16} />
+                            Hapus Semua Siswa
                         </button>
                     )}
                 </div>
@@ -249,6 +301,59 @@ export function UserTable({ users, currentPage, totalPages, totalCount, classes,
                     </div>
                 )}
             </div>
+
+            {/* Modal Konfirmasi Pengamanan Ganda Hapus Semua Siswa */}
+            {isDeleteAllModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-8 max-w-md w-full mx-4 shadow-2xl flex flex-col gap-6 animate-in zoom-in-95 duration-200">
+                        <div className="flex flex-col gap-2">
+                            <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+                                <Trash2 className="text-red-600 animate-bounce" size={24} />
+                                Konfirmasi Penghapusan
+                            </h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                                Tindakan ini bersifat **DESTRUKTIF**. Seluruh akun siswa, pendaftaran kelas, dan jawaban tugas mereka akan dihapus **permanen** dari database.
+                            </p>
+                        </div>
+
+                        <div className="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/50 p-4 rounded-2xl text-xs text-red-600 dark:text-red-400 font-semibold leading-relaxed">
+                            PENTING: Pastikan Anda telah melakukan backup database terlebih dahulu menggunakan script `scripts/backup-db.ts` sebelum melanjutkan.
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                Ketik <span className="text-red-600 font-black">"HAPUS SEMUA SISWA"</span> untuk konfirmasi:
+                            </label>
+                            <input
+                                type="text"
+                                className="w-full px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:ring-4 focus:ring-red-500/5 focus:border-red-500 outline-none transition-all text-sm font-bold dark:text-white"
+                                placeholder="HAPUS SEMUA SISWA"
+                                value={confirmPhrase}
+                                onChange={(e) => setConfirmPhrase(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => {
+                                    setIsDeleteAllModalOpen(false);
+                                    setConfirmPhrase("");
+                                }}
+                                className="px-5 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                onClick={handleDeleteAllStudents}
+                                disabled={confirmPhrase !== "HAPUS SEMUA SISWA" || isPending}
+                                className="px-5 py-3 rounded-xl text-xs font-black uppercase tracking-widest bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 disabled:hover:bg-red-600 transition-all shadow-md shadow-red-500/10"
+                            >
+                                Ya, Hapus Semua
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

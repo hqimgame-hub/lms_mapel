@@ -7,10 +7,10 @@ import { getClasses } from "@/actions/classes";
 export default async function AdminUsersPage({
     searchParams
 }: {
-    searchParams: Promise<{ tab?: string; page?: string; q?: string; classId?: string }>
+    searchParams: Promise<{ tab?: string; page?: string; q?: string; classId?: string; limit?: string }>
 }) {
-    const { tab = 'staff', page = '1', q = '', classId = '' } = await searchParams;
-    const itemsPerPage = 10;
+    const { tab = 'staff', page = '1', q = '', classId = '', limit = '10' } = await searchParams;
+    const itemsPerPage = parseInt(limit) || 10;
     const currentPage = parseInt(page);
     const skip = (currentPage - 1) * itemsPerPage;
 
@@ -102,6 +102,7 @@ export default async function AdminUsersPage({
                         totalCount={totalCount}
                         classes={classes}
                         showFilters={tab === 'students'}
+                        limit={itemsPerPage}
                     />
                 )}
             </div>

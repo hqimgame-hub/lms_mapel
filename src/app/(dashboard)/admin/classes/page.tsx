@@ -2,15 +2,16 @@ import { AddClassForm } from "@/components/admin/AddClassForm";
 import { DeleteClassButton } from "@/components/admin/DeleteClassButton";
 import { EditClassModal } from "@/components/admin/EditClassModal";
 import { prisma } from "@/lib/prisma";
-import { LayoutGrid, PlusCircle } from "lucide-react";
+import { LayoutGrid, PlusCircle, GraduationCap } from "lucide-react";
 import Link from "next/link";
+import { ClassPromotionForm } from "@/components/admin/ClassPromotionForm";
 
 export default async function AdminClassesPage({
     searchParams
 }: {
-    searchParams: Promise<{ tab?: string }>
+    searchParams: Promise<{ tab?: string; classFromId?: string }>
 }) {
-    const { tab = 'list' } = await searchParams;
+    const { tab = 'list', classFromId = '' } = await searchParams;
 
     const classes = await prisma.class.findMany({
         orderBy: { name: 'asc' },
@@ -18,6 +19,27 @@ export default async function AdminClassesPage({
             _count: { select: { students: true, courses: true } }
         }
     });
+
+    let students: any[] = [];
+    if (tab === 'promotion' && classFromId) {
+        const enrollments = await prisma.enrollment.findMany({
+            where: { classId: classFromId },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        email: true
+                    }
+                }
+            },
+            orderBy: {
+                user: { name: 'asc' }
+            }
+        });
+        students = enrollments.map(e => e.user);
+    }
 
     return (
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -48,11 +70,29 @@ export default async function AdminClassesPage({
                     <PlusCircle size={18} />
                     Tambah Kelas
                 </Link>
+                <Link
+                    href="?tab=promotion"
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm transition-all ${tab === 'promotion'
+                            ? "bg-white dark:bg-slate-900 text-primary shadow-md shadow-primary/5 border border-primary/10 dark:border-primary/20"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800/80"
+                        }`}
+                >
+                    <GraduationCap size={18} />
+                    Kenaikan Kelas
+                </Link>
             </div>
 
             {tab === 'create' ? (
                 <div className="max-w-4xl animate-in fade-in slide-in-from-top-4 duration-500">
                     <AddClassForm />
+                </div>
+            ) : tab === 'promotion' ? (
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <ClassPromotionForm 
+                        classes={classes.map(c => ({ id: c.id, name: c.name }))}
+                        students={students}
+                        initialClassFromId={classFromId}
+                    />
                 </div>
             ) : (
                 <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors animate-in fade-in slide-in-from-bottom-4 duration-500">
