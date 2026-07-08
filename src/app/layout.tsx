@@ -13,7 +13,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "LMS TIK & KKA",
+  title: "LMS MGMP TIK 32",
   description: "LMS khusus mata pelajaran TIK dan KKA",
 };
 
