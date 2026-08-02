@@ -14,6 +14,8 @@ const AssignmentSchema = z.object({
     type: z.enum(['ONLINE', 'OFFLINE']).default('ONLINE'),
     published: z.boolean().default(true),
     attachmentUrl: z.string().optional().nullable(),
+    enableDriveUpload: z.boolean().default(false),
+    driveFolderUrl: z.string().optional().nullable(),
 });
 
 export async function createAssignment(prevState: any, formData: FormData) {
@@ -25,6 +27,8 @@ export async function createAssignment(prevState: any, formData: FormData) {
         type: formData.get('type') || 'ONLINE',
         published: formData.get('published') === 'on',
         attachmentUrl: formData.get('attachmentUrl'),
+        enableDriveUpload: formData.get('enableDriveUpload') === 'on',
+        driveFolderUrl: formData.get('driveFolderUrl'),
     };
 
     const validated = AssignmentSchema.safeParse(data);
@@ -45,6 +49,8 @@ export async function createAssignment(prevState: any, formData: FormData) {
                     type: validated.data.type,
                     published: validated.data.published,
                     attachmentUrl: validated.data.attachmentUrl || null,
+                    enableDriveUpload: validated.data.enableDriveUpload,
+                    driveFolderUrl: validated.data.driveFolderUrl || null,
                 }
             })
         ));
@@ -72,6 +78,8 @@ export async function updateAssignment(prevState: ActionState, formData: FormDat
         type: formData.get('type') || 'ONLINE',
         published: formData.get('published') === 'on',
         attachmentUrl: formData.get('attachmentUrl'),
+        enableDriveUpload: formData.get('enableDriveUpload') === 'on',
+        driveFolderUrl: formData.get('driveFolderUrl'),
     };
 
     const validated = AssignmentSchema.safeParse(data);
@@ -90,6 +98,8 @@ export async function updateAssignment(prevState: ActionState, formData: FormDat
                 type: validated.data.type,
                 published: validated.data.published,
                 attachmentUrl: validated.data.attachmentUrl || null,
+                enableDriveUpload: validated.data.enableDriveUpload,
+                driveFolderUrl: validated.data.driveFolderUrl || null,
             }
         });
 

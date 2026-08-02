@@ -69,5 +69,12 @@ JOIN "MaterialContent" mc ON m.id = mc."materialId"
 LIMIT 10;
 
 -- ========================================
+-- STEP 6: Add Drive Upload fields to Assignment
+-- ========================================
+ALTER TABLE "Assignment" ADD COLUMN IF NOT EXISTS "enableDriveUpload" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Assignment" ADD COLUMN IF NOT EXISTS "driveFolderUrl" TEXT;
+
+-- ========================================
 -- MIGRATION COMPLETE!
 -- ========================================
+

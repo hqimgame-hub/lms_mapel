@@ -131,6 +131,8 @@ model Assignment {
   
   submissions Submission[]
   attachmentUrl String?
+  enableDriveUpload Boolean @default(false)
+  driveFolderUrl    String?
 }
 
 model Submission {

@@ -131,6 +131,7 @@ export default async function StudentAssignmentPage({ params }: { params: Promis
                         initialFileName={submission?.fileName}
                         initialTempFileName={submission?.tempFileName}
                         status={submission?.status}
+                        enableDriveUpload={assignment.enableDriveUpload}
                     />
                 )}
             </div>

@@ -14,12 +14,14 @@ export function CreateAssignment({
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCourses, setSelectedCourses] = useState<string[]>(courseId ? [courseId] : []);
+    const [enableDrive, setEnableDrive] = useState(false);
     const [state, formAction, isPending] = useActionState(createAssignment, { message: '', success: false, errors: undefined } as ActionState);
 
     // Close on success
     if (state.success && isOpen) {
         setIsOpen(false);
         setSelectedCourses(courseId ? [courseId] : []);
+        setEnableDrive(false);
     }
 
     const toggleCourse = (id: string) => {
@@ -114,6 +116,51 @@ export function CreateAssignment({
                     <div className="space-y-1">
                         <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Tenggat Waktu</label>
                         <input name="dueDate" type="datetime-local" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-[11px] font-bold text-slate-700 dark:text-slate-300" required />
+                    </div>
+
+                    {/* Google Drive Upload Setting */}
+                    <div className="p-3.5 bg-blue-50/60 dark:bg-blue-950/30 rounded-2xl border border-blue-100 dark:border-blue-800/50 space-y-2.5">
+                        <label className="flex items-center gap-2.5 cursor-pointer group">
+                            <input
+                                type="checkbox"
+                                name="enableDriveUpload"
+                                value="on"
+                                checked={enableDrive}
+                                onChange={(e) => setEnableDrive(e.target.checked)}
+                                className="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary dark:bg-slate-900"
+                            />
+                            <div>
+                                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+                                    Aktifkan Upload Direct Google Drive
+                                </span>
+                                <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">
+                                    Siswa dapat mengunggah file dari Komputer Lab / HP tanpa login Google.
+                                </span>
+                            </div>
+                        </label>
+
+                        {enableDrive && (
+                            <div className="space-y-1.5 pt-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                                <label className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest ml-1">
+                                    Link / ID Folder Google Drive Guru
+                                </label>
+                                <input
+                                    name="driveFolderUrl"
+                                    type="text"
+                                    placeholder="https://drive.google.com/drive/folders/..."
+                                    className="w-full bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-800 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 text-xs font-bold text-slate-700 dark:text-slate-200"
+                                />
+                                <div className="p-2.5 bg-white/80 dark:bg-slate-900/80 rounded-xl border border-blue-100 dark:border-blue-900 text-[10px] text-slate-600 dark:text-slate-400 space-y-1">
+                                    <p className="font-bold text-blue-700 dark:text-blue-300">💡 Instruksi untuk Guru:</p>
+                                    <p>1. Buat folder di Google Drive Anda.</p>
+                                    <p>2. Klik <strong>Bagikan (Share)</strong> folder tersebut ke email Service Account LMS ini:</p>
+                                    <p className="font-mono bg-slate-100 dark:bg-slate-800 p-1 rounded text-[9px] select-all font-bold text-blue-600 dark:text-blue-400">
+                                        drive-api-lms-tikkka@lms-tik-kka.iam.gserviceaccount.com
+                                    </p>
+                                    <p>3. Beri akses sebagai <strong>Editor</strong> lalu salin link foldernya ke kotak di atas.</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {state?.message && (

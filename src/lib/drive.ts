@@ -3,16 +3,36 @@ import { createReadStream } from 'fs';
 
 const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
 
+export function extractFolderId(input?: string | null): string | null {
+    if (!input) return null;
+    const trimmed = input.trim();
+    // If it's a URL like https://drive.google.com/drive/folders/1a2b3c... or https://drive.google.com/drive/u/0/folders/1a2b3c...
+    const match = trimmed.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) {
+        return match[1];
+    }
+    // If query parameter id=1a2b3c...
+    const idParam = trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (idParam && idParam[1]) {
+        return idParam[1];
+    }
+    // If it's already an ID string (no slashes)
+    if (!trimmed.includes('/')) {
+        return trimmed;
+    }
+    return null;
+}
+
 export async function uploadToDrive(filePath: string, fileName: string, mimeType: string, folderId?: string) {
     try {
         const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
         const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'); // Handle newline characters
         const defaultFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
 
-        const targetFolderId = folderId || defaultFolderId;
+        const parsedFolderId = extractFolderId(folderId) || defaultFolderId;
 
-        if (!clientEmail || !privateKey || !targetFolderId) {
-            console.error("Missing Google Drive credentials");
+        if (!clientEmail || !privateKey || !parsedFolderId) {
+            console.error("Missing Google Drive credentials or folder ID");
             return null;
         }
 
@@ -26,7 +46,7 @@ export async function uploadToDrive(filePath: string, fileName: string, mimeType
 
         const requestBody = {
             name: fileName,
-            parents: [targetFolderId],
+            parents: [parsedFolderId],
         };
 
         const media = {
