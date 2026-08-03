@@ -36,6 +36,38 @@ export function extractFolderId(input?: string | null): string | null {
 
 import { Readable } from 'stream';
 
+function getCredentials() {
+    let clientEmail: string | undefined = undefined;
+    let privateKey: string | undefined = undefined;
+
+    // Support single JSON env var (Opsi B)
+    const jsonCredentials = process.env.GOOGLE_DRIVE_CREDENTIALS;
+    if (jsonCredentials) {
+        try {
+            const parsed = JSON.parse(jsonCredentials);
+            clientEmail = parsed.client_email || parsed.clientEmail;
+            privateKey = parsed.private_key || parsed.privateKey;
+        } catch (e) {
+            console.error("Failed to parse GOOGLE_DRIVE_CREDENTIALS JSON:", e);
+        }
+    }
+
+    // Fallback to individual env vars
+    if (!clientEmail) {
+        const rawEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+        clientEmail = rawEmail ? rawEmail.replace(/[,"]/g, '').trim() : undefined;
+    }
+
+    if (!privateKey) {
+        privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n').trim();
+        if (privateKey && privateKey.startsWith('"') && privateKey.endsWith('"')) {
+            privateKey = privateKey.slice(1, -1);
+        }
+    }
+
+    return { clientEmail, privateKey };
+}
+
 export async function uploadToDrive(
     fileInput: string | Buffer,
     fileName: string,
@@ -43,20 +75,14 @@ export async function uploadToDrive(
     folderId?: string
 ) {
     try {
-        const rawEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-        const clientEmail = rawEmail ? rawEmail.replace(/[,"]/g, '').trim() : undefined;
-
-        let privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n').trim();
-        if (privateKey && privateKey.startsWith('"') && privateKey.endsWith('"')) {
-            privateKey = privateKey.slice(1, -1);
-        }
+        const { clientEmail, privateKey } = getCredentials();
 
         const defaultFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID?.trim();
         const parsedFolderId = extractFolderId(folderId) || defaultFolderId;
 
         if (!clientEmail) {
-            console.error("Missing GOOGLE_SERVICE_ACCOUNT_EMAIL");
-            return { error: "GOOGLE_SERVICE_ACCOUNT_EMAIL belum ada di Environment Variable server" };
+            console.error("Missing GOOGLE_DRIVE_CREDENTIALS or GOOGLE_SERVICE_ACCOUNT_EMAIL");
+            return { error: "GOOGLE_DRIVE_CREDENTIALS / GOOGLE_SERVICE_ACCOUNT_EMAIL belum ada di Environment Variable server" };
         }
 
         if (!privateKey) {
