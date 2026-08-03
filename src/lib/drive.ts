@@ -120,6 +120,8 @@ export async function uploadToDrive(
         const file = await drive.files.create({
             requestBody,
             media: media,
+            supportsAllDrives: true,
+            supportsTeamDrives: true,
             fields: 'id, webViewLink, webContentLink',
         });
 
