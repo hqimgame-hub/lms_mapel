@@ -47,31 +47,16 @@ export async function POST(req: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        const timestamp = Date.now();
-        const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const filename = `${timestamp}_${sanitizedName}`;
+        // Upload to Google Drive directly using memory buffer (No disk write needed)
+        const driveResult = await uploadToDrive(buffer, file.name, file.type, targetFolderId || undefined);
 
-        try {
-            await mkdir(UPLOAD_DIR, { recursive: true });
-        } catch (e) {
-            // Already exists
-        }
-
-        const tempFilePath = join(UPLOAD_DIR, filename);
-        await writeFile(tempFilePath, buffer);
-
-        // Upload to Google Drive using Service Account
-        const driveResult = await uploadToDrive(tempFilePath, file.name, file.type, targetFolderId || undefined);
-
-        // Clean up temporary local file immediately
-        try {
-            await unlink(tempFilePath);
-        } catch (e) {
-            console.error("Failed to delete temp file:", e);
-        }
-
-        if (!driveResult || !driveResult.webViewLink) {
-            return NextResponse.json({ error: "Gagal mengunggah file ke Google Drive. Pastikan folder Drive guru telah memberikan akses ke Service Account." }, { status: 500 });
+        if (!driveResult || 'error' in driveResult || !driveResult.webViewLink) {
+            const errDetail = (driveResult && 'error' in driveResult) ? driveResult.error : "Gagal mengunggah file";
+            console.error("Drive Upload Failed:", errDetail);
+            const serviceEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL?.replace(/[,"]/g, '').trim() || 'drive-api-lms-tikkka@lms-tik-kka.iam.gserviceaccount.com';
+            return NextResponse.json({
+                error: `Gagal mengunggah ke Google Drive (${errDetail}). Pastikan folder Drive guru telah memberikan akses Editor ke email: ${serviceEmail}`
+            }, { status: 500 });
         }
 
         return NextResponse.json({
@@ -81,8 +66,10 @@ export async function POST(req: NextRequest) {
             fileId: driveResult.id
         });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Drive upload API error:", error);
-        return NextResponse.json({ error: "Terjadi kesalahan saat memproses unggahan file" }, { status: 500 });
+        return NextResponse.json({
+            error: `Terjadi kesalahan saat memproses unggahan file: ${error?.message || error?.toString() || 'Unknown error'}`
+        }, { status: 500 });
     }
 }

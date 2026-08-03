@@ -23,17 +23,29 @@ export function extractFolderId(input?: string | null): string | null {
     return null;
 }
 
-export async function uploadToDrive(filePath: string, fileName: string, mimeType: string, folderId?: string) {
-    try {
-        const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-        const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'); // Handle newline characters
-        const defaultFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+import { Readable } from 'stream';
 
+export async function uploadToDrive(
+    fileInput: string | Buffer,
+    fileName: string,
+    mimeType: string,
+    folderId?: string
+) {
+    try {
+        const rawEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+        const clientEmail = rawEmail ? rawEmail.replace(/[,"]/g, '').trim() : undefined;
+
+        let privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n').trim();
+        if (privateKey && privateKey.startsWith('"') && privateKey.endsWith('"')) {
+            privateKey = privateKey.slice(1, -1);
+        }
+
+        const defaultFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID?.trim();
         const parsedFolderId = extractFolderId(folderId) || defaultFolderId;
 
         if (!clientEmail || !privateKey || !parsedFolderId) {
-            console.error("Missing Google Drive credentials or folder ID");
-            return null;
+            console.error("Missing Google Drive credentials or folder ID", { clientEmail: !!clientEmail, privateKey: !!privateKey, parsedFolderId });
+            return { error: "Kredensial Google Drive atau ID Folder tidak ditemukan" };
         }
 
         const auth = new google.auth.JWT({
@@ -49,9 +61,13 @@ export async function uploadToDrive(filePath: string, fileName: string, mimeType
             parents: [parsedFolderId],
         };
 
+        const mediaBody = typeof fileInput === 'string'
+            ? createReadStream(fileInput)
+            : Readable.from(fileInput);
+
         const media = {
             mimeType,
-            body: createReadStream(filePath),
+            body: mediaBody,
         };
 
         const file = await drive.files.create({
@@ -66,9 +82,9 @@ export async function uploadToDrive(filePath: string, fileName: string, mimeType
             webContentLink: file.data.webContentLink
         };
 
-    } catch (error) {
-        console.error('Google Drive Upload Error:', error);
-        return null;
+    } catch (error: any) {
+        console.error('Google Drive Upload Error Details:', error);
+        return { error: error?.message || error?.toString() || "Google Drive Upload Error" };
     }
 }
 
