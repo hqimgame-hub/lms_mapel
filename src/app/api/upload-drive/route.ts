@@ -42,13 +42,11 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Tugas tidak ditemukan" }, { status: 404 });
         }
 
-        const targetFolderId = extractFolderId(assignment.driveFolderUrl);
-
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
         // Upload to Google Drive directly using memory buffer (No disk write needed)
-        const driveResult = await uploadToDrive(buffer, file.name, file.type, targetFolderId || undefined);
+        const driveResult = await uploadToDrive(buffer, file.name, file.type, assignment.driveFolderUrl || undefined);
 
         if (!driveResult || 'error' in driveResult || !driveResult.webViewLink) {
             const errDetail = (driveResult && 'error' in driveResult) ? driveResult.error : "Gagal mengunggah file";

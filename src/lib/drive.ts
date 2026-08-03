@@ -6,20 +6,31 @@ const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
 export function extractFolderId(input?: string | null): string | null {
     if (!input) return null;
     const trimmed = input.trim();
-    // If it's a URL like https://drive.google.com/drive/folders/1a2b3c... or https://drive.google.com/drive/u/0/folders/1a2b3c...
-    const match = trimmed.match(/\/folders\/([a-zA-Z0-9_-]+)/);
-    if (match && match[1]) {
-        return match[1];
+    if (!trimmed) return null;
+
+    // Match /folders/ID or /d/ID
+    const folderMatch = trimmed.match(/\/(?:folders|d)\/([a-zA-Z0-9_-]+)/);
+    if (folderMatch && folderMatch[1]) {
+        return folderMatch[1];
     }
-    // If query parameter id=1a2b3c...
-    const idParam = trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+
+    // Match query parameter ?id=ID or &id=ID or ?fileId=ID
+    const idParam = trimmed.match(/[?&](?:id|fileId)=([a-zA-Z0-9_-]+)/);
     if (idParam && idParam[1]) {
         return idParam[1];
     }
-    // If it's already an ID string (no slashes)
-    if (!trimmed.includes('/')) {
+
+    // Pure ID string (alphanumeric with - and _)
+    if (!trimmed.includes('/') && /^[a-zA-Z0-9_-]{10,}$/.test(trimmed)) {
         return trimmed;
     }
+
+    // Fallback: match any 25+ char string
+    const matchAnyId = trimmed.match(/([a-zA-Z0-9_-]{25,50})/);
+    if (matchAnyId && matchAnyId[1]) {
+        return matchAnyId[1];
+    }
+
     return null;
 }
 
@@ -43,9 +54,19 @@ export async function uploadToDrive(
         const defaultFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID?.trim();
         const parsedFolderId = extractFolderId(folderId) || defaultFolderId;
 
-        if (!clientEmail || !privateKey || !parsedFolderId) {
-            console.error("Missing Google Drive credentials or folder ID", { clientEmail: !!clientEmail, privateKey: !!privateKey, parsedFolderId });
-            return { error: "Kredensial Google Drive atau ID Folder tidak ditemukan" };
+        if (!clientEmail) {
+            console.error("Missing GOOGLE_SERVICE_ACCOUNT_EMAIL");
+            return { error: "GOOGLE_SERVICE_ACCOUNT_EMAIL belum ada di Environment Variable server" };
+        }
+
+        if (!privateKey) {
+            console.error("Missing GOOGLE_PRIVATE_KEY");
+            return { error: "GOOGLE_PRIVATE_KEY belum ada di Environment Variable server" };
+        }
+
+        if (!parsedFolderId) {
+            console.error("Missing parsedFolderId", { folderId, defaultFolderId });
+            return { error: `Guru belum memasukkan Link Folder Google Drive pada tugas ini (Tersimpan: '${folderId || 'Kosong'}')` };
         }
 
         const auth = new google.auth.JWT({
