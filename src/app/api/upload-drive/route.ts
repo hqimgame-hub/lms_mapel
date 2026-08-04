@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
         const rawUrl = assignment.driveFolderUrl?.trim() || "";
         const isDirectAppsScript = rawUrl.includes("script.google.com");
-        const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynYpu3fSKedbRoEwGukUKwOUQyJo0Xo3kEyGIXr39QF8x06nABrCeYDiK9grBPYXa2/exec";
+        const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyyydF3JhxrhtxoyEFvdS2WSuXrf-g0Dpm7u7Mmar_6ZQDToXMEY6ZTMRR7VVYqn5i5/exec";
         const appsScriptUrl = isDirectAppsScript ? rawUrl : (process.env.GOOGLE_APPS_SCRIPT_URL?.trim() || DEFAULT_APPS_SCRIPT_URL);
         const targetFolderId = extractFolderId(rawUrl);
 
