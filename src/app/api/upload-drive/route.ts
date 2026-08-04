@@ -69,7 +69,16 @@ export async function POST(req: NextRequest) {
                     redirect: "follow",
                 });
 
-                const appsResult = await appsRes.json();
+                const resText = await appsRes.text();
+                let appsResult: any = null;
+                try {
+                    appsResult = JSON.parse(resText);
+                } catch (e) {
+                    console.error("Apps Script non-JSON response:", resText.slice(0, 300));
+                    return NextResponse.json({
+                        error: "Google Apps Script mengembalikan respon non-JSON. Pastikan saat Deploy Apps Script, pengaturan 'Who has access' (Siapa yang memiliki akses) disetel ke 'Anyone' (Siapa saja)."
+                    }, { status: 500 });
+                }
 
                 if (appsResult && (appsResult.status === "success" || appsResult.success) && appsResult.fileUrl) {
                     return NextResponse.json({
