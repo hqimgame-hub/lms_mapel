@@ -1,7 +1,7 @@
 'use client';
 
 import { saveSubmission, getDraftFile } from "@/actions/submissions";
-import { useState, useActionState, useEffect } from "react";
+import { useState, useActionState, useEffect, startTransition } from "react";
 import { Save, Send, Clock, CheckCircle, Smartphone, Download, Copy, Monitor, QrCode, Mail, Loader2, Share2, Upload, FileText, RotateCcw } from "lucide-react";
 
 interface SubmissionFormProps {
@@ -79,6 +79,20 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
 
             setFileUrl(result.fileUrl);
             setFileName(result.fileName);
+            setDriveUploadError(null);
+
+            // Auto-submit submission to database so assignment status becomes 'SUBMITTED' immediately
+            const submitData = new FormData();
+            submitData.append("assignmentId", assignmentId);
+            submitData.append("fileUrl", result.fileUrl);
+            submitData.append("fileName", result.fileName);
+            submitData.append("content", currentContent || "");
+            submitData.append("action", "SUBMIT");
+
+            startTransition(() => {
+                formAction(submitData);
+            });
+
         } catch (err: any) {
             console.error("Direct Drive upload error:", err);
             setDriveUploadError(err.message || "Gagal mengunggah file");
