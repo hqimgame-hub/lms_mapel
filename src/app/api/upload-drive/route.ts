@@ -45,7 +45,45 @@ export async function POST(req: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Upload to Google Drive directly using memory buffer (No disk write needed)
+        const targetFolderId = extractFolderId(assignment.driveFolderUrl);
+        const appsScriptUrl = process.env.GOOGLE_APPS_SCRIPT_URL?.trim();
+
+        // 1. Try Google Apps Script Web App Bridge if configured (Bypasses Service Account 0MB & Kemdikbud domain limits)
+        if (appsScriptUrl && targetFolderId) {
+            try {
+                const base64Data = buffer.toString("base64");
+                const payload = {
+                    folderId: targetFolderId,
+                    fileName: file.name,
+                    mimeType: file.type || "application/octet-stream",
+                    fileData: base64Data,
+                };
+
+                const appsRes = await fetch(appsScriptUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                    redirect: "follow",
+                });
+
+                const appsResult = await appsRes.json();
+
+                if (appsResult && (appsResult.status === "success" || appsResult.success) && appsResult.fileUrl) {
+                    return NextResponse.json({
+                        success: true,
+                        fileUrl: appsResult.fileUrl,
+                        fileName: appsResult.fileName || file.name,
+                        fileId: appsResult.fileId
+                    });
+                } else if (appsResult && appsResult.message) {
+                    console.error("Apps Script Error:", appsResult.message);
+                }
+            } catch (err: any) {
+                console.error("Apps Script Bridge Upload Error:", err);
+            }
+        }
+
+        // 2. Fallback to Google Service Account upload
         const driveResult = await uploadToDrive(buffer, file.name, file.type, assignment.driveFolderUrl || undefined);
 
         if (!driveResult || 'error' in driveResult || !driveResult.webViewLink) {
