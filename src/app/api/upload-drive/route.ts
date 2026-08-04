@@ -45,15 +45,18 @@ export async function POST(req: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        const targetFolderId = extractFolderId(assignment.driveFolderUrl);
-        const appsScriptUrl = process.env.GOOGLE_APPS_SCRIPT_URL?.trim();
+        const rawUrl = assignment.driveFolderUrl?.trim() || "";
+        const isDirectAppsScript = rawUrl.includes("script.google.com");
+        const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyviWFqUYsdTyS71PJ9zUx3d66-BvdYO5-8rorkldaviv3AZnmXzVLOlx44HF9SDDyl/exec";
+        const appsScriptUrl = isDirectAppsScript ? rawUrl : (process.env.GOOGLE_APPS_SCRIPT_URL?.trim() || DEFAULT_APPS_SCRIPT_URL);
+        const targetFolderId = extractFolderId(rawUrl);
 
-        // 1. Try Google Apps Script Web App Bridge if configured (Bypasses Service Account 0MB & Kemdikbud domain limits)
-        if (appsScriptUrl && targetFolderId) {
+        // 1. Try Google Apps Script Web App Bridge if URL is direct Apps Script or configured in env
+        if (appsScriptUrl) {
             try {
                 const base64Data = buffer.toString("base64");
                 const payload = {
-                    folderId: targetFolderId,
+                    folderId: targetFolderId || undefined,
                     fileName: file.name,
                     mimeType: file.type || "application/octet-stream",
                     fileData: base64Data,
@@ -75,8 +78,8 @@ export async function POST(req: NextRequest) {
                         fileName: appsResult.fileName || file.name,
                         fileId: appsResult.fileId
                     });
-                } else if (appsResult && appsResult.message) {
-                    console.error("Apps Script Error:", appsResult.message);
+                } else if (appsResult && appsResult.error) {
+                    console.error("Apps Script Error:", appsResult.error);
                 }
             } catch (err: any) {
                 console.error("Apps Script Bridge Upload Error:", err);
