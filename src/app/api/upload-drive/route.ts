@@ -26,10 +26,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Assignment ID tidak ditemukan" }, { status: 400 });
         }
 
-        // Limit file size to 25MB for Drive upload
-        const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
+        // Limit file size to 4MB for Vercel Serverless payload limit
+        const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB
         if (file.size > MAX_FILE_SIZE) {
-            return NextResponse.json({ error: "Ukuran file terlalu besar (Maksimal 25MB)" }, { status: 400 });
+            return NextResponse.json({ error: "Ukuran file terlalu besar (Maksimal 4MB per file)" }, { status: 400 });
         }
 
         // Find assignment to get teacher's driveFolderUrl if specified

@@ -41,6 +41,14 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
         const selectedFile = e.target.files?.[0];
         if (!selectedFile) return;
 
+        // Check client-side file size limit (Vercel Serverless 4.5MB payload limit)
+        const MAX_DRIVE_FILE_SIZE = 4 * 1024 * 1024; // 4MB
+        if (selectedFile.size > MAX_DRIVE_FILE_SIZE) {
+            setDriveUploadError("Ukuran file terlalu besar (Maksimal 4MB). Silakan gunakan file yang lebih kecil atau gunakan fitur Upload Cadangan.");
+            setUploadingDrive(false);
+            return;
+        }
+
         setUploadingDrive(true);
         setDriveUploadError(null);
 
@@ -54,7 +62,16 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                 body: formData,
             });
 
-            const result = await response.json();
+            const resText = await response.text();
+            let result: any = {};
+            try {
+                result = JSON.parse(resText);
+            } catch (e) {
+                if (resText.includes("Request Entity Too Large") || response.status === 413) {
+                    throw new Error("Ukuran file terlalu besar untuk diproses server Vercel (Maksimal 4MB). Silakan kecilkan ukuran file.");
+                }
+                throw new Error(`Respon server tidak valid (${response.status}). Silakan coba lagi.`);
+            }
 
             if (!response.ok || !result.success) {
                 throw new Error(result.error || "Gagal mengunggah file ke Google Drive");
