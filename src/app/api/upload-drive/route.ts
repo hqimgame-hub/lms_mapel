@@ -49,11 +49,16 @@ export async function POST(req: NextRequest) {
         const driveResult = await uploadToDrive(buffer, file.name, file.type, assignment.driveFolderUrl || undefined);
 
         if (!driveResult || 'error' in driveResult || !driveResult.webViewLink) {
-            const errDetail = (driveResult && 'error' in driveResult) ? driveResult.error : "Gagal mengunggah file";
+            let errDetail = (driveResult && 'error' in driveResult) ? driveResult.error : "Gagal mengunggah file";
+            
+            if (typeof errDetail === 'string' && errDetail.includes("Service Accounts do not have storage quota")) {
+                errDetail = "Folder Google Drive ini dibuat di 'Drive Saya' (My Drive). Google mewajibkan folder berada di 'Drive Bersama' (Shared Drive / Team Drive) agar Service Account server dapat mengunggah file tanpa terkendala kuota 0MB Service Account. Silakan pindahkan/buat folder di menu 'Drive Bersama' pada Google Drive Anda.";
+            }
+
             console.error("Drive Upload Failed:", errDetail);
             const serviceEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL?.replace(/[,"]/g, '').trim() || 'drive-api-lms-tikkka@lms-tik-kka.iam.gserviceaccount.com';
             return NextResponse.json({
-                error: `Gagal mengunggah ke Google Drive (${errDetail}). Pastikan folder Drive guru telah memberikan akses Editor ke email: ${serviceEmail}`
+                error: `Gagal mengunggah ke Google Drive: ${errDetail}`
             }, { status: 500 });
         }
 
