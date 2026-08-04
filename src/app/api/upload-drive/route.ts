@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
         const rawUrl = assignment.driveFolderUrl?.trim() || "";
         const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyyydF3JhxrhtxoyEFvdS2WSuXrf-g0Dpm7u7Mmar_6ZQDToXMEY6ZTMRR7VVYqn5i5/exec";
-        const appsScriptUrl = process.env.GOOGLE_APPS_SCRIPT_URL?.trim() || DEFAULT_APPS_SCRIPT_URL;
+        const appsScriptUrl = DEFAULT_APPS_SCRIPT_URL;
         const targetFolderId = extractFolderId(rawUrl);
 
         // 1. Try Google Apps Script Web App Bridge if URL is direct Apps Script or configured in env
