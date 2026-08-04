@@ -78,11 +78,18 @@ export async function POST(req: NextRequest) {
                         fileName: appsResult.fileName || file.name,
                         fileId: appsResult.fileId
                     });
-                } else if (appsResult && appsResult.error) {
-                    console.error("Apps Script Error:", appsResult.error);
+                } else if (appsResult && (appsResult.error || appsResult.message)) {
+                    const appsErr = appsResult.error || appsResult.message;
+                    console.error("Apps Script Error:", appsErr);
+                    return NextResponse.json({
+                        error: `Gagal mengunggah via Apps Script Web App: ${appsErr}`
+                    }, { status: 500 });
                 }
             } catch (err: any) {
                 console.error("Apps Script Bridge Upload Error:", err);
+                return NextResponse.json({
+                    error: `Gagal menghubungkan ke Apps Script Web App: ${err?.message || err?.toString()}`
+                }, { status: 500 });
             }
         }
 
