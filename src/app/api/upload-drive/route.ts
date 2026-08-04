@@ -88,7 +88,41 @@ export async function POST(req: NextRequest) {
                     });
                 } else if (appsResult && (appsResult.error || appsResult.message)) {
                     const appsErr = appsResult.error || appsResult.message;
-                    console.error("Apps Script Error:", appsErr);
+                    console.error("Apps Script Primary Error:", appsErr);
+
+                    // Solutif Fallback: If folder ID was restricted/denied, retry uploading to central LMS_Uploads folder
+                    if (targetFolderId && typeof appsErr === 'string' && (appsErr.includes("Access denied") || appsErr.includes("DriveApp") || appsErr.includes("getFolderById"))) {
+                        console.log("Retrying Apps Script upload to central LMS_Uploads folder without restricted folderId...");
+                        try {
+                            const fallbackPayload = {
+                                fileName: file.name,
+                                mimeType: file.type || "application/octet-stream",
+                                fileData: base64Data,
+                            };
+
+                            const retryRes = await fetch(appsScriptUrl, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(fallbackPayload),
+                                redirect: "follow",
+                            });
+
+                            const retryText = await retryRes.text();
+                            const retryResult = JSON.parse(retryText);
+
+                            if (retryResult && (retryResult.status === "success" || retryResult.success) && retryResult.fileUrl) {
+                                return NextResponse.json({
+                                    success: true,
+                                    fileUrl: retryResult.fileUrl,
+                                    fileName: retryResult.fileName || file.name,
+                                    fileId: retryResult.fileId
+                                });
+                            }
+                        } catch (retryErr) {
+                            console.error("Apps Script Fallback Error:", retryErr);
+                        }
+                    }
+
                     return NextResponse.json({
                         error: `Gagal mengunggah via Apps Script Web App: ${appsErr}`
                     }, { status: 500 });
