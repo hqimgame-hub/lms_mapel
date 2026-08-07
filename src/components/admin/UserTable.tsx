@@ -22,9 +22,11 @@ interface User {
     email: string | null;
     role: string;
     enrollments?: {
-        class: {
+        classId?: string;
+        class?: {
+            id?: string;
             name: string;
-        }
+        };
     }[];
 }
 
@@ -251,7 +253,7 @@ export function UserTable({ users, currentPage, totalPages, totalCount, classes,
                                     </td>
                                     <td className="p-6 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <EditUserModal user={user} />
+                                            <EditUserModal user={user} classes={classes} />
                                             <DeleteUserButton id={user.id} />
                                         </div>
                                     </td>

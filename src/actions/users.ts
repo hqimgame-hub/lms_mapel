@@ -88,6 +88,7 @@ export async function updateUser(prevState: ActionState, formData: FormData): Pr
         email: formData.get('email') || undefined,
         password: formData.get('password') || undefined,
         role: formData.get('role'),
+        classId: formData.get('classId') || undefined,
     };
 
     const validated = UserSchema.safeParse(data);
@@ -114,12 +115,34 @@ export async function updateUser(prevState: ActionState, formData: FormData): Pr
 
         console.log(`Updating user ID ${id} with data:`, JSON.stringify(updateData, null, 2));
 
-        await prisma.user.update({
-            where: { id },
-            data: updateData
+        await prisma.$transaction(async (tx) => {
+            await tx.user.update({
+                where: { id },
+                data: updateData
+            });
+
+            if (validated.data.role === 'STUDENT') {
+                if (validated.data.classId) {
+                    await tx.enrollment.deleteMany({
+                        where: { userId: id }
+                    });
+
+                    await tx.enrollment.create({
+                        data: {
+                            userId: id,
+                            classId: validated.data.classId
+                        }
+                    });
+                }
+            } else {
+                await tx.enrollment.deleteMany({
+                    where: { userId: id }
+                });
+            }
         });
 
         revalidatePath('/admin/users');
+        revalidatePath('/admin/classes');
         return { success: true, message: "Pengguna berhasil diperbarui!", errors: undefined };
     } catch (e: any) {
         console.error("Update User Error:", e);

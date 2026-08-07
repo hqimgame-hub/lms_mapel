@@ -2,7 +2,7 @@
 
 import { updateUser } from "@/actions/users";
 import { ActionState } from "@/actions/types";
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { User, Edit, X } from "lucide-react";
 
 interface EditUserModalProps {
@@ -12,12 +12,38 @@ interface EditUserModalProps {
         username: string;
         email: string | null;
         role: string;
+        enrollments?: {
+            classId?: string;
+            class?: {
+                id?: string;
+                name?: string;
+            };
+        }[];
     };
+    classes?: { id: string; name: string }[];
 }
 
-export function EditUserModal({ user }: EditUserModalProps) {
+export function EditUserModal({ user, classes }: EditUserModalProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const [role, setRole] = useState(user.role);
     const [state, formAction, isPending] = useActionState(updateUser, { success: false, message: '', errors: undefined } as ActionState);
+
+    const currentClassId = user.enrollments?.[0]?.classId || user.enrollments?.[0]?.class?.id;
+
+    useEffect(() => {
+        if (isOpen) {
+            setRole(user.role);
+        }
+    }, [isOpen, user.role]);
+
+    useEffect(() => {
+        if (state?.success) {
+            const timer = setTimeout(() => {
+                setIsOpen(false);
+            }, 1200);
+            return () => clearTimeout(timer);
+        }
+    }, [state?.success]);
 
     if (!isOpen) {
         return (
@@ -96,7 +122,8 @@ export function EditUserModal({ user }: EditUserModalProps) {
                         <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Role / Peran</label>
                         <select
                             name="role"
-                            defaultValue={user.role}
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
                             className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-sm font-bold text-slate-700 dark:text-slate-300 appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat"
                         >
                             <option value="STUDENT">Siswa</option>
@@ -104,6 +131,24 @@ export function EditUserModal({ user }: EditUserModalProps) {
                             <option value="ADMIN">Administrator</option>
                         </select>
                     </div>
+
+                    {role === 'STUDENT' && (
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Kelas Siswa</label>
+                            <select
+                                name="classId"
+                                defaultValue={currentClassId || ''}
+                                className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-sm font-bold text-slate-700 dark:text-slate-300 appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat"
+                            >
+                                <option value="">-- Pilih Kelas --</option>
+                                {classes?.map((cls) => (
+                                    <option key={cls.id} value={cls.id}>
+                                        {cls.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
 
                     {state?.message && (
                         <div className={`p-4 rounded-xl text-xs font-bold leading-relaxed border transition-all ${state.success ? 'bg-emerald-50/50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-red-50/50 dark:bg-red-500/10 border-red-100 dark:border-red-500/20 text-red-600 dark:text-red-400'}`}>
