@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { GradeForm } from "@/components/teacher/GradeForm";
 import { AnswerModal } from "@/components/teacher/AnswerModal";
 import { ReturnSubmissionButton } from "@/components/teacher/ReturnSubmissionButton";
+import { CancelReturnButton } from "@/components/teacher/CancelReturnButton";
 import { OfflineGradingGrid } from "@/components/teacher/OfflineGradingGrid";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -140,13 +141,19 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                         </div>
 
                                         <div className="space-y-1 pt-2">
-                                            <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Penilaian</p>
+                                            <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Penilaian & Aksi</p>
                                             {isSubmitted ? (
-                                                <GradeForm submissionId={sub!.id} assignmentId={assignmentId} initialGrade={sub!.grade} initialFeedback={sub!.feedback} />
+                                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                                                    <GradeForm submissionId={sub!.id} assignmentId={assignmentId} initialGrade={sub!.grade} initialFeedback={sub!.feedback} />
+                                                    <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} text="Kembalikan" />
+                                                </div>
                                             ) : isReturned ? (
                                                 <div className="flex flex-col gap-2">
                                                     <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Tunggu Revisi</span>
-                                                    <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} text="Kembalikan Lagi" />
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} text="Kembalikan Lagi" />
+                                                        <CancelReturnButton submissionId={sub!.id} assignmentId={assignmentId} text="Batal Kembalikan" />
+                                                    </div>
                                                 </div>
                                             ) : (
                                                 <div className="text-xs font-bold text-slate-300 dark:text-slate-600">Terbuka saat siswa mengumpulkan</div>
@@ -219,11 +226,17 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                             </td>
                                             <td className="p-6">
                                                 {isSubmitted ? (
-                                                    <GradeForm submissionId={sub!.id} assignmentId={assignmentId} initialGrade={sub!.grade} initialFeedback={sub!.feedback} />
+                                                    <div className="flex items-center gap-3">
+                                                        <GradeForm submissionId={sub!.id} assignmentId={assignmentId} initialGrade={sub!.grade} initialFeedback={sub!.feedback} />
+                                                        <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} />
+                                                    </div>
                                                 ) : isReturned ? (
                                                     <div className="flex flex-col gap-2">
                                                         <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Tunggu Revisi</span>
-                                                        <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} text="Kembalikan Lagi" />
+                                                        <div className="flex items-center gap-2">
+                                                            <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} text="Kembalikan Lagi" />
+                                                            <CancelReturnButton submissionId={sub!.id} assignmentId={assignmentId} text="Batal Kembalikan" />
+                                                        </div>
                                                     </div>
                                                 ) : (
                                                     <span className="text-[10px] font-black text-slate-200 dark:text-slate-800 uppercase tracking-widest">Belum Tersedia</span>

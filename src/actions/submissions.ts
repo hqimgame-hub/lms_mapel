@@ -202,3 +202,38 @@ export async function returnSubmission(submissionId: string, assignmentId: strin
         return { message: "Gagal mengembalikan tugas. Silakan coba lagi.", success: false };
     }
 }
+
+export async function cancelReturnSubmission(submissionId: string, assignmentId: string) {
+    const session = await auth();
+    if (!session?.user?.id || session.user.role !== 'TEACHER') {
+        return { message: "Unauthorized", success: false };
+    }
+
+    try {
+        console.log(`Canceling return for submission ${submissionId} for assignment ${assignmentId}`);
+
+        const updated = await prisma.submission.update({
+            where: { id: submissionId },
+            data: {
+                status: 'SUBMITTED',
+                submittedAt: new Date(),
+            }
+        });
+
+        console.log(`Successfully updated submission status back to SUBMITTED for ${updated.id}`);
+
+        // Revalidate all possible paths
+        revalidatePath(`/teacher/assignments/${assignmentId}`);
+        revalidatePath(`/student/assignments/${assignmentId}`);
+        revalidatePath(`/student/assignments`);
+        revalidatePath(`/student/courses`);
+
+        return {
+            message: "Pengembalian tugas dibatalkan. Status tugas kembali diserahkan.",
+            success: true
+        };
+    } catch (e) {
+        console.error("Error in cancelReturnSubmission:", e);
+        return { message: "Gagal membatalkan pengembalian tugas. Silakan coba lagi.", success: false };
+    }
+}

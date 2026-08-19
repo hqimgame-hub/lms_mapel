@@ -2,7 +2,6 @@
 
 import { gradeSubmission } from "@/actions/grading";
 import { useActionState, useState } from "react";
-import { ReturnSubmissionButton } from "./ReturnSubmissionButton";
 
 interface GradeFormProps {
     submissionId: string;
@@ -25,7 +24,6 @@ export function GradeForm({ submissionId, initialGrade, initialFeedback, assignm
                 <button onClick={() => setIsEditing(true)} className="text-sm text-gray-500 hover:text-blue-600 underline">
                     Ubah
                 </button>
-                <ReturnSubmissionButton submissionId={submissionId} assignmentId={assignmentId} />
             </div>
         );
     }
@@ -79,8 +77,6 @@ export function GradeForm({ submissionId, initialGrade, initialFeedback, assignm
                         ✕
                     </button>
                 )}
-
-                <ReturnSubmissionButton submissionId={submissionId} assignmentId={assignmentId} />
             </div>
         </form>
     );
