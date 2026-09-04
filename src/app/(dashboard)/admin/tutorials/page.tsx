@@ -1,15 +1,36 @@
-import { getAllTutorialsAdmin } from "@/actions/tutorials";
+import { prisma } from "@/lib/prisma";
 import {
     AddTutorialTopicModal,
     EditTutorialTopicModal,
     DeleteTutorialTopicButton,
     ToggleTutorialStatusButton
 } from "@/components/admin/tutorials/TutorialForms";
-import { HelpCircle, Layers, Video, FileText, ChevronRight, ExternalLink } from "lucide-react";
+import { HelpCircle, Layers, Video, FileText, ChevronRight, ExternalLink, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
 export default async function AdminTutorialsPage() {
-    const topics = await getAllTutorialsAdmin();
+    let topics: any[] = [];
+    let loadError: string | null = null;
+
+    try {
+        topics = await prisma.tutorialTopic.findMany({
+            include: {
+                items: {
+                    orderBy: { order: 'asc' }
+                },
+                _count: {
+                    select: { items: true }
+                }
+            },
+            orderBy: [
+                { order: 'asc' },
+                { createdAt: 'desc' }
+            ]
+        });
+    } catch (error: any) {
+        console.error("Error loading tutorial topics:", error);
+        loadError = error?.message || "Gagal memuat data panduan dari database.";
+    }
 
     const getPlacementBadge = (placement: string) => {
         switch (placement) {
@@ -51,6 +72,20 @@ export default async function AdminTutorialsPage() {
                     <AddTutorialTopicModal />
                 </div>
             </div>
+
+            {/* Error Notification */}
+            {loadError && (
+                <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 p-4 rounded-2xl flex items-start gap-3 text-red-700 dark:text-red-300">
+                    <AlertTriangle size={20} className="flex-shrink-0 mt-0.5" />
+                    <div className="text-xs">
+                        <p className="font-bold">Gagal memuat data dari database:</p>
+                        <p className="font-mono mt-1 opacity-90">{loadError}</p>
+                        <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
+                            Pastikan migrasi database <code>migration-tutorial.sql</code> sudah berhasil dijalankan di database production/Supabase Anda.
+                        </p>
+                    </div>
+                </div>
+            )}
 
             {/* Topics Table Card */}
             <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">

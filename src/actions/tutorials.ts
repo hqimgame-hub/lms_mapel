@@ -31,9 +31,11 @@ export type TutorialTopicData = {
 // Check if user is ADMIN
 async function verifyAdmin() {
     const session = await auth();
-    if (!session?.user || session.user.role !== 'ADMIN') {
-        throw new Error('Unauthorized');
+    const role = session?.user?.role?.toUpperCase();
+    if (!session?.user || role !== 'ADMIN') {
+        throw new Error('Akses ditolak: Hanya Admin yang dapat melakukan tindakan ini.');
     }
+    return session.user;
 }
 
 // Public / Student fetcher

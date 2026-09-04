@@ -1,4 +1,4 @@
-import { getTutorialTopicById } from "@/actions/tutorials";
+import { prisma } from "@/lib/prisma";
 import {
     AddTutorialItemModal,
     EditTutorialItemModal,
@@ -16,7 +16,15 @@ export default async function AdminTutorialTopicDetailPage({
     params: Promise<{ id: string }>
 }) {
     const { id } = await params;
-    const topic = await getTutorialTopicById(id);
+    
+    const topic = await prisma.tutorialTopic.findUnique({
+        where: { id },
+        include: {
+            items: {
+                orderBy: { order: 'asc' }
+            }
+        }
+    });
 
     if (!topic) {
         notFound();
