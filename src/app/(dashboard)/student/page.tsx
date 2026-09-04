@@ -11,6 +11,8 @@ import {
     RotateCcw
 } from "lucide-react";
 import Link from "next/link";
+import { getActiveTutorials } from "@/actions/tutorials";
+import { TutorialButton } from "@/components/tutorial/TutorialButton";
 
 export default async function StudentDashboardPage() {
     const session = await auth();
@@ -84,13 +86,25 @@ export default async function StudentDashboardPage() {
         .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
         .slice(0, 5);
 
+    const tutorials = await getActiveTutorials('DASHBOARD');
+
     return (
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header Section */}
-            <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Halo, {student.name}!</h1>
-                <p className="text-slate-500 dark:text-slate-400 font-medium">Selamat datang di dashboard {currentClass.name}. Cek progres belajarmu hari ini.</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex flex-col gap-2">
+                    <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Halo, {student.name}!</h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium">Selamat datang di dashboard {currentClass.name}. Cek progres belajarmu hari ini.</p>
+                </div>
+                {tutorials.length > 0 && (
+                    <TutorialButton topics={tutorials} variant="button" label="Panduan Siswa" />
+                )}
             </div>
+
+            {/* Tutorial Banner (Card Variant) */}
+            {tutorials.length > 0 && (
+                <TutorialButton topics={tutorials} variant="card" />
+            )}
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

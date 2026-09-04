@@ -1,7 +1,7 @@
 import { auth, signOut } from '@/auth';
 import { NavItem } from './NavItem';
 import Image from 'next/image';
-import { BookOpen, LayoutDashboard, Layers, Users, Home, PlusCircle, UserCheck } from 'lucide-react';
+import { BookOpen, LayoutDashboard, Layers, Users, Home, PlusCircle, UserCheck, HelpCircle } from 'lucide-react';
 
 export async function Sidebar() {
     const session = await auth();
@@ -42,6 +42,7 @@ export async function Sidebar() {
                             <NavItem href="/admin/classes" icon={<LayoutDashboard size={18} />} label="Kelas" />
                             <NavItem href="/admin/subjects" icon={<BookOpen size={18} />} label="Mapel" />
                             <NavItem href="/admin/courses" icon={<Layers size={18} />} label="Alokasi Kursus" />
+                            <NavItem href="/admin/tutorials" icon={<HelpCircle size={18} />} label="Panduan Siswa" />
                         </div>
                     </>
                 )}

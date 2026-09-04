@@ -156,3 +156,30 @@ model Submission {
   @@unique([studentId, assignmentId])
 }
 
+model TutorialTopic {
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  placement   String         @default("BOTH") // "LOGIN", "DASHBOARD", "BOTH"
+  isActive    Boolean        @default(true)
+  order       Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  items       TutorialItem[]
+
+  @@index([isActive, placement])
+}
+
+model TutorialItem {
+  id        String        @id @default(cuid())
+  topicId   String
+  topic     TutorialTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  title     String
+  type      String        @default("YOUTUBE") // "YOUTUBE", "BLOG", "LINK"
+  url       String
+  order     Int           @default(0)
+  createdAt DateTime      @default(now())
+
+  @@index([topicId])
+}

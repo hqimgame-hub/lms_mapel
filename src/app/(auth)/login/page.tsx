@@ -4,14 +4,21 @@ import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AlertCircle, LogIn, Eye, EyeOff } from 'lucide-react';
-import { useActionState, useState } from 'react';
+import { useActionState, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { getActiveTutorials, TutorialTopicData } from '@/actions/tutorials';
+import { TutorialButton } from '@/components/tutorial/TutorialButton';
 
 export default function LoginPage() {
     const [error, setError] = useState<string | null>(null);
     const [isPending, setIsPending] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [tutorials, setTutorials] = useState<TutorialTopicData[]>([]);
     const router = useRouter();
+
+    useEffect(() => {
+        getActiveTutorials('LOGIN').then(data => setTutorials(data));
+    }, []);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -166,8 +173,28 @@ export default function LoginPage() {
                             </Link>
                         </p>
                     </div>
+
+                    {/* Tutorial / Help Link */}
+                    {tutorials.length > 0 && (
+                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/60 flex justify-center">
+                            <TutorialButton
+                                topics={tutorials}
+                                variant="button"
+                                label="Panduan & Bantuan Siswa"
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
+
+            {/* Floating button at bottom right */}
+            {tutorials.length > 0 && (
+                <TutorialButton
+                    topics={tutorials}
+                    variant="floating"
+                    label="Butuh Bantuan?"
+                />
+            )}
         </div>
     );
 }

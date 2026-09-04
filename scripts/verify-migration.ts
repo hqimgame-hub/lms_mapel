@@ -1,45 +1,37 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-async function verifyMigration() {
-    console.log('🔍 Verifying production database state...\n');
+async function main() {
+    console.log('--- VERIFYING MIGRATION ---')
+    console.log('Checking connection to database...')
 
     try {
-        // Check Material table structure
-        console.log('Checking Material table...');
-        const materials = await prisma.material.findMany({
-            include: {
-                contents: true
-            },
-            take: 5
-        });
-        console.log(`✅ Found ${materials.length} materials`);
-        console.log(`✅ Materials have 'contents' relation working!\n`);
+        // Check User count
+        const userCount = await prisma.user.count()
+        console.log(`User Count: ${userCount}`)
 
-        // Check MaterialContent table
-        console.log('Checking MaterialContent table...');
-        const contentCount = await prisma.materialContent.count();
-        console.log(`✅ Found ${contentCount} content items\n`);
+        // Check Submission count
+        const submissionCount = await prisma.submission.count()
+        console.log(`Submission Count: ${submissionCount}`)
 
-        // Show sample data
-        if (materials.length > 0) {
-            console.log('Sample material with contents:');
-            materials.forEach(m => {
-                console.log(`  - ${m.title}: ${m.contents.length} content item(s)`);
-            });
-        }
+        // Check Class count
+        const classCount = await prisma.class.count()
+        console.log(`Class Count: ${classCount}`)
 
-        console.log('\n🎉 Database migration is COMPLETE and VERIFIED!');
-        console.log('\nNext step: Trigger redeploy on Vercel');
-        console.log('The application should work without errors now.');
+        console.log('\nIf these numbers match your expected data (approx 383 Users, 492 Submissions), the migration is successful!')
+        console.log('Connected Database URL (masked):', (process.env.POSTGRES_URL || '').replace(/:[^:]+@/, ':****@'))
 
-    } catch (error) {
-        console.error('❌ Verification failed:', error);
-        throw error;
-    } finally {
-        await prisma.$disconnect();
+    } catch (e) {
+        console.error('Verification failed:', e)
     }
 }
 
-verifyMigration();
+main()
+    .catch((e) => {
+        console.error(e)
+        process.exit(1)
+    })
+    .finally(async () => {
+        await prisma.$disconnect()
+    })
