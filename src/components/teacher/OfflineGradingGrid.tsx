@@ -2,6 +2,15 @@
 
 import { useState, useTransition } from "react";
 import { saveOfflineGrades } from "@/actions/offline-grades";
+import { saveSubmissionTagAndNote } from "@/actions/grading";
+import { Sparkles, AlertCircle, Lightbulb, MinusCircle } from "lucide-react";
+
+const TAGS = [
+    { value: 'HIGH_POTENTIAL', label: 'Potensi', Icon: Sparkles },
+    { value: 'NEED_ATTENTION', label: 'Perhatian', Icon: AlertCircle },
+    { value: 'CREATIVE', label: 'Kreatif', Icon: Lightbulb },
+    { value: 'PASSIVE', label: 'Pasif', Icon: MinusCircle },
+] as const;
 
 interface Student {
     id: string;
@@ -13,6 +22,8 @@ interface Submission {
     studentId: string;
     grade: number | null;
     feedback: string | null;
+    teacherTag?: string | null;
+    teacherNote?: string | null;
 }
 
 interface OfflineGradingGridProps {
@@ -34,6 +45,15 @@ export function OfflineGradingGrid({ assignmentId, students, initialSubmissions 
         return initialMap;
     });
 
+    const [tags, setTags] = useState<Record<string, string | null>>(() => {
+        const map: Record<string, string | null> = {};
+        students.forEach(student => {
+            const sub = initialSubmissions.find(s => s.studentId === student.id);
+            map[student.id] = sub?.teacherTag ?? null;
+        });
+        return map;
+    });
+
     const [isPending, startTransition] = useTransition();
     const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
 
@@ -52,6 +72,13 @@ export function OfflineGradingGrid({ assignmentId, students, initialSubmissions 
         }));
     };
 
+    const toggleTag = (studentId: string, tagValue: string) => {
+        setTags(prev => ({
+            ...prev,
+            [studentId]: prev[studentId] === tagValue ? null : tagValue
+        }));
+    };
+
     const handleSaveAll = () => {
         startTransition(async () => {
             setMessage(null);
@@ -61,14 +88,24 @@ export function OfflineGradingGrid({ assignmentId, students, initialSubmissions 
                 feedback: data.feedback
             }));
 
-            const result = await saveOfflineGrades(assignmentId, gradesToSave);
+            const gradeResult = await saveOfflineGrades(assignmentId, gradesToSave);
+
+            // Save tags in parallel
+            const tagEntries = Object.entries(tags);
+            if (tagEntries.length > 0) {
+                await Promise.all(
+                    tagEntries.map(([studentId, tag]) =>
+                        saveSubmissionTagAndNote(assignmentId, studentId, tag, null)
+                    )
+                );
+            }
 
             setMessage({
-                text: result.message,
-                type: result.success ? 'success' : 'error'
+                text: gradeResult.message,
+                type: gradeResult.success ? 'success' : 'error'
             });
 
-            if (result.success) {
+            if (gradeResult.success) {
                 setTimeout(() => setMessage(null), 3000);
             }
         });
@@ -79,7 +116,7 @@ export function OfflineGradingGrid({ assignmentId, students, initialSubmissions 
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-xl font-black text-slate-800 dark:text-slate-200">Penilaian Langsung</h2>
-                    <p className="text-sm font-bold text-slate-400 dark:text-slate-500">Isi nilai dan catatan secara langsung, lalu klik Simpan Semua</p>
+                    <p className="text-sm font-bold text-slate-400 dark:text-slate-500">Isi nilai, catatan, dan tanda evaluasi, lalu klik Simpan Semua</p>
                 </div>
                 <button
                     onClick={handleSaveAll}
@@ -100,9 +137,10 @@ export function OfflineGradingGrid({ assignmentId, students, initialSubmissions 
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                         <tr>
-                            <th className="p-6 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest w-1/3">Siswa</th>
+                            <th className="p-6 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest w-1/4">Siswa</th>
                             <th className="p-6 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest w-24 text-center">Nilai (0-100)</th>
                             <th className="p-6 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Catatan (Opsional)</th>
+                            <th className="p-6 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest min-w-[220px]">Evaluasi Privat</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -128,9 +166,29 @@ export function OfflineGradingGrid({ assignmentId, students, initialSubmissions 
                                         type="text"
                                         value={grades[student.id]?.feedback ?? ''}
                                         onChange={(e) => handleFeedbackChange(student.id, e.target.value)}
-                                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm  text-slate-800 dark:text-slate-200"
+                                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-800 dark:text-slate-200"
                                         placeholder="Catatan untuk siswa..."
                                     />
+                                </td>
+                                <td className="p-4 md:p-6">
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {TAGS.map(({ value, label, Icon }) => (
+                                            <button
+                                                key={value}
+                                                type="button"
+                                                onClick={() => toggleTag(student.id, value)}
+                                                className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all ${
+                                                    tags[student.id] === value
+                                                        ? 'bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 border-slate-800 dark:border-slate-100'
+                                                        : 'text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700 hover:border-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+                                                }`}
+                                                title={label}
+                                            >
+                                                <Icon size={10} />
+                                                {label}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </td>
                             </tr>
                         ))}

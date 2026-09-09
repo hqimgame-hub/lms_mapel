@@ -6,6 +6,7 @@ import { AnswerModal } from "@/components/teacher/AnswerModal";
 import { ReturnSubmissionButton } from "@/components/teacher/ReturnSubmissionButton";
 import { CancelReturnButton } from "@/components/teacher/CancelReturnButton";
 import { OfflineGradingGrid } from "@/components/teacher/OfflineGradingGrid";
+import { SubmissionTagModal } from "@/components/teacher/SubmissionTagModal";
 import Link from "next/link";
 import { format } from "date-fns";
 import { RotateCcw } from "lucide-react";
@@ -41,7 +42,8 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
     // Fetch all submissions for this assignment
     const submissions = await prisma.submission.findMany({
         where: { assignmentId },
-        include: { student: true }
+        include: { student: true },
+        // teacherTag and teacherNote are scalar fields included by default
     });
 
     // Create a map for easy access
@@ -96,9 +98,16 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                             return (
                                 <div key={student.id} className="p-5 flex flex-col gap-4">
                                     <div className="flex justify-between items-start">
-                                        <div className="space-y-0.5">
+                                        <div className="space-y-1">
                                             <div className="font-black text-slate-800 dark:text-slate-200">{student.name}</div>
                                             <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{student.username}</div>
+                                            <SubmissionTagModal
+                                                assignmentId={assignmentId}
+                                                studentId={student.id}
+                                                studentName={student.name}
+                                                initialTag={(sub as any)?.teacherTag ?? null}
+                                                initialNote={(sub as any)?.teacherNote ?? null}
+                                            />
                                         </div>
                                         <div className="flex-shrink-0 mt-1">
                                             {isGraded ? (
@@ -141,10 +150,17 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                         </div>
 
                                         <div className="space-y-1 pt-2">
-                                            <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Penilaian & Aksi</p>
+                                            <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Penilaian &amp; Aksi</p>
                                             {isSubmitted ? (
                                                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                                                    <GradeForm submissionId={sub!.id} assignmentId={assignmentId} initialGrade={sub!.grade} initialFeedback={sub!.feedback} />
+                                                    <GradeForm
+                                                        submissionId={sub!.id}
+                                                        assignmentId={assignmentId}
+                                                        initialGrade={sub!.grade}
+                                                        initialFeedback={sub!.feedback}
+                                                        initialTag={(sub as any)?.teacherTag ?? null}
+                                                        initialNote={(sub as any)?.teacherNote ?? null}
+                                                    />
                                                     <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} text="Kembalikan" />
                                                 </div>
                                             ) : isReturned ? (
@@ -190,6 +206,15 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                             <td className="p-6">
                                                 <div className="font-black text-slate-800 dark:text-slate-200">{student.name}</div>
                                                 <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{student.username}</div>
+                                                <div className="mt-1.5">
+                                                    <SubmissionTagModal
+                                                        assignmentId={assignmentId}
+                                                        studentId={student.id}
+                                                        studentName={student.name}
+                                                        initialTag={(sub as any)?.teacherTag ?? null}
+                                                        initialNote={(sub as any)?.teacherNote ?? null}
+                                                    />
+                                                </div>
                                             </td>
                                             <td className="p-6 text-center">
                                                 {isGraded ? (
@@ -226,8 +251,15 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                             </td>
                                             <td className="p-6">
                                                 {isSubmitted ? (
-                                                    <div className="flex items-center gap-3">
-                                                        <GradeForm submissionId={sub!.id} assignmentId={assignmentId} initialGrade={sub!.grade} initialFeedback={sub!.feedback} />
+                                                    <div className="flex items-start gap-3">
+                                                        <GradeForm
+                                                            submissionId={sub!.id}
+                                                            assignmentId={assignmentId}
+                                                            initialGrade={sub!.grade}
+                                                            initialFeedback={sub!.feedback}
+                                                            initialTag={(sub as any)?.teacherTag ?? null}
+                                                            initialNote={(sub as any)?.teacherNote ?? null}
+                                                        />
                                                         <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} />
                                                     </div>
                                                 ) : isReturned ? (

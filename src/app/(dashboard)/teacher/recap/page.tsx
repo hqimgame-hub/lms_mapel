@@ -24,7 +24,7 @@ export default async function TeacherRecapPage() {
                 orderBy: { dueDate: 'asc' },
                 include: {
                     submissions: {
-                        select: { studentId: true, grade: true }
+                        select: { studentId: true, grade: true, teacherTag: true, teacherNote: true }
                     }
                 }
             }

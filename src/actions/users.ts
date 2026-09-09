@@ -292,118 +292,21 @@ export async function getTeacherStudents(teacherId: string) {
         }
     });
 
-    // Fetch notes & tags created by this teacher
-    let noteMap = new Map<string, { tag: string | null; note: string | null }>();
-    try {
-        const notes = await prisma.studentNote.findMany({
-            where: { teacherId },
-            select: {
-                studentId: true,
-                tag: true,
-                note: true,
-            }
-        });
-        noteMap = new Map(notes.map(n => [n.studentId, { tag: n.tag, note: n.note }]));
-    } catch (err) {
-        console.warn("Could not fetch student notes:", err);
-    }
-
     // Deduplicate kelas (guru bisa mengajar >1 mapel di kelas yang sama)
-    const classMap = new Map<string, { 
-        id: string; 
-        name: string; 
-        students: { 
-            id: string; 
-            name: string; 
-            username: string; 
-            email: string | null;
-            tag?: string | null;
-            note?: string | null;
-        }[] 
-    }>();
-
+    const classMap = new Map<string, { id: string; name: string; students: { id: string; name: string; username: string; email: string | null }[] }>();
     for (const course of courses) {
         const cls = course.class;
         if (!classMap.has(cls.id)) {
             classMap.set(cls.id, {
                 id: cls.id,
                 name: cls.name,
-                students: cls.students.map(e => ({
-                    ...e.user,
-                    tag: noteMap.get(e.user.id)?.tag ?? null,
-                    note: noteMap.get(e.user.id)?.note ?? null,
-                }))
+                students: cls.students.map(e => e.user)
             });
         }
     }
     return Array.from(classMap.values());
 }
 
-/**
- * Guru menandai siswa (tag) dan memberikan catatan privat
- */
-export async function saveStudentNote(
-    studentId: string,
-    tag: string | null,
-    note: string | null
-): Promise<ActionState> {
-    const session = await auth();
-    if (!session?.user?.id || session.user.role !== 'TEACHER') {
-        return { success: false, message: "Akses ditolak. Hanya guru yang dapat menyimpan catatan." };
-    }
-    const teacherId = session.user.id;
-
-    const enrollment = await prisma.enrollment.findFirst({
-        where: {
-            userId: studentId,
-            class: {
-                courses: { some: { teacherId } }
-            }
-        }
-    });
-
-    if (!enrollment) {
-        return { success: false, message: "Siswa tidak ditemukan di kelas Anda." };
-    }
-
-    try {
-        const cleanTag = tag?.trim() || null;
-        const cleanNote = note?.trim() || null;
-
-        if (!cleanTag && !cleanNote) {
-            await prisma.studentNote.deleteMany({
-                where: { teacherId, studentId }
-            });
-            revalidatePath('/teacher/students');
-            return { success: true, message: "Tanda dan catatan siswa berhasil dihapus." };
-        }
-
-        await prisma.studentNote.upsert({
-            where: {
-                teacherId_studentId: {
-                    teacherId,
-                    studentId
-                }
-            },
-            create: {
-                teacherId,
-                studentId,
-                tag: cleanTag,
-                note: cleanNote
-            },
-            update: {
-                tag: cleanTag,
-                note: cleanNote
-            }
-        });
-
-        revalidatePath('/teacher/students');
-        return { success: true, message: "Tanda dan catatan siswa berhasil disimpan." };
-    } catch (e: any) {
-        console.error("Save Student Note Error:", e);
-        return { success: false, message: "Gagal menyimpan catatan siswa: " + (e.message || "Terjadi kesalahan") };
-    }
-}
 
 
 const TeacherUpdateStudentSchema = z.object({

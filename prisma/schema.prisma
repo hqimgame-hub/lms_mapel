@@ -22,8 +22,6 @@ model User {
   submissions        Submission[] // Student
   teachingCourses    Course[]     @relation("TeacherCourses") // Teacher
   enrollments        Enrollment[] // Student
-  teacherNotes       StudentNote[] @relation("TeacherNotes") // Teacher
-  receivedNotes      StudentNote[] @relation("StudentNotes") // Student
 
   @@index([role])
   @@index([name])
@@ -148,6 +146,8 @@ model Submission {
   tempFileName String?          // Filename for the draft
   grade        Int?
   feedback     String?
+  teacherTag   String?          // HIGH_POTENTIAL, NEED_ATTENTION, CREATIVE, PASSIVE
+  teacherNote  String?          @db.Text
   
   studentId    String
   student      User             @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -184,21 +184,4 @@ model TutorialItem {
   createdAt DateTime      @default(now())
 
   @@index([topicId])
-}
-
-model StudentNote {
-  id        String   @id @default(cuid())
-  teacherId String
-  teacher   User     @relation("TeacherNotes", fields: [teacherId], references: [id], onDelete: Cascade)
-  studentId String
-  student   User     @relation("StudentNotes", fields: [studentId], references: [id], onDelete: Cascade)
-
-  tag       String?  // HIGH_POTENTIAL, NEED_ATTENTION, CREATIVE, PASSIVE
-  note      String?  @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([teacherId, studentId])
-  @@index([teacherId])
-  @@index([studentId])
 }
