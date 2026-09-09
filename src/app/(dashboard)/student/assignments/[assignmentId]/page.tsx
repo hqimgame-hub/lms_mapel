@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { SubmissionForm } from "@/components/student/SubmissionForm";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -8,6 +8,10 @@ import Link from "next/link";
 export default async function StudentAssignmentPage({ params }: { params: Promise<{ assignmentId: string }> }) {
     const { assignmentId } = await params;
     const session = await auth();
+
+    if (!session?.user?.id || session.user.role !== 'STUDENT') {
+        redirect('/login');
+    }
 
     const assignment = await prisma.assignment.findUnique({
         where: { id: assignmentId },

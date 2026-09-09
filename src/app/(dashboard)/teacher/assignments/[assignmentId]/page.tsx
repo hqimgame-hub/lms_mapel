@@ -49,7 +49,10 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
     // Create a map for easy access
     const submissionMap = new Map(submissions.map(s => [s.studentId, s]));
 
-    const students = assignment.course.class.students.map(e => e.user).sort((a, b) => a.name.localeCompare(b.name));
+    const students = (assignment.course.class.students || [])
+        .map(e => e.user)
+        .filter(Boolean)
+        .sort((a, b) => (a?.name || '').localeCompare(b?.name || ''));
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
