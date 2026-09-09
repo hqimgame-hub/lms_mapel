@@ -20,9 +20,10 @@ export default async function TeacherCoursePage({
     params: Promise<{ courseId: string }>,
     searchParams: Promise<{ tab?: string }>
 }) {
-    const { courseId } = await params;
-    const { tab = 'assignments' } = await searchParams;
-    const session = await auth();
+    try {
+        const { courseId } = await params;
+        const { tab = 'assignments' } = await searchParams;
+        const session = await auth();
 
     // Security check + Fetch everything in one go
     const course = await prisma.course.findUnique({
@@ -262,4 +263,23 @@ export default async function TeacherCoursePage({
             </div>
         </div>
     );
+    } catch (error: any) {
+        console.error("CRITICAL ERROR IN TeacherCoursePage:", error);
+        return (
+            <div className="p-8 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-3xl max-w-4xl mx-auto space-y-4 my-8">
+                <div className="flex items-center gap-3 text-red-600 dark:text-red-400 font-bold">
+                    <span className="text-2xl">⚠️</span>
+                    <h2 className="text-xl font-black">Gagal Memuat Halaman Kursus/Tugas</h2>
+                </div>
+                <p className="text-sm text-slate-700 dark:text-slate-300 font-semibold">
+                    Detail Error: <span className="font-mono text-red-600 dark:text-red-400">{error?.message || String(error)}</span>
+                </p>
+                {error?.stack && (
+                    <pre className="p-4 bg-white dark:bg-slate-900 border border-red-100 dark:border-red-950 rounded-xl text-xs font-mono text-red-500 overflow-x-auto whitespace-pre-wrap">
+                        {error.stack}
+                    </pre>
+                )}
+            </div>
+        );
+    }
 }
