@@ -10,42 +10,56 @@ import { SubmissionTagModal } from "@/components/teacher/SubmissionTagModal";
 import Link from "next/link";
 import { format } from "date-fns";
 import { RotateCcw } from "lucide-react";
+import { ensureDbColumns } from "@/lib/auto-migrate";
 
 export default async function AssignmentGradingPage({ params }: { params: Promise<{ assignmentId: string }> }) {
     try {
         const { assignmentId } = await params;
         const session = await auth();
 
-    const assignment = await prisma.assignment.findUnique({
-        where: { id: assignmentId },
-        include: {
-            course: {
-                include: {
-                    class: {
-                        include: {
-                            students: {
-                                include: {
-                                    user: true
+        // Self-heal: ensure all required columns exist in the database
+        await ensureDbColumns();
+
+        const assignment = await prisma.assignment.findUnique({
+            where: { id: assignmentId },
+            include: {
+                course: {
+                    include: {
+                        class: {
+                            include: {
+                                students: {
+                                    include: {
+                                        user: true
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+        });
+
+        if (!assignment) return notFound();
+        if (assignment.course.teacherId !== session?.user?.id) {
+            return <div className="p-8 text-red-500">Unauthorized Access</div>;
         }
-    });
 
-    if (!assignment) return notFound();
-    if (assignment.course.teacherId !== session?.user?.id) {
-        return <div className="p-8 text-red-500">Unauthorized Access</div>;
-    }
-
-    // Fetch all submissions for this assignment
-    const submissions = await prisma.submission.findMany({
-        where: { assignmentId },
-        include: { student: true },
-        // teacherTag and teacherNote are scalar fields included by default
-    });
+        // Fetch all submissions for this assignment (with auto-retry if column missing)
+        let submissions;
+        try {
+            submissions = await prisma.submission.findMany({
+                where: { assignmentId },
+                include: { student: true },
+            });
+        } catch (e: any) {
+            console.warn("Submissions query failed, executing fallback ALTER TABLE...", e);
+            await prisma.$executeRawUnsafe(`ALTER TABLE "Submission" ADD COLUMN IF NOT EXISTS "teacherTag" TEXT;`);
+            await prisma.$executeRawUnsafe(`ALTER TABLE "Submission" ADD COLUMN IF NOT EXISTS "teacherNote" TEXT;`);
+            submissions = await prisma.submission.findMany({
+                where: { assignmentId },
+                include: { student: true },
+            });
+        }
 
     // Create a map for easy access
     const submissionMap = new Map(submissions.map(s => [s.studentId, s]));

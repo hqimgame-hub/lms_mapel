@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { GradeRecap } from "@/components/teacher/GradeRecap";
+import { ensureDbColumns } from "@/lib/auto-migrate";
 
 export default async function TeacherRecapPage() {
     const session = await auth();
@@ -8,28 +9,60 @@ export default async function TeacherRecapPage() {
 
     if (!teacherId) return null;
 
-    const courses = await prisma.course.findMany({
-        where: { teacherId },
-        include: {
-            subject: true,
-            class: {
-                include: {
-                    students: {
-                        include: { user: true },
-                        orderBy: { user: { name: 'asc' } }
+    // Self-heal: ensure all required columns exist in the database
+    await ensureDbColumns();
+
+    let courses;
+    try {
+        courses = await prisma.course.findMany({
+            where: { teacherId },
+            include: {
+                subject: true,
+                class: {
+                    include: {
+                        students: {
+                            include: { user: true },
+                            orderBy: { user: { name: 'asc' } }
+                        }
                     }
-                }
-            },
-            assignments: {
-                orderBy: { dueDate: 'asc' },
-                include: {
-                    submissions: {
-                        select: { studentId: true, grade: true, teacherTag: true, teacherNote: true }
+                },
+                assignments: {
+                    orderBy: { dueDate: 'asc' },
+                    include: {
+                        submissions: {
+                            select: { studentId: true, grade: true, teacherTag: true, teacherNote: true }
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    } catch (e: any) {
+        console.warn("Recap query failed, executing fallback ALTER TABLE...", e);
+        await prisma.$executeRawUnsafe(`ALTER TABLE "Submission" ADD COLUMN IF NOT EXISTS "teacherTag" TEXT;`);
+        await prisma.$executeRawUnsafe(`ALTER TABLE "Submission" ADD COLUMN IF NOT EXISTS "teacherNote" TEXT;`);
+        courses = await prisma.course.findMany({
+            where: { teacherId },
+            include: {
+                subject: true,
+                class: {
+                    include: {
+                        students: {
+                            include: { user: true },
+                            orderBy: { user: { name: 'asc' } }
+                        }
+                    }
+                },
+                assignments: {
+                    orderBy: { dueDate: 'asc' },
+                    include: {
+                        submissions: {
+                            select: { studentId: true, grade: true, teacherTag: true, teacherNote: true }
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     if (courses.length === 0) {
         return (
