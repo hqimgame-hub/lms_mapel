@@ -48,7 +48,7 @@ export function GradeRecap({ courses }: GradeRecapProps) {
     const downloadCSV = () => {
         if (!selectedCourse) return;
 
-        const headers = ['Nama Siswa', ...selectedCourse.assignments.map(a => a.title), 'Rata-rata', 'Evaluasi Guru'];
+        const headers = ['Nama Siswa', ...selectedCourse.assignments.map(a => a.title), 'Rata-rata', 'Penanda & Evaluasi Guru'];
         const rows = selectedCourse.class.students.map(enrollment => {
             const studentId = enrollment.user.id;
             const grades = selectedCourse.assignments.map(a => {
@@ -60,16 +60,20 @@ export function GradeRecap({ courses }: GradeRecapProps) {
                 ? (validGrades.reduce((a, b) => a + b, 0) / validGrades.length).toFixed(1)
                 : '0';
 
-            // Collect all unique tags and notes for this student
-            const tags = selectedCourse.assignments
+            // Collect all tags and notes for this student
+            const tagSummaries = selectedCourse.assignments
                 .map(a => {
                     const sub = a.submissions.find(s => s.studentId === studentId);
-                    return sub?.teacherTag ? `${a.title}: ${TAG_MAP[sub.teacherTag]?.label ?? sub.teacherTag}` : null;
+                    if (!sub?.teacherTag) return null;
+                    const tagLabel = TAG_MAP[sub.teacherTag]?.label ?? sub.teacherTag;
+                    return sub.teacherNote
+                        ? `[${tagLabel}] ${a.title}: "${sub.teacherNote}"`
+                        : `[${tagLabel}] ${a.title}`;
                 })
                 .filter(Boolean)
                 .join(' | ');
 
-            return [`"${enrollment.user.name}"`, ...grades, average, `"${tags}"`];
+            return [`"${enrollment.user.name}"`, ...grades, average, `"${tagSummaries}"`];
         });
 
         const csvContent = [
@@ -122,14 +126,16 @@ export function GradeRecap({ courses }: GradeRecapProps) {
                     <table className="w-full text-left text-sm">
                         <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[10px] uppercase font-black tracking-widest text-slate-400">
                             <tr>
-                                <th className="px-8 py-6 min-w-[200px] sticky left-0 bg-slate-50 dark:bg-slate-800 z-10 border-r border-slate-100 dark:border-slate-700 transition-colors">Nama Siswa</th>
+                                <th className="px-8 py-6 min-w-[240px] sticky left-0 bg-slate-50 dark:bg-slate-800 z-10 border-r border-slate-100 dark:border-slate-700 transition-colors">
+                                    Nama Siswa &amp; Penanda
+                                </th>
                                 {selectedCourse.assignments.map(a => (
-                                    <th key={a.id} className="px-6 py-6 min-w-[160px] whitespace-nowrap">
+                                    <th key={a.id} className="px-6 py-6 min-w-[130px] text-center whitespace-nowrap">
                                         {a.title}
                                     </th>
                                 ))}
                                 <th className="px-8 py-6 text-right min-w-[100px]">Rata-rata</th>
-                                <th className="px-6 py-6 min-w-[180px]">Evaluasi Guru</th>
+                                <th className="px-6 py-6 min-w-[200px]">Catatan Evaluasi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
@@ -143,71 +149,101 @@ export function GradeRecap({ courses }: GradeRecapProps) {
                                     ? validGrades.reduce((a, b) => a + b, 0) / validGrades.length
                                     : 0;
 
-                                // Collect all unique tags for this student across all assignments
-                                const studentTagEntries = selectedCourse.assignments
+                                // Collect all tags given to this student across all assignments in this course
+                                const studentTags = selectedCourse.assignments
                                     .map(a => {
                                         const sub = a.submissions.find(s => s.studentId === enrollment.user.id);
                                         const tagDef = sub?.teacherTag ? TAG_MAP[sub.teacherTag] : null;
-                                        return tagDef ? { assignmentTitle: a.title, tagDef, note: sub?.teacherNote } : null;
+                                        return tagDef ? {
+                                            tagKey: sub!.teacherTag!,
+                                            tagDef,
+                                            assignmentTitle: a.title,
+                                            note: sub?.teacherNote
+                                        } : null;
                                     })
-                                    .filter(Boolean) as { assignmentTitle: string; tagDef: { label: string; Icon: any }; note?: string | null }[];
+                                    .filter(Boolean) as { tagKey: string; tagDef: { label: string; Icon: any }; assignmentTitle: string; note?: string | null }[];
+
+                                // Deduplicate tag definitions to show unique badges per student
+                                const uniqueTagKeys = Array.from(new Set(studentTags.map(t => t.tagKey)));
+                                const uniqueTagDefs = uniqueTagKeys.map(k => TAG_MAP[k]).filter(Boolean);
 
                                 return (
                                     <tr key={enrollment.user.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors font-medium text-slate-600 dark:text-slate-400">
-                                        <td className="px-8 py-4 sticky left-0 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border-r border-slate-50 dark:border-slate-800 font-bold text-slate-800 dark:text-slate-200">
-                                            {enrollment.user.name}
-                                        </td>
-                                        {selectedCourse.assignments.map((a, idx) => {
-                                            const sub = a.submissions.find(s => s.studentId === enrollment.user.id);
-                                            const grade = grades[idx];
-                                            const tagDef = sub?.teacherTag ? TAG_MAP[sub.teacherTag] : null;
+                                        {/* Column 1: Nama Siswa & Penanda (Per-Nama) */}
+                                        <td className="px-8 py-4 sticky left-0 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border-r border-slate-50 dark:border-slate-800">
+                                            <div className="flex flex-col gap-1.5">
+                                                <div className="font-bold text-slate-800 dark:text-slate-200">
+                                                    {enrollment.user.name}
+                                                </div>
 
-                                            return (
-                                                <td key={a.id} className="px-6 py-4">
-                                                    <div className="flex flex-col gap-1.5">
-                                                        {grade !== undefined && grade !== null ? (
-                                                            <span className={`px-2.5 py-1 rounded-lg font-bold text-xs w-fit ${grade >= 90 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
-                                                                grade >= 75 ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' :
-                                                                    'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400'
-                                                                }`}>
-                                                                {grade}
-                                                            </span>
-                                                        ) : (
-                                                            <span className="text-slate-300 dark:text-slate-700 font-bold">-</span>
-                                                        )}
-                                                        {tagDef && (() => {
-                                                            const CellTagIcon = tagDef.Icon;
+                                                {/* Penanda Per-Nama */}
+                                                {uniqueTagDefs.length > 0 ? (
+                                                    <div className="flex flex-wrap gap-1.5 mt-0.5">
+                                                        {uniqueTagDefs.map((tagDef, i) => {
+                                                            const TagIcon = tagDef.Icon;
                                                             return (
                                                                 <span
-                                                                    className="inline-flex items-center gap-1 text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-md w-fit"
-                                                                    title={sub?.teacherNote ? `${tagDef.label}: "${sub.teacherNote}"` : tagDef.label}
+                                                                    key={i}
+                                                                    className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                                                                    title={tagDef.label}
                                                                 >
-                                                                    <CellTagIcon size={9} />
-                                                                    {tagDef.label}
+                                                                    <TagIcon size={11} className="text-primary" />
+                                                                    <span>{tagDef.label}</span>
                                                                 </span>
                                                             );
-                                                        })()}
+                                                        })}
                                                     </div>
+                                                ) : (
+                                                    <span className="text-[10px] font-medium text-slate-300 dark:text-slate-600">
+                                                        Belum ditandai
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
+
+                                        {/* Assignment Columns: Nilai Murni Tanpa Penanda */}
+                                        {selectedCourse.assignments.map((a, idx) => {
+                                            const grade = grades[idx];
+
+                                            return (
+                                                <td key={a.id} className="px-6 py-4 text-center">
+                                                    {grade !== undefined && grade !== null ? (
+                                                        <span className={`px-2.5 py-1 rounded-lg font-bold text-xs inline-block ${
+                                                            grade >= 90 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
+                                                            grade >= 75 ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' :
+                                                            'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400'
+                                                        }`}>
+                                                            {grade}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-slate-300 dark:text-slate-700 font-bold">-</span>
+                                                    )}
                                                 </td>
                                             );
                                         })}
+
+                                        {/* Rata-rata */}
                                         <td className="px-8 py-4 text-right">
                                             <span className="font-black text-slate-800 dark:text-slate-100 text-sm">{average.toFixed(1)}</span>
                                         </td>
+
+                                        {/* Catatan Evaluasi Guru */}
                                         <td className="px-6 py-4">
-                                            {studentTagEntries.length > 0 ? (
+                                            {studentTags.length > 0 ? (
                                                 <div className="flex flex-col gap-2">
-                                                    {studentTagEntries.map((entry, i) => {
+                                                    {studentTags.map((entry, i) => {
                                                         const EntryIcon = entry.tagDef.Icon;
                                                         return (
                                                             <div key={i} className="flex flex-col gap-0.5 p-2 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-800/50" title={entry.note ?? ''}>
                                                                 <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">
                                                                     <EntryIcon size={10} />
                                                                     <span>{entry.tagDef.label}</span>
+                                                                    <span className="text-slate-400 font-normal">({entry.assignmentTitle})</span>
                                                                 </div>
-                                                                <div className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold truncate max-w-[170px]">{entry.assignmentTitle}</div>
                                                                 {entry.note && (
-                                                                    <div className="text-[10px] italic text-slate-500 dark:text-slate-400 line-clamp-2 max-w-[170px]">"{entry.note}"</div>
+                                                                    <div className="text-[10px] italic text-slate-500 dark:text-slate-400 line-clamp-2 max-w-[190px]">
+                                                                        "{entry.note}"
+                                                                    </div>
                                                                 )}
                                                             </div>
                                                         );
