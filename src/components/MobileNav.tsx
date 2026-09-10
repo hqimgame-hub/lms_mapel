@@ -142,6 +142,12 @@ export function MobileNav({ role, userName, userEmail }: MobileNavProps) {
                         <LogOut size={16} />
                         Keluar Aplikasi
                     </button>
+
+                    <div className="mt-3 pt-2 text-center">
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                            Dikembangkan oleh <span className="font-semibold text-slate-600 dark:text-slate-400">MIDStudio</span> sejak tahun 2025
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

@@ -7,7 +7,7 @@ export default async function RegisterPage() {
     const classes = await getClasses();
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-500">
+        <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-500">
             <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden backdrop-blur-xl">
                 {/* Header Section */}
                 <div className="bg-gradient-to-br from-primary via-blue-600 to-blue-700 dark:from-primary/90 dark:via-blue-700/90 dark:to-blue-800/90 p-10 text-white text-center relative overflow-hidden">
@@ -37,6 +37,11 @@ export default async function RegisterPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Developer Attribution */}
+            <p className="mt-6 text-xs text-slate-400 dark:text-slate-500 font-medium text-center">
+                Dikembangkan oleh <span className="font-semibold text-slate-600 dark:text-slate-300">MIDStudio</span> sejak tahun 2025
+            </p>
         </div>
     );
 }

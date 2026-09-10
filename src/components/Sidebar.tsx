@@ -91,6 +91,14 @@ export async function Sidebar() {
                             <span>Keluar</span>
                         </button>
                     </form>
+
+                    <div className="mt-3 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 text-center">
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium leading-relaxed">
+                            Dikembangkan oleh <span className="font-semibold text-slate-600 dark:text-slate-400">MIDStudio</span>
+                            <br />
+                            <span className="text-[9px] text-slate-400/80 dark:text-slate-500/80">sejak tahun 2025</span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
