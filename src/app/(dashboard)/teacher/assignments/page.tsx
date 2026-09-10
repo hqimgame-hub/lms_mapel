@@ -9,6 +9,8 @@ import { DeleteButton } from "@/components/teacher/DeleteButton";
 import { deleteAssignment } from "@/actions/assignments";
 import { AssignmentsListClient } from "@/components/teacher/AssignmentsListClient";
 
+export const dynamic = 'force-dynamic';
+
 export default async function TeacherAssignmentsPage() {
     try {
         const session = await auth();
@@ -64,6 +66,9 @@ export default async function TeacherAssignmentsPage() {
             </div>
         );
     } catch (error: any) {
+        if (error?.digest === 'DYNAMIC_SERVER_USAGE' || error?.digest?.startsWith('NEXT_') || error?.message?.includes('NEXT_')) {
+            throw error;
+        }
         console.error("CRITICAL ERROR IN TeacherAssignmentsPage:", error);
         return (
             <div className="p-8 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-3xl max-w-4xl mx-auto space-y-4 my-8">

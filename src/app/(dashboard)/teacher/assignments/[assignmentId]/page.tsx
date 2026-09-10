@@ -12,6 +12,8 @@ import { format } from "date-fns";
 import { RotateCcw } from "lucide-react";
 import { ensureDbColumns } from "@/lib/auto-migrate";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AssignmentGradingPage({ params }: { params: Promise<{ assignmentId: string }> }) {
     try {
         const { assignmentId } = await params;
@@ -176,8 +178,6 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                                         assignmentId={assignmentId}
                                                         initialGrade={sub!.grade}
                                                         initialFeedback={sub!.feedback}
-                                                        initialTag={(sub as any)?.teacherTag ?? null}
-                                                        initialNote={(sub as any)?.teacherNote ?? null}
                                                     />
                                                     <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} text="Kembalikan" />
                                                 </div>
@@ -275,8 +275,6 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                                             assignmentId={assignmentId}
                                                             initialGrade={sub!.grade}
                                                             initialFeedback={sub!.feedback}
-                                                            initialTag={(sub as any)?.teacherTag ?? null}
-                                                            initialNote={(sub as any)?.teacherNote ?? null}
                                                         />
                                                         <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} />
                                                     </div>
@@ -303,6 +301,9 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
         </div>
     );
     } catch (error: any) {
+        if (error?.digest === 'DYNAMIC_SERVER_USAGE' || error?.digest?.startsWith('NEXT_') || error?.message?.includes('NEXT_')) {
+            throw error;
+        }
         console.error("CRITICAL ERROR IN AssignmentGradingPage:", error);
         return (
             <div className="p-8 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-3xl max-w-4xl mx-auto space-y-4 my-8">

@@ -164,48 +164,54 @@ export function GradeRecap({ courses }: GradeRecapProps) {
 
                                             return (
                                                 <td key={a.id} className="px-6 py-4">
-                                                    <div className="flex flex-col gap-1">
+                                                    <div className="flex flex-col gap-1.5">
                                                         {grade !== undefined && grade !== null ? (
-                                                            <span className={`px-2 py-1 rounded-lg font-bold text-xs w-fit ${grade >= 90 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
+                                                            <span className={`px-2.5 py-1 rounded-lg font-bold text-xs w-fit ${grade >= 90 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
                                                                 grade >= 75 ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' :
                                                                     'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400'
                                                                 }`}>
                                                                 {grade}
                                                             </span>
                                                         ) : (
-                                                            <span className="text-slate-300 dark:text-slate-700">-</span>
+                                                            <span className="text-slate-300 dark:text-slate-700 font-bold">-</span>
                                                         )}
-                                                        {tagDef && (
-                                                            <span
-                                                                className="flex items-center gap-1 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest"
-                                                                title={sub?.teacherNote ?? tagDef.label}
-                                                            >
-                                                                <tagDef.Icon size={9} />
-                                                                {tagDef.label}
-                                                            </span>
-                                                        )}
+                                                        {tagDef && (() => {
+                                                            const CellTagIcon = tagDef.Icon;
+                                                            return (
+                                                                <span
+                                                                    className="inline-flex items-center gap-1 text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-md w-fit"
+                                                                    title={sub?.teacherNote ? `${tagDef.label}: "${sub.teacherNote}"` : tagDef.label}
+                                                                >
+                                                                    <CellTagIcon size={9} />
+                                                                    {tagDef.label}
+                                                                </span>
+                                                            );
+                                                        })()}
                                                     </div>
                                                 </td>
                                             );
                                         })}
                                         <td className="px-8 py-4 text-right">
-                                            <span className="font-black text-slate-800 dark:text-slate-100">{average.toFixed(1)}</span>
+                                            <span className="font-black text-slate-800 dark:text-slate-100 text-sm">{average.toFixed(1)}</span>
                                         </td>
                                         <td className="px-6 py-4">
                                             {studentTagEntries.length > 0 ? (
-                                                <div className="flex flex-col gap-1.5">
-                                                    {studentTagEntries.map((entry, i) => (
-                                                        <div key={i} className="flex flex-col gap-0.5" title={entry.note ?? ''}>
-                                                            <div className="flex items-center gap-1 text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-                                                                <entry.tagDef.Icon size={9} />
-                                                                {entry.tagDef.label}
+                                                <div className="flex flex-col gap-2">
+                                                    {studentTagEntries.map((entry, i) => {
+                                                        const EntryIcon = entry.tagDef.Icon;
+                                                        return (
+                                                            <div key={i} className="flex flex-col gap-0.5 p-2 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-800/50" title={entry.note ?? ''}>
+                                                                <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">
+                                                                    <EntryIcon size={10} />
+                                                                    <span>{entry.tagDef.label}</span>
+                                                                </div>
+                                                                <div className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold truncate max-w-[170px]">{entry.assignmentTitle}</div>
+                                                                {entry.note && (
+                                                                    <div className="text-[10px] italic text-slate-500 dark:text-slate-400 line-clamp-2 max-w-[170px]">"{entry.note}"</div>
+                                                                )}
                                                             </div>
-                                                            <div className="text-[10px] text-slate-400 dark:text-slate-500 truncate max-w-[160px]">{entry.assignmentTitle}</div>
-                                                            {entry.note && (
-                                                                <div className="text-[10px] italic text-slate-400 dark:text-slate-600 truncate max-w-[160px]">"{entry.note}"</div>
-                                                            )}
-                                                        </div>
-                                                    ))}
+                                                        );
+                                                    })}
                                                 </div>
                                             ) : (
                                                 <span className="text-slate-200 dark:text-slate-800">—</span>

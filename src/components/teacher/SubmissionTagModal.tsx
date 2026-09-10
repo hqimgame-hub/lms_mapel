@@ -60,10 +60,15 @@ export function SubmissionTagModal({ assignmentId, studentId, studentName, initi
                 title="Tandai siswa & tambah catatan privat"
             >
                 {currentTagDef ? (
-                    <>
-                        <currentTagDef.Icon size={10} />
-                        <span>{currentTagDef.label}</span>
-                    </>
+                    (() => {
+                        const TagIcon = currentTagDef.Icon;
+                        return (
+                            <>
+                                <TagIcon size={10} />
+                                <span>{currentTagDef.label}</span>
+                            </>
+                        );
+                    })()
                 ) : (
                     <>
                         <Tag size={10} />
