@@ -48,7 +48,14 @@ export function GradeRecap({ courses }: GradeRecapProps) {
     const downloadCSV = () => {
         if (!selectedCourse) return;
 
-        const headers = ['Nama Siswa', ...selectedCourse.assignments.map(a => a.title), 'Rata-rata', 'Penanda & Evaluasi Guru'];
+        const headers = [
+            'Nama Siswa',
+            'Penanda Siswa',
+            ...selectedCourse.assignments.map(a => `"${a.title.replace(/"/g, '""')}"`),
+            'Rata-rata',
+            'Catatan Evaluasi'
+        ];
+
         const rows = selectedCourse.class.students.map(enrollment => {
             const studentId = enrollment.user.id;
             const grades = selectedCourse.assignments.map(a => {
@@ -60,20 +67,31 @@ export function GradeRecap({ courses }: GradeRecapProps) {
                 ? (validGrades.reduce((a, b) => a + b, 0) / validGrades.length).toFixed(1)
                 : '0';
 
-            // Collect all tags and notes for this student
-            const tagSummaries = selectedCourse.assignments
+            // Distinct tag labels for this student
+            const studentTags = selectedCourse.assignments
+                .map(a => a.submissions.find(s => s.studentId === studentId)?.teacherTag)
+                .filter(Boolean) as string[];
+            const uniqueTagLabels = Array.from(new Set(studentTags))
+                .map(tag => TAG_MAP[tag]?.label ?? tag)
+                .join(', ');
+
+            // Detailed notes per assignment
+            const detailedNotes = selectedCourse.assignments
                 .map(a => {
                     const sub = a.submissions.find(s => s.studentId === studentId);
-                    if (!sub?.teacherTag) return null;
-                    const tagLabel = TAG_MAP[sub.teacherTag]?.label ?? sub.teacherTag;
-                    return sub.teacherNote
-                        ? `[${tagLabel}] ${a.title}: "${sub.teacherNote}"`
-                        : `[${tagLabel}] ${a.title}`;
+                    if (!sub?.teacherNote) return null;
+                    return `${a.title}: ${sub.teacherNote}`;
                 })
                 .filter(Boolean)
                 .join(' | ');
 
-            return [`"${enrollment.user.name}"`, ...grades, average, `"${tagSummaries}"`];
+            return [
+                `"${enrollment.user.name.replace(/"/g, '""')}"`,
+                `"${uniqueTagLabels || '-'}"`,
+                ...grades,
+                average,
+                `"${detailedNotes.replace(/"/g, '""') || '-'}"`
+            ];
         });
 
         const csvContent = [
@@ -81,7 +99,8 @@ export function GradeRecap({ courses }: GradeRecapProps) {
             ...rows.map(r => r.join(','))
         ].join('\n');
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        // Include UTF-8 BOM (\uFEFF) so Excel on Windows opens it with correct encoding & special characters
+        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
