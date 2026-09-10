@@ -145,8 +145,11 @@ export function GradeRecap({ courses }: GradeRecapProps) {
                     <table className="w-full text-left text-sm">
                         <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[10px] uppercase font-black tracking-widest text-slate-400">
                             <tr>
-                                <th className="px-8 py-6 min-w-[240px] sticky left-0 bg-slate-50 dark:bg-slate-800 z-10 border-r border-slate-100 dark:border-slate-700 transition-colors">
-                                    Nama Siswa &amp; Penanda
+                                <th className="px-6 py-6 min-w-[200px] sticky left-0 bg-slate-50 dark:bg-slate-800 z-10 border-r border-slate-100 dark:border-slate-700 transition-colors">
+                                    Nama Siswa
+                                </th>
+                                <th className="px-6 py-6 min-w-[180px]">
+                                    Penanda Siswa
                                 </th>
                                 {selectedCourse.assignments.map(a => (
                                     <th key={a.id} className="px-6 py-6 min-w-[130px] text-center whitespace-nowrap">
@@ -188,36 +191,34 @@ export function GradeRecap({ courses }: GradeRecapProps) {
 
                                 return (
                                     <tr key={enrollment.user.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors font-medium text-slate-600 dark:text-slate-400">
-                                        {/* Column 1: Nama Siswa & Penanda (Per-Nama) */}
-                                        <td className="px-8 py-4 sticky left-0 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border-r border-slate-50 dark:border-slate-800">
-                                            <div className="flex flex-col gap-1.5">
-                                                <div className="font-bold text-slate-800 dark:text-slate-200">
-                                                    {enrollment.user.name}
-                                                </div>
-
-                                                {/* Penanda Per-Nama */}
-                                                {uniqueTagDefs.length > 0 ? (
-                                                    <div className="flex flex-wrap gap-1.5 mt-0.5">
-                                                        {uniqueTagDefs.map((tagDef, i) => {
-                                                            const TagIcon = tagDef.Icon;
-                                                            return (
-                                                                <span
-                                                                    key={i}
-                                                                    className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
-                                                                    title={tagDef.label}
-                                                                >
-                                                                    <TagIcon size={11} className="text-primary" />
-                                                                    <span>{tagDef.label}</span>
-                                                                </span>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-[10px] font-medium text-slate-300 dark:text-slate-600">
-                                                        Belum ditandai
-                                                    </span>
-                                                )}
+                                        {/* Column 1: Nama Siswa */}
+                                        <td className="px-6 py-4 sticky left-0 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border-r border-slate-50 dark:border-slate-800">
+                                            <div className="font-bold text-slate-800 dark:text-slate-200">
+                                                {enrollment.user.name}
                                             </div>
+                                        </td>
+
+                                        {/* Column 2: Kolom Khusus Penanda Siswa */}
+                                        <td className="px-6 py-4">
+                                            {uniqueTagDefs.length > 0 ? (
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {uniqueTagDefs.map((tagDef, i) => {
+                                                        const TagIcon = tagDef.Icon;
+                                                        return (
+                                                            <span
+                                                                key={i}
+                                                                className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-xs"
+                                                                title={tagDef.label}
+                                                            >
+                                                                <TagIcon size={11} className="text-primary shrink-0" />
+                                                                <span>{tagDef.label}</span>
+                                                            </span>
+                                                        );
+                                                    })}
+                                                </div>
+                                            ) : (
+                                                <span className="text-xs font-semibold text-slate-300 dark:text-slate-600">—</span>
+                                            )}
                                         </td>
 
                                         {/* Assignment Columns: Nilai Murni Tanpa Penanda */}
@@ -278,7 +279,7 @@ export function GradeRecap({ courses }: GradeRecapProps) {
 
                             {selectedCourse.class.students.length === 0 && (
                                 <tr>
-                                    <td colSpan={selectedCourse.assignments.length + 3} className="px-8 py-12 text-center text-slate-400">
+                                    <td colSpan={selectedCourse.assignments.length + 4} className="px-8 py-12 text-center text-slate-400">
                                         <div className="flex flex-col items-center gap-2">
                                             <Users size={32} className="text-slate-200 dark:text-slate-800" />
                                             <p>Belum ada siswa di kelas ini.</p>
