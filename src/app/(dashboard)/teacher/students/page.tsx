@@ -17,7 +17,7 @@ export default async function TeacherStudentsPage() {
             <div className="flex flex-col gap-2">
                 <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Data Siswa</h1>
                 <p className="text-slate-500 dark:text-slate-400 font-medium">
-                    Lihat dan kelola akun siswa di kelas Anda. Anda dapat mereset password siswa yang lupa.
+                    Lihat dan kelola akun siswa di kelas Anda. Anda dapat mereset password atau menghapus akun duplikat siswa.
                 </p>
             </div>
 
@@ -27,7 +27,7 @@ export default async function TeacherStudentsPage() {
                 <div className="text-sm">
                     <p className="font-bold">Hanya siswa di kelas Anda yang ditampilkan.</p>
                     <p className="font-medium opacity-80 mt-0.5">
-                        Anda dapat mengubah nama, email, dan mereset password siswa tanpa perlu menghubungi admin.
+                        Anda dapat mengubah nama, email, mereset password, serta menghapus akun duplikat siswa di kelas Anda tanpa perlu menghubungi admin.
                     </p>
                 </div>
             </div>

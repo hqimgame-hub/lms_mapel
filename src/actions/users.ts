@@ -282,7 +282,15 @@ export async function getTeacherStudents(teacherId: string) {
                     students: {
                         select: {
                             user: {
-                                select: { id: true, name: true, username: true, email: true }
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    username: true,
+                                    email: true,
+                                    _count: {
+                                        select: { submissions: true }
+                                    }
+                                }
                             }
                         },
                         orderBy: { user: { name: 'asc' } }
@@ -293,7 +301,17 @@ export async function getTeacherStudents(teacherId: string) {
     });
 
     // Deduplicate kelas (guru bisa mengajar >1 mapel di kelas yang sama)
-    const classMap = new Map<string, { id: string; name: string; students: { id: string; name: string; username: string; email: string | null }[] }>();
+    const classMap = new Map<string, {
+        id: string;
+        name: string;
+        students: {
+            id: string;
+            name: string;
+            username: string;
+            email: string | null;
+            _count?: { submissions: number };
+        }[]
+    }>();
     for (const course of courses) {
         const cls = course.class;
         if (!classMap.has(cls.id)) {
@@ -382,6 +400,55 @@ export async function updateStudentByTeacher(prevState: ActionState, formData: F
     } catch (e: any) {
         if (e.code === 'P2002') return { success: false, message: "Email sudah digunakan akun lain.", errors: undefined };
         return { success: false, message: "Gagal memperbarui data siswa.", errors: undefined };
+    }
+}
+
+/**
+ * Guru dapat menghapus akun siswa duplikat hanya jika siswa terdaftar di kelas yang diajarnya.
+ */
+export async function deleteStudentByTeacher(studentId: string): Promise<ActionState> {
+    const session = await auth();
+    if (!session?.user?.id || session.user.role !== 'TEACHER') {
+        return { success: false, message: "Akses ditolak. Hanya guru yang dapat melakukan ini." };
+    }
+    const teacherId = session.user.id;
+
+    // Pastikan user target ada dan role-nya STUDENT
+    const student = await prisma.user.findUnique({
+        where: { id: studentId },
+        select: { id: true, name: true, role: true }
+    });
+
+    if (!student || student.role !== 'STUDENT') {
+        return { success: false, message: "Akun siswa tidak ditemukan atau bukan merupakan siswa." };
+    }
+
+    // Verifikasi: apakah siswa terdaftar di kelas yang diajar guru ini?
+    const enrollment = await prisma.enrollment.findFirst({
+        where: {
+            userId: studentId,
+            class: {
+                courses: { some: { teacherId } }
+            }
+        }
+    });
+
+    if (!enrollment) {
+        return { success: false, message: "Siswa tidak terdaftar di kelas yang Anda ampu." };
+    }
+
+    try {
+        await prisma.user.delete({
+            where: { id: studentId }
+        });
+
+        revalidatePath('/teacher/students');
+        revalidatePath('/admin/users');
+        revalidatePath('/admin/classes');
+        return { success: true, message: `Akun siswa "${student.name}" berhasil dihapus.` };
+    } catch (e: any) {
+        console.error("Delete Student By Teacher Error:", e);
+        return { success: false, message: "Gagal menghapus akun siswa: " + (e.message || "Terjadi kesalahan") };
     }
 }
 
