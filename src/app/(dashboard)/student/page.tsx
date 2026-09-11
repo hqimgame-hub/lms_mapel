@@ -96,9 +96,6 @@ export default async function StudentDashboardPage() {
                     <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Halo, {student.name}!</h1>
                     <p className="text-slate-500 dark:text-slate-400 font-medium">Selamat datang di dashboard {currentClass.name}. Cek progres belajarmu hari ini.</p>
                 </div>
-                {tutorials.length > 0 && (
-                    <TutorialButton topics={tutorials} variant="button" label="Panduan Siswa" />
-                )}
             </div>
 
             {/* Tutorial Banner (Card Variant) */}

@@ -173,17 +173,6 @@ export default function LoginPage() {
                             </Link>
                         </p>
                     </div>
-
-                    {/* Tutorial / Help Link */}
-                    {tutorials.length > 0 && (
-                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/60 flex justify-center">
-                            <TutorialButton
-                                topics={tutorials}
-                                variant="button"
-                                label="Panduan & Bantuan Siswa"
-                            />
-                        </div>
-                    )}
                 </div>
             </div>
 
