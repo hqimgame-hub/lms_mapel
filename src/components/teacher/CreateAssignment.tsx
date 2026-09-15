@@ -2,45 +2,36 @@
 
 import { createAssignment } from "@/actions/assignments";
 import { ActionState } from "@/actions/types";
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { Plus, X } from "lucide-react";
 
-export function CreateAssignment({
+interface CreateAssignmentModalProps {
+    courseId?: string;
+    teacherCourses?: { id: string; name: string }[];
+    onClose: () => void;
+}
+
+function CreateAssignmentModal({
     courseId,
-    teacherCourses
-}: {
-    courseId?: string,
-    teacherCourses?: { id: string, name: string }[]
-}) {
-    const [isOpen, setIsOpen] = useState(false);
+    teacherCourses,
+    onClose
+}: CreateAssignmentModalProps) {
     const [selectedCourses, setSelectedCourses] = useState<string[]>(courseId ? [courseId] : []);
     const [enableDrive, setEnableDrive] = useState(false);
     const [state, formAction, isPending] = useActionState(createAssignment, { message: '', success: false, errors: undefined } as ActionState);
 
     // Close on success
-    if (state.success && isOpen) {
-        setIsOpen(false);
-        setSelectedCourses(courseId ? [courseId] : []);
-        setEnableDrive(false);
-    }
+    useEffect(() => {
+        if (state?.success) {
+            onClose();
+        }
+    }, [state?.success, onClose]);
 
     const toggleCourse = (id: string) => {
         setSelectedCourses(prev =>
             prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
         );
     };
-
-    if (!isOpen) {
-        return (
-            <button
-                onClick={() => setIsOpen(true)}
-                className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition shadow-md font-bold text-sm"
-            >
-                <Plus size={20} />
-                Buat Tugas Baru
-            </button>
-        );
-    }
 
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-300">
@@ -53,7 +44,8 @@ export function CreateAssignment({
                         <h3 className="font-bold text-sm tracking-tight">Buat Tugas Baru</h3>
                     </div>
                     <button
-                        onClick={() => setIsOpen(false)}
+                        onClick={onClose}
+                        type="button"
                         className="hover:bg-white/20 p-2 rounded-xl transition-colors"
                     >
                         <X size={18} />
@@ -184,7 +176,7 @@ export function CreateAssignment({
                     <div className="flex gap-3 pt-3">
                         <button
                             type="button"
-                            onClick={() => setIsOpen(false)}
+                            onClick={onClose}
                             className="flex-1 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800 font-black text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
                         >
                             Batal
@@ -200,5 +192,36 @@ export function CreateAssignment({
                 </form>
             </div>
         </div>
+    );
+}
+
+export function CreateAssignment({
+    courseId,
+    teacherCourses
+}: {
+    courseId?: string,
+    teacherCourses?: { id: string, name: string }[]
+}) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <>
+            <button
+                type="button"
+                onClick={() => setIsOpen(true)}
+                className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition shadow-md font-bold text-sm"
+            >
+                <Plus size={20} />
+                Buat Tugas Baru
+            </button>
+
+            {isOpen && (
+                <CreateAssignmentModal
+                    courseId={courseId}
+                    teacherCourses={teacherCourses}
+                    onClose={() => setIsOpen(false)}
+                />
+            )}
+        </>
     );
 }

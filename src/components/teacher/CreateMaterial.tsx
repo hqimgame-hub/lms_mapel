@@ -1,33 +1,35 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect, useActionState } from "react";
 import { Plus, X, Trash2 } from "lucide-react";
 import { createMaterial } from "@/actions/materials";
-import { useActionState } from "react";
 
 interface ContentItem {
     type: string;
     content: string;
 }
 
-export function CreateMaterial({
+interface CreateMaterialModalProps {
+    courseId?: string;
+    teacherCourses?: { id: string, name: string }[];
+    onClose: () => void;
+}
+
+function CreateMaterialModal({
     courseId,
-    teacherCourses
-}: {
-    courseId?: string,
-    teacherCourses?: { id: string, name: string }[]
-}) {
-    const [isOpen, setIsOpen] = useState(false);
+    teacherCourses,
+    onClose
+}: CreateMaterialModalProps) {
     const [selectedCourses, setSelectedCourses] = useState<string[]>(courseId ? [courseId] : []);
     const [contentItems, setContentItems] = useState<ContentItem[]>([{ type: 'TEXT', content: '' }]);
     const [state, formAction, isPending] = useActionState(createMaterial, { message: '', success: false, errors: undefined as Record<string, string[]> | undefined });
 
-    // Close on success and reset
-    if (state.success && isOpen) {
-        setIsOpen(false);
-        setSelectedCourses(courseId ? [courseId] : []);
-        setContentItems([{ type: 'TEXT', content: '' }]);
-    }
+    // Close on success
+    useEffect(() => {
+        if (state?.success) {
+            onClose();
+        }
+    }, [state?.success, onClose]);
 
     const toggleCourse = (id: string) => {
         setSelectedCourses(prev =>
@@ -51,18 +53,6 @@ export function CreateMaterial({
         setContentItems(updated);
     };
 
-    if (!isOpen) {
-        return (
-            <button
-                onClick={() => setIsOpen(true)}
-                className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-xl hover:bg-slate-800 transition shadow-md font-bold text-sm"
-            >
-                <Plus size={20} />
-                Bagikan Materi
-            </button>
-        );
-    }
-
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-300">
             <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
@@ -74,7 +64,8 @@ export function CreateMaterial({
                         <h3 className="font-bold text-sm tracking-tight">Bagikan Materi</h3>
                     </div>
                     <button
-                        onClick={() => setIsOpen(false)}
+                        onClick={onClose}
+                        type="button"
                         className="hover:bg-white/20 p-2 rounded-xl transition-colors"
                     >
                         <X size={18} />
@@ -199,7 +190,7 @@ export function CreateMaterial({
                     <div className="flex gap-3 pt-3">
                         <button
                             type="button"
-                            onClick={() => setIsOpen(false)}
+                            onClick={onClose}
                             className="flex-1 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800 font-black text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
                         >
                             Batal
@@ -211,10 +202,40 @@ export function CreateMaterial({
                         >
                             {isPending ? 'Membagikan...' : 'Bagikan'}
                         </button>
-
                     </div>
                 </form>
             </div>
         </div>
+    );
+}
+
+export function CreateMaterial({
+    courseId,
+    teacherCourses
+}: {
+    courseId?: string,
+    teacherCourses?: { id: string, name: string }[]
+}) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <>
+            <button
+                type="button"
+                onClick={() => setIsOpen(true)}
+                className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-xl hover:bg-slate-800 transition shadow-md font-bold text-sm"
+            >
+                <Plus size={20} />
+                Bagikan Materi
+            </button>
+
+            {isOpen && (
+                <CreateMaterialModal
+                    courseId={courseId}
+                    teacherCourses={teacherCourses}
+                    onClose={() => setIsOpen(false)}
+                />
+            )}
+        </>
     );
 }

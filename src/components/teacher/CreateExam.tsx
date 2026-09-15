@@ -1,43 +1,35 @@
 'use client';
 
-import { useState, useActionState } from "react";
+import { useState, useEffect, useActionState } from "react";
 import { Plus, X, Link as LinkIcon } from "lucide-react";
 import { createExam } from "@/actions/exams";
 
-export function CreateExam({
+interface CreateExamModalProps {
+    courseId?: string;
+    teacherCourses?: { id: string, name: string }[];
+    onClose: () => void;
+}
+
+function CreateExamModal({
     courseId,
-    teacherCourses
-}: {
-    courseId?: string,
-    teacherCourses?: { id: string, name: string }[]
-}) {
-    const [isOpen, setIsOpen] = useState(false);
+    teacherCourses,
+    onClose
+}: CreateExamModalProps) {
     const [selectedCourses, setSelectedCourses] = useState<string[]>(courseId ? [courseId] : []);
     const [state, formAction, isPending] = useActionState(createExam, { message: '', success: false, errors: undefined as Record<string, string[]> | undefined });
 
     // Close on success
-    if (state.success && isOpen) {
-        setIsOpen(false);
-        setSelectedCourses(courseId ? [courseId] : []);
-    }
+    useEffect(() => {
+        if (state?.success) {
+            onClose();
+        }
+    }, [state?.success, onClose]);
 
     const toggleCourse = (id: string) => {
         setSelectedCourses(prev =>
             prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
         );
     };
-
-    if (!isOpen) {
-        return (
-            <button
-                onClick={() => setIsOpen(true)}
-                className="flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition shadow-md font-bold text-sm"
-            >
-                <Plus size={20} />
-                Buat Ujian Baru
-            </button>
-        );
-    }
 
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-300">
@@ -50,7 +42,8 @@ export function CreateExam({
                         <h3 className="font-bold text-sm tracking-tight">Buat Ujian Baru</h3>
                     </div>
                     <button
-                        onClick={() => setIsOpen(false)}
+                        onClick={onClose}
+                        type="button"
                         className="hover:bg-white/20 p-2 rounded-xl transition-colors"
                     >
                         <X size={18} />
@@ -87,36 +80,37 @@ export function CreateExam({
 
                     <div className="space-y-1">
                         <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Judul Ujian</label>
-                        <input name="title" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-sm font-bold text-slate-700 dark:text-slate-300 shadow-inner" placeholder="PPH Bab 1..." required />
+                        <input name="title" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-sm font-bold text-slate-700 dark:text-slate-300 shadow-inner" placeholder="E.g. Ulangan Harian 1" required />
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Deskripsi</label>
-                        <textarea name="description" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-sm font-medium text-slate-600 dark:text-slate-400 min-h-[50px]" rows={2} placeholder="Instruksi..." />
+                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Deskripsi / Petunjuk</label>
+                        <textarea name="description" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-sm font-medium text-slate-600 dark:text-slate-400 min-h-[60px]" rows={2} placeholder="Kerjakan soal dengan teliti..." />
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Link Google Form</label>
+                        <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Link Ujian Eksternal</label>
                         <div className="relative">
-                            <LinkIcon className="absolute left-3 top-3 text-slate-400" size={14} />
-                            <input name="link" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 pl-9 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-xs font-medium text-slate-600 dark:text-slate-400" placeholder="https://forms.gle/..." required />
+                            <input name="externalUrl" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 pl-9 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-sm font-bold text-slate-700 dark:text-slate-300 placeholder:text-slate-400" placeholder="https://forms.google.com/..." required />
+                            <LinkIcon size={14} className="absolute left-3 top-3.5 text-slate-400" />
                         </div>
+                        <p className="text-[9px] text-slate-400 ml-1">Bisa berupa Google Form, Quizizz, atau platform ujian lainnya.</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1">
-                            <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Waktu Mulai</label>
-                            <input name="startTime" type="datetime-local" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-[11px] font-bold text-slate-700 dark:text-slate-300" />
+                            <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Mulai Ujian</label>
+                            <input name="startTime" type="datetime-local" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-[11px] font-bold text-slate-700 dark:text-slate-300" required />
                         </div>
                         <div className="space-y-1">
-                            <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Waktu Selesai</label>
-                            <input name="endTime" type="datetime-local" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-[11px] font-bold text-slate-700 dark:text-slate-300" />
+                            <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Selesai Ujian</label>
+                            <input name="endTime" type="datetime-local" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-[11px] font-bold text-slate-700 dark:text-slate-300" required />
                         </div>
                     </div>
 
                     <div className="space-y-1">
                         <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Durasi (Menit)</label>
-                        <input name="duration" type="number" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-sm font-bold text-slate-700 dark:text-slate-300" placeholder="90" />
+                        <input name="duration" type="number" min="1" defaultValue="60" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-500 transition-all text-sm font-bold text-slate-700 dark:text-slate-300" required />
                     </div>
 
                     {state?.message && (
@@ -143,7 +137,7 @@ export function CreateExam({
                     <div className="flex gap-3 pt-3">
                         <button
                             type="button"
-                            onClick={() => setIsOpen(false)}
+                            onClick={onClose}
                             className="flex-1 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800 font-black text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
                         >
                             Batal
@@ -159,5 +153,36 @@ export function CreateExam({
                 </form>
             </div>
         </div>
+    );
+}
+
+export function CreateExam({
+    courseId,
+    teacherCourses
+}: {
+    courseId?: string,
+    teacherCourses?: { id: string, name: string }[]
+}) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <>
+            <button
+                type="button"
+                onClick={() => setIsOpen(true)}
+                className="flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition shadow-md font-bold text-sm"
+            >
+                <Plus size={20} />
+                Buat Ujian Baru
+            </button>
+
+            {isOpen && (
+                <CreateExamModal
+                    courseId={courseId}
+                    teacherCourses={teacherCourses}
+                    onClose={() => setIsOpen(false)}
+                />
+            )}
+        </>
     );
 }
