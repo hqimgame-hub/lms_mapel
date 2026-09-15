@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/session";
 import { format } from "date-fns";
 import { Layers, Calendar, ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function TeacherAssignmentsPage() {
     try {
-        const session = await auth();
+        const session = await getSession();
         const teacherId = session?.user?.id;
 
         if (!teacherId) return null;
