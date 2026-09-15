@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import {
@@ -14,29 +14,34 @@ import Link from "next/link";
 import { getActiveTutorials } from "@/actions/tutorials";
 import { TutorialButton } from "@/components/tutorial/TutorialButton";
 
+export const dynamic = 'force-dynamic';
+
 export default async function StudentDashboardPage() {
-    const session = await auth();
+    const session = await getSession();
 
     if (!session?.user || session.user.role !== 'STUDENT') {
-        redirect('/login');
+        return redirect('/login');
     }
 
     // Fetch user with enrollment and assignments
-    const student = await prisma.user.findUnique({
-        where: { id: session.user.id },
-        include: {
-            enrollments: {
-                include: {
-                    class: {
-                        include: {
-                            courses: {
-                                include: {
-                                    subject: true,
-                                    assignments: {
-                                        where: { published: true },
-                                        include: {
-                                            submissions: {
-                                                where: { studentId: session.user.id }
+    let student: any = null;
+    try {
+        student = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            include: {
+                enrollments: {
+                    include: {
+                        class: {
+                            include: {
+                                courses: {
+                                    include: {
+                                        subject: true,
+                                        assignments: {
+                                            where: { published: true },
+                                            include: {
+                                                submissions: {
+                                                    where: { studentId: session.user.id }
+                                                }
                                             }
                                         }
                                     }
@@ -46,8 +51,11 @@ export default async function StudentDashboardPage() {
                     }
                 }
             }
-        }
-    });
+        });
+    } catch (err) {
+        console.error('[STUDENT DASHBOARD ERROR] Gagal memuat data siswa:', err);
+        throw err;
+    }
 
     if (!student || student.enrollments.length === 0) {
         return (

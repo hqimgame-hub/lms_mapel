@@ -1,10 +1,10 @@
 
-import { auth } from "@/auth";
+import { getSession } from "@/lib/session";
 import { MobileNav } from "@/components/MobileNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export async function Header() {
-    const session = await auth();
+    const session = await getSession();
 
     return (
         <header className="h-16 bg-white dark:bg-slate-900 border-b dark:border-slate-800 flex items-center justify-between px-4 md:px-8 sticky top-0 z-10 w-full transition-colors duration-300">

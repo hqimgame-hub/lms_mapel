@@ -1,10 +1,11 @@
-import { auth, signOut } from '@/auth';
+import { signOut } from '@/auth';
+import { getSession } from '@/lib/session';
 import { NavItem } from './NavItem';
 import Image from 'next/image';
 import { BookOpen, LayoutDashboard, Layers, Users, Home, PlusCircle, UserCheck, HelpCircle } from 'lucide-react';
 
 export async function Sidebar() {
-    const session = await auth();
+    const session = await getSession();
     const role = session?.user?.role;
 
     return (

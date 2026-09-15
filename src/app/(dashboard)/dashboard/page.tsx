@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -18,84 +18,93 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
-    const session = await auth();
+    const session = await getSession();
     if (!session?.user) return redirect('/login');
 
-    if (session.user.role === 'STUDENT') redirect('/student');
+    if (session.user.role === 'STUDENT') return redirect('/student');
 
     // Fetch teaching courses (if teacher)
-    const teacherCourses = session.user.role === 'TEACHER'
-        ? await prisma.course.findMany({
-            where: { teacherId: session.user.id },
-            include: {
-                class: true,
-                subject: true,
-                assignments: {
-                    select: {
-                        _count: {
-                            select: {
-                                submissions: {
-                                    where: { status: 'SUBMITTED' }
+    let teacherCourses: any[] = [];
+    let adminData: any = null;
+    let myCourses: any[] = [];
+
+    try {
+        teacherCourses = session.user.role === 'TEACHER'
+            ? await prisma.course.findMany({
+                where: { teacherId: session.user.id },
+                include: {
+                    class: true,
+                    subject: true,
+                    assignments: {
+                        select: {
+                            _count: {
+                                select: {
+                                    submissions: {
+                                        where: { status: 'SUBMITTED' }
+                                    }
                                 }
                             }
                         }
-                    }
-                },
-                _count: { select: { assignments: true } }
-            }
-        })
-        : [];
-
-    // Calculate total pending submissions for teacher
-    const totalPending = teacherCourses.reduce((acc, course) => {
-        return acc + (course.assignments || []).reduce((sum, assign) => sum + (assign._count?.submissions || 0), 0);
-    }, 0);
-
-    // Admin Stats & Recent Data
-    let adminData = null;
-    if (session.user.role === 'ADMIN') {
-        const [totalStudents, totalTeachers, totalClasses, totalSubjects, recentUsers] = await Promise.all([
-            prisma.user.count({ where: { role: 'STUDENT' } }),
-            prisma.user.count({ where: { role: 'TEACHER' } }),
-            prisma.class.count(),
-            prisma.subject.count(),
-            prisma.user.findMany({
-                orderBy: { id: 'desc' },
-                take: 5
+                    },
+                    _count: { select: { assignments: true } }
+                }
             })
-        ]);
-        adminData = { totalStudents, totalTeachers, totalClasses, totalSubjects, recentUsers };
-    }
+            : [];
 
-    const isStudent = session.user.role === 'STUDENT';
-    const isTeacher = session.user.role === 'TEACHER';
-    const isAdmin = session.user.role === 'ADMIN';
+        // Admin Stats & Recent Data
+        if (session.user.role === 'ADMIN') {
+            const [totalStudents, totalTeachers, totalClasses, totalSubjects, recentUsers] = await Promise.all([
+                prisma.user.count({ where: { role: 'STUDENT' } }),
+                prisma.user.count({ where: { role: 'TEACHER' } }),
+                prisma.class.count(),
+                prisma.subject.count(),
+                prisma.user.findMany({
+                    orderBy: { id: 'desc' },
+                    take: 5
+                })
+            ]);
+            adminData = { totalStudents, totalTeachers, totalClasses, totalSubjects, recentUsers };
+        }
 
-    // Flatten courses from all enrolled classes (Student)
-    let myCourses: any[] = [];
-    if (session.user.role === 'STUDENT') {
-        const studentData = await prisma.user.findUnique({
-            where: { id: session.user.id },
-            include: {
-                enrollments: {
-                    include: {
-                        class: {
-                            include: {
-                                courses: {
-                                    include: {
-                                        subject: true,
-                                        teacher: true
+        // Flatten courses from all enrolled classes (Student — seharusnya sudah redirect, tapi sebagai fallback)
+        if (session.user.role === 'STUDENT') {
+            const studentData = await prisma.user.findUnique({
+                where: { id: session.user.id },
+                include: {
+                    enrollments: {
+                        include: {
+                            class: {
+                                include: {
+                                    courses: {
+                                        include: {
+                                            subject: true,
+                                            teacher: true
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
-        });
-        myCourses = studentData?.enrollments.flatMap(e => e.class.courses) || [];
+            });
+            myCourses = studentData?.enrollments.flatMap(e => e.class.courses) || [];
+        }
+    } catch (error) {
+        console.error('[DASHBOARD ERROR] Gagal fetch data dashboard:', error);
+        throw error; // re-throw agar error boundary & Vercel logs bisa menangkap
     }
+
+    // Calculate total pending submissions for teacher
+    const totalPending = teacherCourses.reduce((acc: number, course: any) => {
+        return acc + (course.assignments || []).reduce((sum: number, assign: any) => sum + (assign._count?.submissions || 0), 0);
+    }, 0);
+
+    const isStudent = session.user.role === 'STUDENT';
+    const isTeacher = session.user.role === 'TEACHER';
+    const isAdmin = session.user.role === 'ADMIN';
 
     async function joinClass(formData: FormData) {
         'use server';
@@ -252,7 +261,7 @@ export default async function DashboardPage() {
                                     <div key={u.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-400 dark:text-slate-500 text-xs uppercase">
-                                                {u.name.substring(0, 2)}
+                                                {(u.name || '??').substring(0, 2)}
                                             </div>
                                             <div>
                                                 <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-none mb-1">{u.name}</p>
