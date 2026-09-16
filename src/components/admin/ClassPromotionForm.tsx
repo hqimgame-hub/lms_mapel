@@ -144,7 +144,7 @@ export function ClassPromotionForm({ classes, students, initialClassFromId }: Cl
                             required
                         >
                             <option value="">-- Pilih Kelas Tujuan --</option>
-                            <option value="LULUS" className="text-purple-600 font-bold">🎓 Lulus / Alumni (Kosongkan Kelas)</option>
+                            <option value="LULUS" className="text-purple-600 font-bold">Lulus / Alumni (Kosongkan Kelas)</option>
                             {classes
                                 .filter(c => c.id !== classFromId) // Hindari mempromosikan ke kelas yang sama
                                 .map(c => (

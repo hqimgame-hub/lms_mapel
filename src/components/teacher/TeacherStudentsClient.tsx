@@ -164,7 +164,12 @@ function EditStudentModal({
                             disabled={isPending || state.success}
                             className="flex-1 py-3 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 transition-all active:scale-[0.98] disabled:opacity-50 shadow-md shadow-blue-500/20"
                         >
-                            {isPending ? 'Menyimpan...' : state.success ? 'Tersimpan ✓' : 'Simpan Perubahan'}
+                            {isPending ? 'Menyimpan...' : state.success ? (
+                                <span className="inline-flex items-center gap-1.5 justify-center">
+                                    <CheckCircle2 size={16} />
+                                    Tersimpan
+                                </span>
+                            ) : 'Simpan Perubahan'}
                         </button>
                     </div>
                 </form>

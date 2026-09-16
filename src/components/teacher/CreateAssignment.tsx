@@ -3,7 +3,7 @@
 import { createAssignment } from "@/actions/assignments";
 import { ActionState } from "@/actions/types";
 import { useActionState, useState, useEffect } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Info } from "lucide-react";
 
 interface CreateAssignmentModalProps {
     courseId?: string;
@@ -143,9 +143,9 @@ function CreateAssignmentModal({
                                     className="w-full bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-800 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 text-xs font-bold text-slate-700 dark:text-slate-200"
                                 />
                                 <div className="p-2.5 bg-white/80 dark:bg-slate-900/80 rounded-xl border border-blue-100 dark:border-blue-900 text-[10px] text-slate-600 dark:text-slate-400 space-y-1">
-                                    <p className="font-bold text-blue-700 dark:text-blue-300">💡 Instruksi untuk Guru:</p>
+                                    <p className="font-bold text-blue-700 dark:text-blue-300 flex items-center gap-1.5"><Info size={13} className="shrink-0" /> Instruksi untuk Guru:</p>
                                     <p>1. Buat folder tugas di Google Drive Anda.</p>
-                                    <p>2. Atur akses folder: <strong>"Siapa saja yang memiliki link" ➔ "Pengedit / Editor"</strong>.</p>
+                                    <p>2. Atur akses folder: <strong>&quot;Siapa saja yang memiliki link&quot; &rarr; &quot;Pengedit / Editor&quot;</strong>.</p>
                                     <p>3. Salin link foldernya ke kotak di atas. File siswa akan otomatis tersimpan di folder Anda tanpa siswa perlu login!</p>
                                 </div>
                             </div>

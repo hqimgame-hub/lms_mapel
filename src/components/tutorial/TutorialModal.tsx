@@ -13,6 +13,7 @@ import {
     Video,
     FileText,
     Sparkles,
+    Info,
     PlayCircle
 } from 'lucide-react';
 
@@ -279,7 +280,7 @@ export function TutorialModal({ isOpen, onClose, topics }: TutorialModalProps) {
 
                 {/* Modal Footer */}
                 <div className="p-4 px-6 md:px-8 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between text-xs text-slate-400">
-                    <span>💡 Klik salah satu topik di atas untuk melihat detail bantuan</span>
+                    <span className="flex items-center gap-1.5"><Info size={14} className="shrink-0" /> Klik salah satu topik di atas untuk melihat detail bantuan</span>
                     <button
                         type="button"
                         onClick={onClose}

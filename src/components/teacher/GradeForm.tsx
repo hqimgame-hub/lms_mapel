@@ -2,6 +2,7 @@
 
 import { gradeSubmission } from "@/actions/grading";
 import { useActionState, useState } from "react";
+import { X } from "lucide-react";
 
 interface GradeFormProps {
     submissionId: string;
@@ -76,7 +77,7 @@ export function GradeForm({ submissionId, initialGrade, initialFeedback, assignm
                             onClick={() => setIsEditing(false)}
                             className="p-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
                         >
-                            ✕
+                            <X size={16} />
                         </button>
                     )}
                 </div>

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { format } from "date-fns";
-import { Layers, Calendar, ChevronRight } from "lucide-react";
+import { Layers, Calendar, ChevronRight, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { CreateAssignment } from "@/components/teacher/CreateAssignment";
 import { EditAssignmentModal } from "@/components/teacher/EditAssignmentModal";
@@ -73,7 +73,7 @@ export default async function TeacherAssignmentsPage() {
         return (
             <div className="p-8 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-3xl max-w-4xl mx-auto space-y-4 my-8">
                 <div className="flex items-center gap-3 text-red-600 dark:text-red-400 font-bold">
-                    <span className="text-2xl">⚠️</span>
+                    <AlertTriangle size={24} className="shrink-0" />
                     <h2 className="text-xl font-black">Gagal Memuat Manajemen Tugas</h2>
                 </div>
                 <p className="text-sm text-slate-700 dark:text-slate-300 font-semibold">

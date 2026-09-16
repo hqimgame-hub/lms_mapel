@@ -145,10 +145,10 @@ export function EditMaterialModal({ material }: EditMaterialModalProps) {
                                             onChange={(e) => updateContentItem(index, 'type', e.target.value)}
                                             className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-2 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-xs font-bold text-slate-700 dark:text-slate-300"
                                         >
-                                            <option value="TEXT">📝 Teks Materi</option>
-                                            <option value="PDF_LINK">📄 Link File PDF</option>
-                                            <option value="YOUTUBE_LINK">🎬 Link Video YouTube</option>
-                                            <option value="EXTERNAL_LINK">🔗 Link Eksternal</option>
+                                            <option value="TEXT">Teks Materi</option>
+                                            <option value="PDF_LINK">Link File PDF</option>
+                                            <option value="YOUTUBE_LINK">Link Video YouTube</option>
+                                            <option value="EXTERNAL_LINK">Link Eksternal</option>
                                         </select>
 
                                         <textarea

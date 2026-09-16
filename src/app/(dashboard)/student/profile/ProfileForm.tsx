@@ -10,7 +10,7 @@ export default function StudentProfilePage({ userEmail, userName }: { userEmail:
     return (
         <div className="max-w-2xl mx-auto flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Pengaturan Profil ⚙️</h1>
+                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Pengaturan Profil</h1>
                 <p className="text-slate-500 font-medium">Kelola informasi akun dan keamanan kata sandi Anda.</p>
             </div>
 

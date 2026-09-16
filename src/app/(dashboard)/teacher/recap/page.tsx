@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { GradeRecap } from "@/components/teacher/GradeRecap";
 import { ensureDbColumns } from "@/lib/auto-migrate";
+import { AlertTriangle } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -95,7 +96,7 @@ export default async function TeacherRecapPage() {
         return (
             <div className="p-8 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-3xl max-w-4xl mx-auto space-y-4 my-8">
                 <div className="flex items-center gap-3 text-red-600 dark:text-red-400 font-bold">
-                    <span className="text-2xl">⚠️</span>
+                    <AlertTriangle size={24} className="shrink-0" />
                     <h2 className="text-xl font-black">Gagal Memuat Rekap Nilai</h2>
                 </div>
                 <p className="text-sm text-slate-700 dark:text-slate-300 font-semibold">

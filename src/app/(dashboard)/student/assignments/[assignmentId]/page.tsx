@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { SubmissionForm } from "@/components/student/SubmissionForm";
 import { format } from "date-fns";
 import Link from "next/link";
+import { MessageSquareQuote } from "lucide-react";
 
 export default async function StudentAssignmentPage({ params }: { params: Promise<{ assignmentId: string }> }) {
     const { assignmentId } = await params;
@@ -106,8 +107,8 @@ export default async function StudentAssignmentPage({ params }: { params: Promis
                 {/* Catatan Guru saat tugas dikembalikan */}
                 {submission?.status === 'RETURNED' && submission?.feedback && (
                     <div className="bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 rounded-2xl p-6 mb-8 flex items-start gap-4 transition-colors">
-                        <div className="bg-white dark:bg-slate-800 p-3 rounded-full border border-orange-100 dark:border-orange-500/20 shadow-sm text-orange-500 dark:text-orange-400 text-xl">
-                            💬
+                        <div className="bg-white dark:bg-slate-800 p-3 rounded-full border border-orange-100 dark:border-orange-500/20 shadow-sm text-orange-500 dark:text-orange-400">
+                            <MessageSquareQuote size={20} />
                         </div>
                         <div>
                             <div className="font-bold text-orange-800 dark:text-orange-300 mb-1 uppercase tracking-widest text-[10px]">Catatan dari Guru</div>

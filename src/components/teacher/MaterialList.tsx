@@ -44,13 +44,13 @@ export function MaterialList({ materials, courseId, isTeacher = false }: Materia
     const getTypeLabel = (type: string) => {
         switch (type) {
             case 'YOUTUBE_LINK':
-                return '🎬 Video YouTube';
+                return 'Video YouTube';
             case 'PDF_LINK':
-                return '📄 PDF/Dokumen';
+                return 'PDF / Dokumen';
             case 'EXTERNAL_LINK':
-                return '🔗 Link Eksternal';
+                return 'Link Eksternal';
             default:
-                return '📝 Teks';
+                return 'Teks';
         }
     };
 

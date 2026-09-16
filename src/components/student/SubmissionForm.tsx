@@ -2,7 +2,7 @@
 
 import { saveSubmission, getDraftFile } from "@/actions/submissions";
 import { useState, useActionState, useEffect, startTransition } from "react";
-import { Save, Send, Clock, CheckCircle, Smartphone, Download, Copy, Monitor, QrCode, Mail, Loader2, Share2, Upload, FileText, RotateCcw } from "lucide-react";
+import { Save, Send, Clock, CheckCircle, Smartphone, Download, Copy, Monitor, QrCode, Mail, Loader2, Share2, Upload, FileText, RotateCcw, AlertCircle } from "lucide-react";
 
 interface SubmissionFormProps {
     assignmentId: string;
@@ -228,8 +228,9 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                             </div>
 
                             {driveUploadError && (
-                                <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 text-red-600 dark:text-red-400 rounded-xl text-xs font-bold">
-                                    ⚠️ {driveUploadError}
+                                <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 text-red-600 dark:text-red-400 rounded-xl text-xs font-bold flex items-center gap-2">
+                                    <AlertCircle size={14} className="shrink-0" />
+                                    <span>{driveUploadError}</span>
                                 </div>
                             )}
 
@@ -452,7 +453,7 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                                     <button onClick={() => setShowEmailModal(false)} className="text-slate-400 hover:text-slate-600 italic text-xs font-bold">Tutup</button>
                                 </div>
                                 <div>
-                                    <h4 className="text-xl font-black text-slate-800 tracking-tight">Kirim Cadangan ke Email 📧</h4>
+                                    <h4 className="text-xl font-black text-slate-800 tracking-tight">Kirim Cadangan ke Email</h4>
                                     <p className="text-sm text-slate-500 mt-1 font-medium">Salinan jawaban akan dikirimkan ke emailmu untuk berjaga-jaga.</p>
                                 </div>
                                 <div className="space-y-2">
@@ -493,8 +494,8 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                                     <QrCode size={32} />
                                 </div>
                                 <div>
-                                    <h4 className="text-xl font-black text-slate-800 tracking-tight">Pindah ke HP 📱</h4>
-                                    <p className="text-sm text-slate-500 mt-1 font-medium italic">Klik "Simpan ke Cloud" di PC ini dulu, lalu scan untuk lanjut di rumah.</p>
+                                    <h4 className="text-xl font-black text-slate-800 tracking-tight">Pindah ke HP</h4>
+                                    <p className="text-sm text-slate-500 mt-1 font-medium italic">Klik &quot;Simpan ke Cloud&quot; di PC ini dulu, lalu scan untuk lanjut di rumah.</p>
                                 </div>
                                 <div className="bg-slate-50 p-4 rounded-3xl border border-slate-100 inline-block mx-auto mb-2">
                                     <img src={qrUrl} alt="Scan to continue" className="w-48 h-48 rounded-lg" />

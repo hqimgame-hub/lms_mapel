@@ -5,7 +5,7 @@ import {
     DeleteTutorialTopicButton,
     ToggleTutorialStatusButton
 } from "@/components/admin/tutorials/TutorialForms";
-import { HelpCircle, Layers, Video, FileText, ChevronRight, ExternalLink, AlertTriangle } from "lucide-react";
+import { HelpCircle, Layers, Video, FileText, ChevronRight, ExternalLink, AlertTriangle, Search } from "lucide-react";
 import Link from "next/link";
 
 export default async function AdminTutorialsPage() {
@@ -113,8 +113,8 @@ export default async function AdminTutorialsPage() {
 
                         {debugInfo && (
                             <div className="bg-white/80 dark:bg-slate-900/80 p-3 rounded-xl border border-red-200/50 dark:border-red-800/50 space-y-1 text-[11px] text-slate-700 dark:text-slate-300">
-                                <p className="font-bold text-slate-900 dark:text-white">
-                                    🔍 Info Koneksi Database Vercel:
+                                <p className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                                    <Search size={14} /> Info Koneksi Database Vercel:
                                 </p>
                                 <p>
                                     <strong>Host Database yang Terhubung:</strong>{' '}
