@@ -1,7 +1,7 @@
 'use client';
 
 import { gradeSubmission } from "@/actions/grading";
-import { useActionState, useState, useEffect } from "react";
+import { useActionState, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 
@@ -16,37 +16,41 @@ export function GradeForm({ submissionId, initialGrade, initialFeedback, assignm
     const router = useRouter();
     const [state, formAction, isPending] = useActionState(gradeSubmission, { message: '', success: false });
 
-    // Local state for displayed values
+    // Local display state
     const [currentGrade, setCurrentGrade] = useState<number | null>(initialGrade ?? null);
     const [currentFeedback, setCurrentFeedback] = useState<string>(initialFeedback ?? '');
     const [isEditing, setIsEditing] = useState(initialGrade === null || initialGrade === undefined);
 
-    // Form inputs state
+    // Form input state
     const [gradeInput, setGradeInput] = useState<string>(
         initialGrade !== null && initialGrade !== undefined ? String(initialGrade) : ''
     );
     const [feedbackInput, setFeedbackInput] = useState<string>(initialFeedback ?? '');
 
-    // Synchronize local state when props change from server
+    // Ref to capture values AT SUBMIT TIME — so the success effect doesn't depend on live input state
+    const submittedDataRef = useRef<{ grade: string; feedback: string } | null>(null);
+
+    // Sync display state when server sends fresh props (e.g. after router.refresh())
     useEffect(() => {
         setCurrentGrade(initialGrade ?? null);
         setCurrentFeedback(initialFeedback ?? '');
-        if (!isEditing) {
-            setGradeInput(initialGrade !== null && initialGrade !== undefined ? String(initialGrade) : '');
-            setFeedbackInput(initialFeedback ?? '');
-        }
-    }, [initialGrade, initialFeedback, isEditing]);
+    }, [initialGrade, initialFeedback]);
 
-    // Handle successful save: close edit mode, update displayed values, and refresh server data
+    // Handle action success — only fires when state changes, not when user types
     useEffect(() => {
-        if (state?.success) {
-            const numericGrade = gradeInput.trim() === '' ? null : Number(gradeInput);
+        if (state?.success && submittedDataRef.current !== null) {
+            // Read submitted values and immediately clear the ref so this effect
+            // never re-runs for a stale success state
+            const { grade, feedback } = submittedDataRef.current;
+            submittedDataRef.current = null;
+
+            const numericGrade = grade.trim() === '' ? null : Number(grade);
             setCurrentGrade(numericGrade);
-            setCurrentFeedback(feedbackInput.trim());
+            setCurrentFeedback(feedback.trim());
             setIsEditing(false);
             router.refresh();
         }
-    }, [state, router, gradeInput, feedbackInput]);
+    }, [state, router]); // ← gradeInput & feedbackInput NOT here — no more spurious triggers
 
     const handleStartEditing = () => {
         setGradeInput(currentGrade !== null && currentGrade !== undefined ? String(currentGrade) : '');
@@ -58,6 +62,14 @@ export function GradeForm({ submissionId, initialGrade, initialFeedback, assignm
         setGradeInput(currentGrade !== null && currentGrade !== undefined ? String(currentGrade) : '');
         setFeedbackInput(currentFeedback || '');
         setIsEditing(false);
+    };
+
+    const handleSubmit = () => {
+        // Capture current input values BEFORE the async action runs
+        submittedDataRef.current = {
+            grade: gradeInput,
+            feedback: feedbackInput,
+        };
     };
 
     if (!isEditing && currentGrade !== null && currentGrade !== undefined) {
@@ -83,7 +95,7 @@ export function GradeForm({ submissionId, initialGrade, initialFeedback, assignm
     }
 
     return (
-        <form action={formAction} className="flex flex-col gap-2 w-full">
+        <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-2 w-full">
             <input type="hidden" name="submissionId" value={submissionId} />
             <input type="hidden" name="assignmentId" value={assignmentId} />
 
