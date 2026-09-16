@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, X, Home, BookOpen, LayoutDashboard, Layers, Users, PlusCircle, LogOut, UserCheck, HelpCircle } from "lucide-react";
+import { Menu, X, Home, BookOpen, LayoutDashboard, Layers, Users, PlusCircle, LogOut, UserCheck, HelpCircle, Database } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -90,6 +90,7 @@ export function MobileNav({ role, userName, userEmail }: MobileNavProps) {
                                     <NavItem href="/admin/subjects" icon={<BookOpen size={18} />} label="Mapel" onClick={() => setIsOpen(false)} />
                                     <NavItem href="/admin/courses" icon={<Layers size={18} />} label="Alokasi Kursus" onClick={() => setIsOpen(false)} />
                                     <NavItem href="/admin/tutorials" icon={<HelpCircle size={18} />} label="Panduan Siswa" onClick={() => setIsOpen(false)} />
+                                    <NavItem href="/admin/backup" icon={<Database size={18} />} label="Backup Data" onClick={() => setIsOpen(false)} />
                                 </div>
                             </>
                         )}
