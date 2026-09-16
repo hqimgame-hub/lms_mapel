@@ -112,22 +112,32 @@ export async function saveSubmission(prevState: any, formData: FormData) {
             }
         });
 
-        revalidatePath(`/student/assignments/${assignmentId}`);
-        revalidatePath(`/student/courses`);
+        // Revalidation should not fail the user's submission if DB write succeeded
+        try {
+            revalidatePath(`/student/assignments/${assignmentId}`);
+            revalidatePath(`/student/courses`);
+            revalidatePath(`/student`);
+        } catch (revErr) {
+            console.warn("[saveSubmission] Non-critical revalidatePath warning:", revErr);
+        }
 
         const msg = action === 'SUBMIT'
             ? "Tugas berhasil diserahkan!"
             : (tempFileName ? "Draft & Backup File berhasil disimpan!" : "Draft berhasil disimpan!");
 
-        // Fetch saved tempFileName to return to client (so badge updates instantly)
-        const savedTempFileName = tempFileName ?? (
-            !shouldUseNewTempFile
-                ? (await prisma.submission.findUnique({
+        // Fetch saved tempFileName safely to return to client
+        let savedTempFileName = tempFileName ?? null;
+        if (!shouldUseNewTempFile) {
+            try {
+                const draft = await prisma.submission.findUnique({
                     where: { studentId_assignmentId: { studentId, assignmentId } },
                     select: { tempFileName: true }
-                }))?.tempFileName ?? null
-                : null
-        );
+                });
+                savedTempFileName = draft?.tempFileName ?? null;
+            } catch (fetchErr) {
+                console.warn("[saveSubmission] Non-critical draft name fetch warning:", fetchErr);
+            }
+        }
 
         return {
             message: msg,
