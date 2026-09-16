@@ -20,17 +20,24 @@ export async function gradeSubmission(prevState: any, formData: FormData) {
         return { message: "Akses ditolak", success: false };
     }
 
+    const hasTag = formData.has('teacherTag');
+    const hasNote = formData.has('teacherNote');
     const rawTag = formData.get('teacherTag')?.toString();
     const rawNote = formData.get('teacherNote')?.toString();
 
-    const data = {
+    const data: any = {
         submissionId: formData.get('submissionId'),
         grade: formData.get('grade'),
-        feedback: formData.get('feedback'),
-        teacherTag: rawTag && rawTag !== 'NONE' ? rawTag : null,
-        teacherNote: rawNote?.trim() ? rawNote.trim() : null,
+        feedback: formData.get('feedback')?.toString(),
         assignmentId: formData.get('assignmentId'),
     };
+
+    if (hasTag) {
+        data.teacherTag = rawTag && rawTag !== 'NONE' ? rawTag : null;
+    }
+    if (hasNote) {
+        data.teacherNote = rawNote?.trim() ? rawNote.trim() : null;
+    }
 
     const validated = GradeSchema.safeParse(data);
 
@@ -41,14 +48,14 @@ export async function gradeSubmission(prevState: any, formData: FormData) {
     try {
         const updatePayload: any = {
             grade: validated.data.grade,
-            feedback: validated.data.feedback,
+            feedback: validated.data.feedback?.trim() || null,
             status: 'GRADED'
         };
 
-        if (data.teacherTag !== undefined) {
+        if (hasTag && data.teacherTag !== undefined) {
             updatePayload.teacherTag = data.teacherTag;
         }
-        if (data.teacherNote !== undefined) {
+        if (hasNote && data.teacherNote !== undefined) {
             updatePayload.teacherNote = data.teacherNote;
         }
 
@@ -59,6 +66,7 @@ export async function gradeSubmission(prevState: any, formData: FormData) {
 
         revalidatePath(`/teacher/assignments/${validated.data.assignmentId}`);
         revalidatePath(`/teacher/recap`);
+        revalidatePath(`/student/assignments/${validated.data.assignmentId}`);
         return { message: "Nilai dan catatan berhasil disimpan!", success: true };
     } catch (e) {
         console.error("Grade submission error:", e);
