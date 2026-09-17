@@ -72,6 +72,7 @@ model Enrollment {
   joinedAt  DateTime @default(now())
 
   @@unique([userId, classId])
+  @@index([classId])
 }
 
 
@@ -133,6 +134,9 @@ model Assignment {
   attachmentUrl String?
   enableDriveUpload Boolean @default(false)
   driveFolderUrl    String?
+
+  @@index([courseId])
+  @@index([published])
 }
 
 model Submission {
@@ -156,6 +160,8 @@ model Submission {
   assignment   Assignment       @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, assignmentId])
+  @@index([status])
+  @@index([assignmentId])
 }
 
 model TutorialTopic {

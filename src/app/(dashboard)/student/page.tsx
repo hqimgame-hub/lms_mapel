@@ -14,8 +14,6 @@ import Link from "next/link";
 import { getActiveTutorials } from "@/actions/tutorials";
 import { TutorialButton } from "@/components/tutorial/TutorialButton";
 
-export const dynamic = 'force-dynamic';
-
 export default async function StudentDashboardPage() {
     const session = await getSession();
 
@@ -23,41 +21,19 @@ export default async function StudentDashboardPage() {
         return redirect('/login');
     }
 
-    // Fetch user with enrollment and assignments
-    let student: any = null;
+    // 1. Fetch enrollment first to identify student's class
+    let enrollment: any = null;
     try {
-        student = await prisma.user.findUnique({
-            where: { id: session.user.id },
-            include: {
-                enrollments: {
-                    include: {
-                        class: {
-                            include: {
-                                courses: {
-                                    include: {
-                                        subject: true,
-                                        assignments: {
-                                            where: { published: true },
-                                            include: {
-                                                submissions: {
-                                                    where: { studentId: session.user.id }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        enrollment = await prisma.enrollment.findFirst({
+            where: { userId: session.user.id },
+            include: { class: true }
         });
     } catch (err) {
-        console.error('[STUDENT DASHBOARD ERROR] Gagal memuat data siswa:', err);
+        console.error('[STUDENT DASHBOARD ERROR] Gagal memuat data pendaftaran siswa:', err);
         throw err;
     }
 
-    if (!student || student.enrollments.length === 0) {
+    if (!enrollment) {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] text-center gap-4">
                 <div className="bg-amber-50 dark:bg-amber-500/10 p-6 rounded-full text-amber-500">
@@ -69,10 +45,51 @@ export default async function StudentDashboardPage() {
         );
     }
 
-    const currentClass = student.enrollments[0].class;
-    const allAssignments = currentClass.courses.flatMap(c =>
-        c.assignments.map(a => ({ ...a, subject: c.subject.name }))
-    );
+    const currentClass = enrollment.class;
+    const student = { name: session.user.name || 'Siswa' };
+
+    // 2. Fetch assignments, submissions (excluding heavy tempFile), and tutorials in parallel
+    const [rawAssignments, rawSubmissions, tutorials] = await Promise.all([
+        prisma.assignment.findMany({
+            where: {
+                published: true,
+                course: { classId: currentClass.id }
+            },
+            select: {
+                id: true,
+                title: true,
+                dueDate: true,
+                course: {
+                    select: {
+                        subject: { select: { name: true } }
+                    }
+                }
+            }
+        }),
+        prisma.submission.findMany({
+            where: { studentId: session.user.id },
+            select: {
+                assignmentId: true,
+                status: true,
+                content: true,
+                fileUrl: true,
+                tempFileName: true,
+            }
+        }),
+        getActiveTutorials('DASHBOARD'),
+    ]);
+
+    const submissionMap = new Map(rawSubmissions.map(s => [s.assignmentId, s]));
+    const allAssignments = rawAssignments.map(a => {
+        const sub = submissionMap.get(a.id);
+        return {
+            id: a.id,
+            title: a.title,
+            dueDate: a.dueDate,
+            subject: a.course.subject.name,
+            submissions: sub ? [sub] : []
+        };
+    });
 
     const isRealDraft = (sub: any) => {
         return sub?.status === 'DRAFT' && (sub.content || sub.fileUrl || sub.tempFileName);
@@ -93,8 +110,6 @@ export default async function StudentDashboardPage() {
         .filter(a => a.submissions.length === 0 || (a.submissions[0]?.status === 'DRAFT' && !isRealDraft(a.submissions[0])) || isRealDraft(a.submissions[0]))
         .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
         .slice(0, 5);
-
-    const tutorials = await getActiveTutorials('DASHBOARD');
 
     return (
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">

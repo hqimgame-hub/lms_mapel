@@ -13,8 +13,6 @@ import { EditAssignmentModal } from "@/components/teacher/EditAssignmentModal";
 import { deleteAssignment } from "@/actions/assignments";
 import { DeleteButton } from "@/components/teacher/DeleteButton";
 
-export const dynamic = 'force-dynamic';
-
 export default async function TeacherCoursePage({
     params,
     searchParams

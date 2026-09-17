@@ -9,8 +9,6 @@ import { DeleteButton } from "@/components/teacher/DeleteButton";
 import { deleteAssignment } from "@/actions/assignments";
 import { AssignmentsListClient } from "@/components/teacher/AssignmentsListClient";
 
-export const dynamic = 'force-dynamic';
-
 export default async function TeacherAssignmentsPage() {
     try {
         const session = await getSession();

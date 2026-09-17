@@ -11,47 +11,58 @@ export default async function StudentAssignmentsPage() {
         redirect('/login');
     }
 
-    // Fetch user with enrollment and assignments
-    const student = await prisma.user.findUnique({
-        where: { id: session.user.id },
-        include: {
-            enrollments: {
-                include: {
-                    class: {
-                        include: {
-                            courses: {
-                                include: {
-                                    subject: true,
-                                    assignments: {
-                                        where: { published: true },
-                                        include: {
-                                            submissions: {
-                                                where: { studentId: session.user.id }
-                                            }
-                                        },
-                                        orderBy: { dueDate: 'asc' }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    // 1. Fetch enrollment first to identify student's class
+    const enrollment = await prisma.enrollment.findFirst({
+        where: { userId: session.user.id },
+        include: { class: true }
     });
 
-    if (!student || student.enrollments.length === 0) {
+    if (!enrollment) {
         redirect('/student');
     }
 
-    const currentClass = student.enrollments[0].class;
-    const assignments = currentClass.courses.flatMap(c =>
-        c.assignments.map(a => ({
+    const currentClass = enrollment.class;
+
+    // 2. Fetch assignments & submissions in parallel
+    const [rawAssignments, rawSubmissions] = await Promise.all([
+        prisma.assignment.findMany({
+            where: {
+                published: true,
+                course: { classId: currentClass.id }
+            },
+            select: {
+                id: true,
+                title: true,
+                dueDate: true,
+                courseId: true,
+                course: {
+                    select: {
+                        subject: { select: { name: true } }
+                    }
+                }
+            },
+            orderBy: { dueDate: 'asc' }
+        }),
+        prisma.submission.findMany({
+            where: { studentId: session.user.id },
+            select: {
+                assignmentId: true,
+                status: true,
+                grade: true,
+                submittedAt: true,
+            }
+        })
+    ]);
+
+    const submissionMap = new Map(rawSubmissions.map(s => [s.assignmentId, s]));
+    const assignments = rawAssignments.map(a => {
+        const sub = submissionMap.get(a.id);
+        return {
             ...a,
-            subject: c.subject.name,
-            courseId: c.id
-        }))
-    ).sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+            subject: a.course.subject.name,
+            submissions: sub ? [sub] : []
+        };
+    }).sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
     return (
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">

@@ -11,23 +11,19 @@ export default async function StudentCoursesPage() {
         redirect('/login');
     }
 
-    // Fetch student's class and courses
-    const student = await prisma.user.findUnique({
-        where: { id: session.user.id },
+    // Fetch student's class and courses directly from enrollment
+    const enrollment = await prisma.enrollment.findFirst({
+        where: { userId: session.user.id },
         include: {
-            enrollments: {
+            class: {
                 include: {
-                    class: {
+                    courses: {
                         include: {
-                            courses: {
-                                include: {
-                                    subject: true,
-                                    teacher: true,
-                                    materials: { where: { published: true }, select: { id: true } },
-                                    assignments: { where: { published: true }, select: { id: true } },
-                                    exams: { where: { published: true }, select: { id: true } },
-                                }
-                            }
+                            subject: true,
+                            teacher: true,
+                            materials: { where: { published: true }, select: { id: true } },
+                            assignments: { where: { published: true }, select: { id: true } },
+                            exams: { where: { published: true }, select: { id: true } },
                         }
                     }
                 }
@@ -35,11 +31,11 @@ export default async function StudentCoursesPage() {
         }
     });
 
-    if (!student || student.enrollments.length === 0) {
+    if (!enrollment) {
         redirect('/student');
     }
 
-    const currentClass = student.enrollments[0].class;
+    const currentClass = enrollment.class;
     const courses = currentClass.courses;
 
     return (

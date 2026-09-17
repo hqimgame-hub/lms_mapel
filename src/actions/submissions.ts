@@ -115,8 +115,11 @@ export async function saveSubmission(prevState: any, formData: FormData) {
         // Revalidation should not fail the user's submission if DB write succeeded
         try {
             revalidatePath(`/student/assignments/${assignmentId}`);
-            revalidatePath(`/student/courses`);
             revalidatePath(`/student`);
+            if (action === 'SUBMIT') {
+                revalidatePath(`/student/assignments`);
+                revalidatePath(`/teacher/assignments/${assignmentId}`);
+            }
         } catch (revErr) {
             console.warn("[saveSubmission] Non-critical revalidatePath warning:", revErr);
         }
