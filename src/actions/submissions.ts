@@ -10,7 +10,7 @@ const SubmissionSchema = z.object({
     content: z.string().optional(),
     fileUrl: z.string().optional().nullable(),
     fileName: z.string().optional().nullable(),
-    action: z.enum(['DRAFT', 'SUBMIT']),
+    action: z.enum(['DRAFT', 'SUBMIT']).optional().default('SUBMIT'),
 });
 
 export async function saveSubmission(prevState: any, formData: FormData) {
@@ -19,12 +19,13 @@ export async function saveSubmission(prevState: any, formData: FormData) {
         return { message: "Unauthorized", success: false, tempFileName: null };
     }
 
+    const rawAction = formData.get('action');
     const data = {
         assignmentId: formData.get('assignmentId'),
         content: formData.get('content'),
         fileUrl: formData.get('fileUrl'),
         fileName: formData.get('fileName'),
-        action: formData.get('action'),
+        action: (rawAction === 'DRAFT' || rawAction === 'SUBMIT') ? rawAction : 'SUBMIT',
     };
 
     const validated = SubmissionSchema.safeParse(data);
@@ -65,7 +66,12 @@ export async function saveSubmission(prevState: any, formData: FormData) {
         });
 
         if (existing?.status === 'SUBMITTED' || existing?.status === 'GRADED') {
-            return { message: "Assignment already submitted. Cannot modify.", success: false, tempFileName: null };
+            return {
+                message: "Tugas sudah berhasil diserahkan sebelumnya.",
+                success: true,
+                status: existing.status,
+                tempFileName: existing.tempFileName ?? null
+            };
         }
 
         const status = action === 'SUBMIT' ? 'SUBMITTED' : 'DRAFT';
@@ -145,6 +151,7 @@ export async function saveSubmission(prevState: any, formData: FormData) {
         return {
             message: msg,
             success: true,
+            status,
             tempFileName: savedTempFileName ?? null,
         };
 

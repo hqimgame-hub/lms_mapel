@@ -255,7 +255,7 @@ export default async function DashboardPage() {
                                 Pengguna Terbaru
                             </h3>
                             <div className="space-y-4">
-                                {adminData.recentUsers.map(u => (
+                                {adminData.recentUsers.map((u: any) => (
                                     <div key={u.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-400 dark:text-slate-500 text-xs uppercase">

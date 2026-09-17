@@ -2,6 +2,7 @@
 
 import { saveSubmission, getDraftFile } from "@/actions/submissions";
 import { useState, useActionState, useEffect, startTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Save, Send, Clock, CheckCircle, Smartphone, Download, Copy, Monitor, QrCode, Mail, Loader2, Share2, Upload, FileText, RotateCcw, AlertCircle } from "lucide-react";
 
 interface SubmissionFormProps {
@@ -16,12 +17,17 @@ interface SubmissionFormProps {
 }
 
 export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, initialFileName, initialTempFileName, status, dueDate, enableDriveUpload }: SubmissionFormProps) {
+    const router = useRouter();
     const [state, formAction, isPending] = useActionState(saveSubmission, { message: '', success: false, tempFileName: null });
     const [showShare, setShowShare] = useState(false);
     const [showEmailModal, setShowEmailModal] = useState(false);
     const [sendingEmail, setSendingEmail] = useState(false);
     const [downloading, setDownloading] = useState(false);
     const [copied, setCopied] = useState(false);
+
+    // Dynamic submission status (local state to prevent stale UI)
+    const [currentStatus, setCurrentStatus] = useState(status || 'DRAFT');
+    const [submitActionType, setSubmitActionType] = useState<'DRAFT' | 'SUBMIT'>('SUBMIT');
 
     // Drive Upload states
     const [uploadingDrive, setUploadingDrive] = useState(false);
@@ -81,6 +87,9 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
             setFileName(result.fileName);
             setDriveUploadError(null);
 
+            // Immediately lock UI optimistically so student sees instant progress
+            setCurrentStatus('SUBMITTED');
+
             // Auto-submit submission to database so assignment status becomes 'SUBMITTED' immediately
             const submitData = new FormData();
             submitData.append("assignmentId", assignmentId);
@@ -101,22 +110,33 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
         }
     };
 
+    // Update status when server returns success response
     useEffect(() => {
         if (state.success) {
+            if ('status' in state && state.status) {
+                setCurrentStatus(state.status);
+            } else if (state.message?.includes("diserahkan") || state.message?.includes("Tugas sudah berhasil")) {
+                setCurrentStatus('SUBMITTED');
+            }
             // Update tempFileName badge immediately from action response
             if ('tempFileName' in state && state.tempFileName !== undefined) {
                 setTempFileName(state.tempFileName ?? '');
             }
+            // Invalidate client router cache so server components sync seamlessly without manual F5
+            router.refresh();
         }
-    }, [state]);
+    }, [state, router]);
 
-    // Sync state with server data (important after revalidatePath)
+    // Sync state with server props
     useEffect(() => {
+        if (status) {
+            setCurrentStatus(status);
+        }
         setTempFileName(initialTempFileName ?? '');
         setFileUrl(initialFileUrl ?? '');
         setFileName(initialFileName ?? '');
         setCurrentContent(initialContent ?? '');
-    }, [initialTempFileName, initialFileUrl, initialFileName, initialContent]);
+    }, [status, initialTempFileName, initialFileUrl, initialFileName, initialContent]);
 
     const downloadTxt = () => {
         const element = document.createElement("a");
@@ -150,17 +170,17 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
         }
     };
 
-    const isLocked = status === 'SUBMITTED' || status === 'GRADED';
+    const isLocked = currentStatus === 'SUBMITTED' || currentStatus === 'GRADED';
 
     return (
         <div className="bg-slate-50/50 rounded-[2rem] p-8 border border-slate-100 flex flex-col gap-6">
             <div className="flex justify-between items-center">
                 <h3 className="font-black text-xl text-slate-800 tracking-tight flex items-center gap-3">
                     Jawaban Anda
-                    {status === 'DRAFT' && (
+                    {currentStatus === 'DRAFT' && (
                         <span className="text-[10px] font-black bg-amber-100 text-amber-600 px-3 py-1 rounded-full uppercase tracking-widest border border-amber-200">Draft Disimpan</span>
                     )}
-                    {status === 'RETURNED' && (
+                    {currentStatus === 'RETURNED' && (
                         <span className="text-[10px] font-black bg-red-100 text-red-600 px-3 py-1 rounded-full uppercase tracking-widest border border-red-200">Perlu Perbaikan (Dikembalikan)</span>
                     )}
                     {isLocked && (
@@ -173,6 +193,7 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                 <input type="hidden" name="assignmentId" value={assignmentId} />
                 <input type="hidden" name="fileUrl" value={fileUrl} />
                 <input type="hidden" name="fileName" value={fileName} />
+                <input type="hidden" name="action" value={submitActionType} />
 
                 {/* Direct Google Drive Upload Feature (Teacher Enabled) */}
                 {enableDriveUpload && !isLocked && (
@@ -363,7 +384,7 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                     </div>
                 </div>
 
-                {status === 'RETURNED' && (
+                {currentStatus === 'RETURNED' && (
                     <div className="p-5 bg-red-50 border-2 border-red-100 rounded-3xl flex items-start gap-4 animate-in slide-in-from-top-4 duration-500">
                         <div className="p-3 bg-white rounded-2xl text-red-500 shadow-sm">
                             <RotateCcw size={24} />
@@ -389,25 +410,46 @@ export function SubmissionForm({ assignmentId, initialContent, initialFileUrl, i
                                 name="action"
                                 value="DRAFT"
                                 disabled={isPending}
+                                onClick={() => setSubmitActionType('DRAFT')}
                                 className="w-full sm:flex-1 flex items-center justify-center gap-3 bg-white text-slate-600 px-8 py-4 rounded-2xl border-2 border-slate-100 hover:border-slate-200 hover:bg-slate-50 font-black text-sm transition-all disabled:opacity-50 active:scale-[0.98]"
                             >
-                                <Save size={20} />
-                                Simpan ke Cloud
+                                {isPending && submitActionType === 'DRAFT' ? (
+                                    <>
+                                        <Loader2 className="animate-spin" size={20} />
+                                        Menyimpan Draft...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save size={20} />
+                                        Simpan ke Cloud
+                                    </>
+                                )}
                             </button>
                             <button
                                 type="submit"
                                 name="action"
                                 value="SUBMIT"
                                 disabled={isPending}
-                                className="w-full sm:flex-1 flex items-center justify-center gap-3 bg-primary text-white px-8 py-4 rounded-2xl hover:bg-blue-600 font-black text-sm transition-all shadow-xl shadow-primary/20 disabled:opacity-50 active:scale-[0.98]"
                                 onClick={(e) => {
                                     if (!confirm("Sudah yakin dengan jawabanmu? Setelah diserahkan, tugas tidak bisa diubah lagi.")) {
                                         e.preventDefault();
+                                        return;
                                     }
+                                    setSubmitActionType('SUBMIT');
                                 }}
+                                className="w-full sm:flex-1 flex items-center justify-center gap-3 bg-primary text-white px-8 py-4 rounded-2xl hover:bg-blue-600 font-black text-sm transition-all shadow-xl shadow-primary/20 disabled:opacity-50 active:scale-[0.98]"
                             >
-                                <Send size={20} />
-                                Serahkan Tugas
+                                {isPending && submitActionType === 'SUBMIT' ? (
+                                    <>
+                                        <Loader2 className="animate-spin" size={20} />
+                                        Menyerahkan Tugas...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Send size={20} />
+                                        Serahkan Tugas
+                                    </>
+                                )}
                             </button>
                         </div>
 
