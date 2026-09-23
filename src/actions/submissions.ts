@@ -186,11 +186,13 @@ export async function getDraftFile(assignmentId: string) {
     };
 }
 
-export async function returnSubmission(submissionId: string, assignmentId: string) {
+export async function returnSubmission(submissionId: string, assignmentId: string, prevState: any, formData: FormData) {
     const session = await auth();
     if (!session?.user?.id || session.user.role !== 'TEACHER') {
         return { message: "Unauthorized", success: false };
     }
+
+    const feedback = formData.get('feedback')?.toString().trim() || null;
 
     try {
         console.log(`Returning submission ${submissionId} for assignment ${assignmentId}`);
@@ -200,8 +202,8 @@ export async function returnSubmission(submissionId: string, assignmentId: strin
             data: {
                 status: 'RETURNED',
                 submittedAt: null,
-                grade: null
-                // feedback dipertahankan agar catatan guru tetap terlihat oleh siswa
+                grade: null,
+                feedback: feedback, // Simpan pesan guru (null jika kosong)
             }
         });
 
