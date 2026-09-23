@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { notFound } from "next/navigation";
-import { GradeForm } from "@/components/teacher/GradeForm";
+import { GradingPanel } from "@/components/teacher/GradingPanel";
 import { AnswerModal } from "@/components/teacher/AnswerModal";
 import { ReturnSubmissionButton } from "@/components/teacher/ReturnSubmissionButton";
 import { CancelReturnButton } from "@/components/teacher/CancelReturnButton";
@@ -156,13 +156,12 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                             <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Penilaian &amp; Aksi</p>
                                             {isSubmitted ? (
                                                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                                                    <GradeForm
+                                                    <GradingPanel
                                                         submissionId={sub!.id}
                                                         assignmentId={assignmentId}
                                                         initialGrade={sub!.grade}
                                                         initialFeedback={sub!.feedback}
                                                     />
-                                                    <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} text="Kembalikan" />
                                                 </div>
                                             ) : isReturned ? (
                                                 <div className="flex flex-col gap-2">
@@ -253,13 +252,12 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                                             <td className="p-6">
                                                 {isSubmitted ? (
                                                     <div className="flex items-start gap-3">
-                                                        <GradeForm
+                                                        <GradingPanel
                                                             submissionId={sub!.id}
                                                             assignmentId={assignmentId}
                                                             initialGrade={sub!.grade}
                                                             initialFeedback={sub!.feedback}
                                                         />
-                                                        <ReturnSubmissionButton submissionId={sub!.id} assignmentId={assignmentId} />
                                                     </div>
                                                 ) : isReturned ? (
                                                     <div className="flex flex-col gap-2">
