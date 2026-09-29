@@ -93,7 +93,7 @@ export default async function StudentCoursePage({
                     Dashboard
                 </Link>
                 <ChevronRight size={14} className="text-slate-300 dark:text-slate-700" />
-                <span className="text-slate-800 dark:text-slate-200">{course.subject.name}</span>
+                <span className="text-slate-800 dark:text-slate-200">{course.subject?.name ?? 'Mata Pelajaran'}</span>
             </nav>
 
             {/* Header */}
@@ -103,8 +103,8 @@ export default async function StudentCoursePage({
                     <div className="inline-block px-3 py-1 rounded-lg bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest mb-3">
                         Ruang Belajar Siswa
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{course.subject.name}</h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Guru Pengajar: <span className="text-slate-800 dark:text-slate-200 font-bold">{course.teacher.name}</span></p>
+                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{course.subject?.name ?? 'Mata Pelajaran'}</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Guru Pengajar: <span className="text-slate-800 dark:text-slate-200 font-bold">{course.teacher?.name ?? 'Guru Pengajar'}</span></p>
                 </div>
             </div>
 

@@ -63,9 +63,9 @@ export default async function StudentCoursesPage() {
 
                         <div>
                             <h3 className="text-2xl font-black text-slate-800 dark:text-white group-hover:text-primary transition-colors tracking-tight leading-tight mb-2">
-                                {course.subject.name}
+                                {course.subject?.name ?? 'Mata Pelajaran'}
                             </h3>
-                            <p className="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{course.teacher.name}</p>
+                            <p className="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{course.teacher?.name ?? 'Guru Pengajar'}</p>
                         </div>
 
                         <div className="pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">

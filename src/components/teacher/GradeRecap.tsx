@@ -104,7 +104,9 @@ export function GradeRecap({ courses }: GradeRecapProps) {
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
-        link.setAttribute('download', `Rekap_Nilai_${selectedCourse.class.name}_${selectedCourse.subject.name}.csv`);
+        const className = selectedCourse?.class?.name ?? 'Kelas';
+        const subjectName = selectedCourse?.subject?.name ?? 'Mapel';
+        link.setAttribute('download', `Rekap_Nilai_${className}_${subjectName}.csv`);
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
@@ -123,7 +125,7 @@ export function GradeRecap({ courses }: GradeRecapProps) {
                     >
                         {courses.map(course => (
                             <option key={course.id} value={course.id}>
-                                {course.class.name} - {course.subject.name}
+                                {course.class?.name ?? 'Kelas'} - {course.subject?.name ?? 'Mapel'}
                             </option>
                         ))}
                     </select>

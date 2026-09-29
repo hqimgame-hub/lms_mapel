@@ -64,13 +64,13 @@ export default async function TeacherGradingPage() {
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <h3 className="font-bold text-slate-800 dark:text-slate-200">{sub.student.name}</h3>
+                                        <h3 className="font-bold text-slate-800 dark:text-slate-200">{sub.student?.name ?? 'Siswa'}</h3>
                                         <span className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500">
-                                            {sub.assignment.course.class.name}
+                                            {sub.assignment?.course?.class?.name ?? '-'}
                                         </span>
                                     </div>
                                     <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
-                                        Submisi: <span className="text-slate-900 dark:text-slate-100 font-bold">{sub.assignment.title}</span>
+                                        Submisi: <span className="text-slate-900 dark:text-slate-100 font-bold">{sub.assignment?.title ?? 'Tugas'}</span>
                                     </p>
                                     <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
                                         <div className="flex items-center gap-1">
@@ -78,7 +78,7 @@ export default async function TeacherGradingPage() {
                                             Dikumpul: {sub.submittedAt ? format(new Date(sub.submittedAt), 'PPP p') : '-'}
                                         </div>
                                         <div className="px-2 py-0.5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded transition-colors">
-                                            {sub.assignment.course.subject.name}
+                                            {sub.assignment?.course?.subject?.name ?? '-'}
                                         </div>
                                     </div>
                                 </div>

@@ -98,7 +98,7 @@ export default async function AdminCoursesPage({
                                                     <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                                                         <GraduationCap size={16} />
                                                     </div>
-                                                    <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{course.class.name}</span>
+                                                    <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{course.class?.name ?? '-'}</span>
                                                 </div>
                                             </td>
                                             <td className="p-6">
@@ -106,7 +106,7 @@ export default async function AdminCoursesPage({
                                                     <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                                                         <BookOpen size={16} />
                                                     </div>
-                                                    <span className="font-medium text-slate-600 dark:text-slate-400 text-sm">{course.subject.name}</span>
+                                                    <span className="font-medium text-slate-600 dark:text-slate-400 text-sm">{course.subject?.name ?? '-'}</span>
                                                 </div>
                                             </td>
                                             <td className="p-6">
@@ -114,7 +114,7 @@ export default async function AdminCoursesPage({
                                                     <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                                                         <User size={16} />
                                                     </div>
-                                                    <span className="text-sm font-bold text-slate-800 dark:text-slate-200">{course.teacher.name}</span>
+                                                    <span className="text-sm font-bold text-slate-800 dark:text-slate-200">{course.teacher?.name ?? '-'}</span>
                                                 </div>
                                             </td>
                                             <td className="p-6 text-right">

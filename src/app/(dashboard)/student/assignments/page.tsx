@@ -59,7 +59,7 @@ export default async function StudentAssignmentsPage() {
         const sub = submissionMap.get(a.id);
         return {
             ...a,
-            subject: a.course.subject.name,
+            subject: a.course?.subject?.name ?? 'Mata Pelajaran',
             submissions: sub ? [sub] : []
         };
     }).sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());

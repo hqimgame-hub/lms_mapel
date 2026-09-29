@@ -59,9 +59,9 @@ export default async function StudentAssignmentPage({ params }: { params: Promis
                     <div>
                         <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{assignment.title}</h1>
                         <div className="flex gap-2 text-sm text-slate-500 dark:text-slate-400">
-                            <span>{assignment.course.subject.name}</span>
+                            <span>{assignment.course?.subject?.name ?? 'Mata Pelajaran'}</span>
                             <span>•</span>
-                            <span>{assignment.course.teacher.name}</span>
+                            <span>{assignment.course?.teacher?.name ?? 'Guru Pengajar'}</span>
                         </div>
                     </div>
                     <div className="text-right">

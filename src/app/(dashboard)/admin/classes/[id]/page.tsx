@@ -79,8 +79,8 @@ export default async function AdminClassDetailsPage({ params }: { params: { id: 
                         <tbody className="divide-y">
                             {classData.courses.map(course => (
                                 <tr key={course.id}>
-                                    <td className="p-3 font-medium">{course.subject.name}</td>
-                                    <td className="p-3 text-sm">{course.teacher.name}</td>
+                                    <td className="p-3 font-medium">{course.subject?.name ?? '-'}</td>
+                                    <td className="p-3 text-sm">{course.teacher?.name ?? '-'}</td>
                                     <td className="p-3">
                                         <form action={removeCourse}>
                                             <input type="hidden" name="courseId" value={course.id} />

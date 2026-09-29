@@ -50,7 +50,7 @@ export default async function TeacherExamsPage() {
                     courseId=""
                     teacherCourses={teacherCourses.map(c => ({
                         id: c.id,
-                        name: `${c.subject.name} - ${c.class.name}`
+                        name: `${c.subject?.name ?? 'Mata Pelajaran'} - ${c.class?.name ?? 'Kelas'}`
                     }))}
                 />
             </div>
@@ -61,10 +61,10 @@ export default async function TeacherExamsPage() {
                         <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                                    {exam.course.class.name}
+                                    {exam.course?.class?.name ?? '-'}
                                 </span>
                                 <span className="px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[10px] font-black uppercase tracking-widest">
-                                    {exam.course.subject.name}
+                                    {exam.course?.subject?.name ?? '-'}
                                 </span>
                                 <span className="px-2 py-0.5 rounded-md bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest">
                                     Google Form

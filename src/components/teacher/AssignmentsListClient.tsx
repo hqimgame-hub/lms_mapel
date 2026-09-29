@@ -32,20 +32,22 @@ export function AssignmentsListClient({ initialAssignments }: AssignmentsListCli
     const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
 
     const classes = useMemo(() => {
-        const uniqueClasses = new Set(initialAssignments.map(a => a.course.class.name));
+        const uniqueClasses = new Set(initialAssignments.map(a => a.course?.class?.name).filter(Boolean) as string[]);
         return Array.from(uniqueClasses).sort();
     }, [initialAssignments]);
 
     const subjects = useMemo(() => {
-        const uniqueSubjects = new Set(initialAssignments.map(a => a.course.subject.name));
+        const uniqueSubjects = new Set(initialAssignments.map(a => a.course?.subject?.name).filter(Boolean) as string[]);
         return Array.from(uniqueSubjects).sort();
     }, [initialAssignments]);
 
     const filteredAssignments = useMemo(() => {
         return initialAssignments.filter(assignment => {
             const matchesSearch = assignment.title.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesClass = !selectedClass || assignment.course.class.name === selectedClass;
-            const matchesSubject = !selectedSubject || assignment.course.subject.name === selectedSubject;
+            const className = assignment.course?.class?.name;
+            const subjectName = assignment.course?.subject?.name;
+            const matchesClass = !selectedClass || className === selectedClass;
+            const matchesSubject = !selectedSubject || subjectName === selectedSubject;
 
             return matchesSearch && matchesClass && matchesSubject;
         });
@@ -138,10 +140,10 @@ export function AssignmentsListClient({ initialAssignments }: AssignmentsListCli
                         <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                                    {assignment.course.class.name}
+                                    {assignment.course?.class?.name ?? '-'}
                                 </span>
                                 <span className="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-widest">
-                                    {assignment.course.subject.name}
+                                    {assignment.course?.subject?.name ?? '-'}
                                 </span>
                             </div>
                             <h3 className="text-xl font-bold text-slate-800 dark:text-white group-hover:text-primary transition-colors">{assignment.title}</h3>

@@ -79,7 +79,7 @@ export default async function TeacherCoursePage({
                     Dashboard
                 </Link>
                 <ChevronRight size={14} className="text-slate-300" />
-                <span className="text-slate-800">{course.subject.name}</span>
+                <span className="text-slate-800">{course.subject?.name ?? 'Mata Pelajaran'}</span>
             </nav>
 
             {/* Premium Header */}
@@ -89,12 +89,12 @@ export default async function TeacherCoursePage({
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div>
                             <div className="inline-block px-3 py-1 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary dark:text-blue-400 text-[10px] font-black uppercase tracking-widest mb-3">
-                                Kelas {course.class.name}
+                                Kelas {course.class?.name ?? '-'}
                             </div>
-                            <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{course.subject.name}</h1>
+                            <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{course.subject?.name ?? 'Mata Pelajaran'}</h1>
                             <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium flex items-center gap-2">
                                 <Users size={18} className="text-slate-300 dark:text-slate-600" />
-                                {course.class._count.students} Siswa Terdaftar di Rombel ini
+                                {course.class?._count?.students ?? 0} Siswa Terdaftar di Rombel ini
                             </p>
                         </div>
                     </div>
@@ -226,7 +226,7 @@ export default async function TeacherCoursePage({
                     <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm transition-colors">
                         <div className="p-8 border-b border-slate-50 dark:border-slate-800 font-medium">
                             <h2 className="text-xl font-black text-slate-800 dark:text-white">Siswa Terdaftar</h2>
-                            <p className="text-slate-400 dark:text-slate-500 text-xs">Daftar siswa di kelas {course.class.name}.</p>
+                            <p className="text-slate-400 dark:text-slate-500 text-xs">Daftar siswa di kelas {course.class?.name ?? '-'}.</p>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">

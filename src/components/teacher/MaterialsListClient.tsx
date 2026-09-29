@@ -31,12 +31,12 @@ export function MaterialsListClient({ initialMaterials }: MaterialsListClientPro
     const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
 
     const classes = useMemo(() => {
-        const uniqueClasses = new Set(initialMaterials.map(m => m.course.class.name));
+        const uniqueClasses = new Set(initialMaterials.map(m => m.course?.class?.name).filter(Boolean) as string[]);
         return Array.from(uniqueClasses).sort();
     }, [initialMaterials]);
 
     const subjects = useMemo(() => {
-        const uniqueSubjects = new Set(initialMaterials.map(m => m.course.subject.name));
+        const uniqueSubjects = new Set(initialMaterials.map(m => m.course?.subject?.name).filter(Boolean) as string[]);
         return Array.from(uniqueSubjects).sort();
     }, [initialMaterials]);
 
@@ -44,8 +44,10 @@ export function MaterialsListClient({ initialMaterials }: MaterialsListClientPro
         return initialMaterials.filter(material => {
             const matchesSearch = material.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 (material.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
-            const matchesClass = !selectedClass || material.course.class.name === selectedClass;
-            const matchesSubject = !selectedSubject || material.course.subject.name === selectedSubject;
+            const className = material.course?.class?.name;
+            const subjectName = material.course?.subject?.name;
+            const matchesClass = !selectedClass || className === selectedClass;
+            const matchesSubject = !selectedSubject || subjectName === selectedSubject;
 
             return matchesSearch && matchesClass && matchesSubject;
         });
@@ -138,10 +140,10 @@ export function MaterialsListClient({ initialMaterials }: MaterialsListClientPro
                         <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                                    {material.course.class.name}
+                                    {material.course?.class?.name ?? '-'}
                                 </span>
                                 <span className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest">
-                                    {material.course.subject.name}
+                                    {material.course?.subject?.name ?? '-'}
                                 </span>
                             </div>
                             <h3 className="text-xl font-bold text-slate-800 dark:text-white group-hover:text-primary transition-colors">{material.title}</h3>

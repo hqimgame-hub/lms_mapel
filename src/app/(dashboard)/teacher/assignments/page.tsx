@@ -55,7 +55,7 @@ export default async function TeacherAssignmentsPage() {
                         courseId="" // Empty because we use multi-select now
                         teacherCourses={teacherCourses.map(c => ({
                             id: c.id,
-                            name: `${c.subject.name} - ${c.class.name}`
+                            name: `${c.subject?.name ?? 'Mata Pelajaran'} - ${c.class?.name ?? 'Kelas'}`
                         }))}
                     />
                 </div>

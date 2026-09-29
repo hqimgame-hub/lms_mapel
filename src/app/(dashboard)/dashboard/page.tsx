@@ -311,12 +311,12 @@ export default async function DashboardPage() {
                                         <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-500" />
                                         <div className="relative z-10">
                                             <div className="inline-block px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest mb-4">
-                                                {course.class.name}
+                                                {course.class?.name ?? '-'}
                                             </div>
-                                            <h4 className="text-xl font-bold text-slate-800 dark:text-white mb-2 truncate">{course.subject.name}</h4>
+                                            <h4 className="text-xl font-bold text-slate-800 dark:text-white mb-2 truncate">{course.subject?.name ?? 'Mata Pelajaran'}</h4>
                                             <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 mb-6">
                                                 <UserCircle size={14} />
-                                                <span className="text-xs font-medium">{course.teacher.name}</span>
+                                                <span className="text-xs font-medium">{course.teacher?.name ?? 'Guru Pengajar'}</span>
                                             </div>
                                             <Link href={`/student/courses/${course.id}`} className="flex items-center justify-center gap-2 w-full bg-slate-900 dark:bg-slate-800 text-white py-3.5 rounded-2xl font-bold text-sm group-hover:bg-primary transition-colors">
                                                 Masuk Kelas
@@ -391,13 +391,13 @@ export default async function DashboardPage() {
                             <div key={course.id} className="bg-white dark:bg-slate-900 p-7 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all group border-b-4 border-b-emerald-500 transition-colors">
                                 <div className="flex items-start justify-between mb-6">
                                     <div className="inline-block px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-widest">
-                                        {course.class.name}
+                                        {course.class?.name ?? '-'}
                                     </div>
                                     <div className="text-slate-300 dark:text-slate-700">
                                         <Layers size={20} />
                                     </div>
                                 </div>
-                                <h4 className="text-xl font-bold text-slate-800 dark:text-white mb-2">{course.subject.name}</h4>
+                                <h4 className="text-xl font-bold text-slate-800 dark:text-white mb-2">{course.subject?.name ?? 'Mata Pelajaran'}</h4>
                                 <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 mb-8 text-sm">
                                     <Activity size={16} />
                                     <span>{course._count.assignments} Tugas Aktif</span>
