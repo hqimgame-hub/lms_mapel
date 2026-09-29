@@ -86,7 +86,7 @@ export default async function StudentDashboardPage() {
             id: a.id,
             title: a.title,
             dueDate: a.dueDate,
-            subject: a.course.subject.name,
+            subject: a.course?.subject?.name ?? 'Mata Pelajaran',
             submissions: sub ? [sub] : []
         };
     });
