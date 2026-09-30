@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { generateDatabaseBackup, uploadBackupToGoogleDrive } from '@/lib/backup';
+import { generateDatabaseBackup, uploadBothBackupsToGoogleDrive } from '@/lib/backup';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // 60 seconds max execution time for backup
@@ -45,24 +45,38 @@ export async function GET(req: NextRequest) {
         console.log('[CRON BACKUP] Memulai proses backup database...');
         const backupData = await generateDatabaseBackup();
 
-        console.log(`[CRON BACKUP] Data siap (${backupData.meta.totalRecords} records). Mengunggah ke Google Drive...`);
-        const uploadResult = await uploadBackupToGoogleDrive(backupData);
+        console.log(`[CRON BACKUP] Data siap (${backupData.meta.totalRecords} records). Mengunggah JSON + Excel ke Google Drive...`);
+        const { json: jsonResult, excel: excelResult } = await uploadBothBackupsToGoogleDrive(backupData);
 
-        if (!uploadResult.success) {
-            console.error('[CRON BACKUP FAILED]', uploadResult.error);
+        const hasError = !jsonResult.success && !excelResult.success;
+        if (hasError) {
+            console.error('[CRON BACKUP FAILED] JSON:', jsonResult.error, '| Excel:', excelResult.error);
             return NextResponse.json({
                 success: false,
-                error: uploadResult.error,
+                error: `JSON: ${jsonResult.error} | Excel: ${excelResult.error}`,
                 stats: backupData.meta.stats
             }, { status: 500 });
         }
 
-        console.log(`[CRON BACKUP SUCCESS] File ${uploadResult.fileName} tersimpan di Drive.`);
+        console.log(`[CRON BACKUP SUCCESS] JSON: ${jsonResult.fileName} | Excel: ${excelResult.fileName}`);
         return NextResponse.json({
             success: true,
-            message: 'Backup database berhasil diekspor dan diunggah ke Google Drive.',
-            fileName: uploadResult.fileName,
-            viewUrl: uploadResult.viewUrl,
+            message: 'Backup database berhasil diekspor dan diunggah ke Google Drive (JSON + Excel).',
+            json: {
+                fileName: jsonResult.fileName,
+                viewUrl: jsonResult.viewUrl,
+                success: jsonResult.success,
+                error: jsonResult.error,
+            },
+            excel: {
+                fileName: excelResult.fileName,
+                viewUrl: excelResult.viewUrl,
+                success: excelResult.success,
+                error: excelResult.error,
+            },
+            // Backward compat: tetap ada fileName & viewUrl dari JSON
+            fileName: jsonResult.fileName,
+            viewUrl: jsonResult.viewUrl,
             totalRecords: backupData.meta.totalRecords,
             stats: backupData.meta.stats,
             generatedAt: backupData.meta.generatedAt

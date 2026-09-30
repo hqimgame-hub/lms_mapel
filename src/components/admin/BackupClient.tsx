@@ -13,6 +13,7 @@ import {
     ArrowUpRight,
     ShieldCheck,
     FileCode,
+    FileSpreadsheet,
     RefreshCw
 } from 'lucide-react';
 
@@ -24,6 +25,7 @@ interface BackupClientProps {
 
 export function BackupClient({ stats, totalRecords, hasGoogleDrive }: BackupClientProps) {
     const [downloading, setDownloading] = useState(false);
+    const [downloadingExcel, setDownloadingExcel] = useState(false);
     const [uploadingDrive, setUploadingDrive] = useState(false);
     const [driveResult, setDriveResult] = useState<{
         success: boolean;
@@ -31,6 +33,7 @@ export function BackupClient({ stats, totalRecords, hasGoogleDrive }: BackupClie
         viewUrl?: string;
         error?: string;
         generatedAt?: string;
+        excel?: { success: boolean; fileName?: string; viewUrl?: string; error?: string };
     } | null>(null);
 
     // 1. Download file JSON directly to user's computer
@@ -61,6 +64,34 @@ export function BackupClient({ stats, totalRecords, hasGoogleDrive }: BackupClie
         }
     };
 
+    // 1b. Download file Excel directly to user's computer
+    const handleDownloadExcel = async () => {
+        try {
+            setDownloadingExcel(true);
+            const response = await fetch('/api/admin/backup/download?format=xlsx');
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.error || 'Gagal mengunduh file backup Excel');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const now = new Date().toISOString().slice(0, 10);
+            a.download = `backup-lms-${now}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        } catch (error: any) {
+            console.error('Download Excel error:', error);
+            alert('Gagal mengunduh backup Excel: ' + (error.message || 'Terjadi kesalahan sistem'));
+        } finally {
+            setDownloadingExcel(false);
+        }
+    };
+
     // 2. Trigger backup directly to Google Drive
     const handleTriggerDriveBackup = async () => {
         try {
@@ -82,6 +113,7 @@ export function BackupClient({ stats, totalRecords, hasGoogleDrive }: BackupClie
                 fileName: result.fileName,
                 viewUrl: result.viewUrl,
                 generatedAt: result.generatedAt,
+                excel: result.excel,
             });
         } catch (error: any) {
             console.error('Drive backup error:', error);
@@ -146,7 +178,7 @@ export function BackupClient({ stats, totalRecords, hasGoogleDrive }: BackupClie
                             </div>
                             <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-semibold">
                                 <ShieldCheck size={16} className="text-indigo-600 dark:text-indigo-400" />
-                                <span>Format: File JSON Lengkap (Kompatibel dengan script restore)</span>
+                                <span>Format: <span className="text-blue-600 dark:text-blue-400">JSON</span> + <span className="text-emerald-600 dark:text-emerald-400">Excel (.xlsx)</span> — 2 file setiap backup</span>
                             </div>
                         </div>
 
@@ -164,17 +196,43 @@ export function BackupClient({ stats, totalRecords, hasGoogleDrive }: BackupClie
                                     </span>
                                 </div>
                                 {driveResult.success && (
-                                    <div className="flex flex-col gap-1.5 pl-6">
-                                        <p className="font-mono text-[11px] text-slate-600 dark:text-slate-300">{driveResult.fileName}</p>
-                                        {driveResult.viewUrl && (
-                                            <a
-                                                href={driveResult.viewUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-1 font-bold text-blue-600 dark:text-blue-400 hover:underline"
-                                            >
-                                                Buka File di Google Drive <ArrowUpRight size={14} />
-                                            </a>
+                                    <div className="flex flex-col gap-2 pl-6">
+                                        {/* JSON result */}
+                                        <div className="flex flex-col gap-0.5">
+                                            <p className="font-mono text-[11px] text-slate-600 dark:text-slate-300 flex items-center gap-1">
+                                                <FileCode size={12} className="text-blue-500" /> {driveResult.fileName}
+                                            </p>
+                                            {driveResult.viewUrl && (
+                                                <a
+                                                    href={driveResult.viewUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-1 font-bold text-blue-600 dark:text-blue-400 hover:underline"
+                                                >
+                                                    Buka JSON di Google Drive <ArrowUpRight size={14} />
+                                                </a>
+                                            )}
+                                        </div>
+                                        {/* Excel result */}
+                                        {driveResult.excel && (
+                                            <div className="flex flex-col gap-0.5">
+                                                <p className="font-mono text-[11px] text-slate-600 dark:text-slate-300 flex items-center gap-1">
+                                                    <FileSpreadsheet size={12} className="text-emerald-500" /> {driveResult.excel.fileName}
+                                                </p>
+                                                {driveResult.excel.viewUrl && (
+                                                    <a
+                                                        href={driveResult.excel.viewUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-1 font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                                                    >
+                                                        Buka Excel di Google Drive <ArrowUpRight size={14} />
+                                                    </a>
+                                                )}
+                                                {driveResult.excel.error && (
+                                                    <p className="text-red-500">{driveResult.excel.error}</p>
+                                                )}
+                                            </div>
                                         )}
                                     </div>
                                 )}
@@ -204,7 +262,7 @@ export function BackupClient({ stats, totalRecords, hasGoogleDrive }: BackupClie
                     </button>
                 </div>
 
-                {/* Card 2: Manual Download JSON */}
+                {/* Card 2: Manual Download JSON + Excel */}
                 <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between gap-6 transition-colors">
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-between">
@@ -222,7 +280,7 @@ export function BackupClient({ stats, totalRecords, hasGoogleDrive }: BackupClie
                                 Unduh Cadangan ke Komputer
                             </h2>
                             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                                Unduh snapshot seluruh data database langsung ke perangkat lokal Anda dalam format <code>.json</code>.
+                                Unduh snapshot seluruh data database ke perangkat lokal dalam format <code>.json</code> atau <code>.xlsx</code> (Excel).
                             </p>
                         </div>
 
@@ -239,23 +297,42 @@ export function BackupClient({ stats, totalRecords, hasGoogleDrive }: BackupClie
                         </div>
                     </div>
 
-                    <button
-                        onClick={handleDownloadJson}
-                        disabled={downloading}
-                        className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-bold py-3.5 px-6 rounded-2xl shadow-lg transition-all disabled:opacity-60 cursor-pointer"
-                    >
-                        {downloading ? (
-                            <>
-                                <Loader2 size={18} className="animate-spin" />
-                                <span>Menyiapkan File Cadangan...</span>
-                            </>
-                        ) : (
-                            <>
-                                <Download size={18} />
-                                <span>Unduh Backup (.JSON) Sekarang</span>
-                            </>
-                        )}
-                    </button>
+                    <div className="flex flex-col gap-3">
+                        <button
+                            onClick={handleDownloadJson}
+                            disabled={downloading}
+                            className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-bold py-3.5 px-6 rounded-2xl shadow-lg transition-all disabled:opacity-60 cursor-pointer"
+                        >
+                            {downloading ? (
+                                <>
+                                    <Loader2 size={18} className="animate-spin" />
+                                    <span>Menyiapkan File Cadangan...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FileCode size={18} />
+                                    <span>Unduh Backup (.JSON)</span>
+                                </>
+                            )}
+                        </button>
+                        <button
+                            onClick={handleDownloadExcel}
+                            disabled={downloadingExcel}
+                            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-emerald-600/20 transition-all disabled:opacity-60 cursor-pointer"
+                        >
+                            {downloadingExcel ? (
+                                <>
+                                    <Loader2 size={18} className="animate-spin" />
+                                    <span>Menyiapkan File Excel...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FileSpreadsheet size={18} />
+                                    <span>Unduh Backup (.XLSX / Excel)</span>
+                                </>
+                            )}
+                        </button>
+                    </div>
                 </div>
             </div>
 
