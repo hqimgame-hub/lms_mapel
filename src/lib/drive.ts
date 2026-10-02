@@ -139,9 +139,8 @@ export async function uploadToDrive(
 
 export async function getOrCreateFolder(folderName: string) {
     try {
-        const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-        const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-        const rootFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+        const { clientEmail, privateKey } = getCredentials();
+        const rootFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID?.trim();
 
         if (!clientEmail || !privateKey || !rootFolderId) return null;
 
@@ -159,6 +158,8 @@ export async function getOrCreateFolder(folderName: string) {
             q: query,
             fields: 'files(id, name)',
             spaces: 'drive',
+            supportsAllDrives: true,
+            includeItemsFromAllDrives: true,
         });
 
         if (res.data.files && res.data.files.length > 0) {
@@ -174,6 +175,7 @@ export async function getOrCreateFolder(folderName: string) {
 
         const file = await drive.files.create({
             requestBody: fileMetadata,
+            supportsAllDrives: true,
             fields: 'id'
         });
 
