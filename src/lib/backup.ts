@@ -129,8 +129,11 @@ export async function uploadBackupToGoogleDrive(backupData: BackupResult): Promi
     }
 }
 
+const MAX_EXCEL_CELL_LENGTH = 32000;
+
 /**
- * Menghasilkan file Excel (.xlsx) dari data backup — setiap tabel jadi 1 sheet
+ * Menghasilkan file Excel (.xlsx) dari data backup — setiap tabel jadi 1 sheet.
+ * Melakukan sanitasi otomatis agar teks tidak melampaui batas sel Excel (32.767 karakter).
  */
 export function generateExcelBackup(backupData: BackupResult): Buffer {
     const wb = XLSX.utils.book_new();
@@ -144,15 +147,47 @@ export function generateExcelBackup(backupData: BackupResult): Buffer {
             continue;
         }
 
-        const ws = XLSX.utils.json_to_sheet(rows);
+        // Sanitasi baris data agar tidak melanggar batas 32.767 karakter per sel Excel
+        const sanitizedRows = rows.map((row: any) => {
+            const cleanRow: Record<string, any> = {};
+            for (const [key, value] of Object.entries(row)) {
+                if (value === null || value === undefined) {
+                    cleanRow[key] = value;
+                } else if (table === 'Submission' && key === 'tempFile' && typeof value === 'string' && value.length > 100) {
+                    // Berkas draft Base64 siswa berukuran masif, ganti dengan ringkasan di Excel (tetap utuh di JSON)
+                    cleanRow[key] = `[BERKAS_BASE64: ${value.length.toLocaleString('id-ID')} karakter - Tersimpan utuh di backup JSON]`;
+                } else if (typeof value === 'string' && value.length > MAX_EXCEL_CELL_LENGTH) {
+                    // Potong teks yang melebihi batas 32.767 karakter Excel secara aman
+                    cleanRow[key] = value.slice(0, MAX_EXCEL_CELL_LENGTH) +
+                        `... [DIPOTONG: Total ${value.length.toLocaleString('id-ID')} karakter - Lihat data lengkap di backup JSON]`;
+                } else if (typeof value === 'object' && !(value instanceof Date)) {
+                    // Jika ada objek bersarang, ubah ke string dan cek panjangnya
+                    const jsonStr = JSON.stringify(value);
+                    if (jsonStr.length > MAX_EXCEL_CELL_LENGTH) {
+                        cleanRow[key] = jsonStr.slice(0, MAX_EXCEL_CELL_LENGTH) + '... [TRUNCATED]';
+                    } else {
+                        cleanRow[key] = jsonStr;
+                    }
+                } else {
+                    cleanRow[key] = value;
+                }
+            }
+            return cleanRow;
+        });
 
-        // Auto-width kolom berdasarkan isi data
-        const colWidths = Object.keys(rows[0]).map((key) => ({
-            wch: Math.max(
+        const ws = XLSX.utils.json_to_sheet(sanitizedRows);
+
+        // Auto-width kolom berdasarkan isi data (dibatasi antara 10 - 50 agar sesuai spesifikasi Excel)
+        const firstRow = sanitizedRows[0];
+        const colWidths = Object.keys(firstRow).map((key) => {
+            const maxContentLen = Math.max(
                 key.length,
-                ...rows.slice(0, 100).map((r) => String(r[key] ?? '').length)
-            )
-        }));
+                ...sanitizedRows.slice(0, 100).map((r) => String(r[key] ?? '').length)
+            );
+            return {
+                wch: Math.min(Math.max(maxContentLen, 10), 50)
+            };
+        });
         ws['!cols'] = colWidths;
 
         XLSX.utils.book_append_sheet(wb, ws, table);
@@ -185,7 +220,7 @@ export function generateExcelBackup(backupData: BackupResult): Buffer {
 }
 
 /**
- * Upload JSON + Excel ke Google Drive sekaligus
+ * Upload JSON + Excel ke Google Drive sekaligus secara aman dan andal
  */
 export async function uploadBothBackupsToGoogleDrive(backupData: BackupResult): Promise<{
     json: { success: boolean; fileName: string; fileId?: string; viewUrl?: string; error?: string };
@@ -199,27 +234,41 @@ export async function uploadBothBackupsToGoogleDrive(backupData: BackupResult): 
         backupFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID?.trim() || null;
     }
 
-    // Upload JSON
+    // 1. Upload JSON (Format backup utama & utuh)
     const jsonFileName = `backup-lms-${dateStr}.json`;
-    const jsonBuffer = Buffer.from(JSON.stringify(backupData, null, 2), 'utf-8');
-    const jsonUpload = await uploadToDrive(jsonBuffer, jsonFileName, 'application/json', backupFolderId || undefined);
+    let jsonResult: { success: boolean; fileName: string; fileId?: string; viewUrl?: string; error?: string };
+    try {
+        const jsonBuffer = Buffer.from(JSON.stringify(backupData, null, 2), 'utf-8');
+        const jsonUpload = await uploadToDrive(jsonBuffer, jsonFileName, 'application/json', backupFolderId || undefined);
+        jsonResult = jsonUpload.error
+            ? { success: false, fileName: jsonFileName, error: jsonUpload.error }
+            : { success: true, fileName: jsonFileName, fileId: jsonUpload.id ?? undefined, viewUrl: jsonUpload.webViewLink ?? undefined };
+    } catch (jsonErr: any) {
+        console.error('[BACKUP JSON DRIVE ERROR]', jsonErr);
+        jsonResult = { success: false, fileName: jsonFileName, error: jsonErr.message || 'Gagal mengunggah JSON ke Drive' };
+    }
 
-    // Upload Excel
+    // 2. Upload Excel (Format tabular untuk inspeksi / pelaporan)
     const xlsxFileName = `backup-lms-${dateStr}.xlsx`;
-    const xlsxBuffer = generateExcelBackup(backupData);
-    const xlsxUpload = await uploadToDrive(
-        xlsxBuffer,
-        xlsxFileName,
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        backupFolderId || undefined
-    );
+    let excelResult: { success: boolean; fileName: string; fileId?: string; viewUrl?: string; error?: string };
+    try {
+        const xlsxBuffer = generateExcelBackup(backupData);
+        const xlsxUpload = await uploadToDrive(
+            xlsxBuffer,
+            xlsxFileName,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            backupFolderId || undefined
+        );
+        excelResult = xlsxUpload.error
+            ? { success: false, fileName: xlsxFileName, error: xlsxUpload.error }
+            : { success: true, fileName: xlsxFileName, fileId: xlsxUpload.id ?? undefined, viewUrl: xlsxUpload.webViewLink ?? undefined };
+    } catch (excelErr: any) {
+        console.error('[BACKUP EXCEL DRIVE ERROR]', excelErr);
+        excelResult = { success: false, fileName: xlsxFileName, error: excelErr.message || 'Gagal memproses/mengunggah Excel ke Drive' };
+    }
 
     return {
-        json: jsonUpload.error
-            ? { success: false, fileName: jsonFileName, error: jsonUpload.error }
-            : { success: true, fileName: jsonFileName, fileId: jsonUpload.id ?? undefined, viewUrl: jsonUpload.webViewLink ?? undefined },
-        excel: xlsxUpload.error
-            ? { success: false, fileName: xlsxFileName, error: xlsxUpload.error }
-            : { success: true, fileName: xlsxFileName, fileId: xlsxUpload.id ?? undefined, viewUrl: xlsxUpload.webViewLink ?? undefined },
+        json: jsonResult,
+        excel: excelResult,
     };
 }
