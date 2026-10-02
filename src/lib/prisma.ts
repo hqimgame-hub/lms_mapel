@@ -15,9 +15,9 @@ function createPrismaClient() {
     })
 }
 
-// Singleton pattern - mencegah multiple PrismaClient di serverless
+// Singleton pattern - selalu gunakan satu instance PrismaClient di seluruh request/chunk
 export const prisma = globalForPrisma.prisma ?? createPrismaClient()
 
-if (process.env.NODE_ENV !== 'production') {
-    globalForPrisma.prisma = prisma
-}
+// Simpan ke globalThis baik di dev maupun prod untuk mencegah kebocoran pool koneksi database
+globalForPrisma.prisma = prisma
+

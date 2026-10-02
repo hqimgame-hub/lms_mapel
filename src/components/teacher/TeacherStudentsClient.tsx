@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useActionState, useEffect, useTransition, useMemo } from "react";
+import { useState, useActionState, useEffect, useTransition, useMemo, useCallback } from "react";
 import { updateStudentByTeacher, deleteStudentByTeacher } from "@/actions/users";
 import { ActionState } from "@/actions/types";
 import {
@@ -8,7 +8,6 @@ import {
     CheckCircle, AlertCircle, Pencil, ChevronDown, Trash2,
     AlertTriangle, CheckCircle2
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 type Student = {
     id: string;
@@ -45,10 +44,10 @@ function EditStudentModal({
     useEffect(() => {
         if (state.success) {
             onUpdated(student.id, { name, email: email || null });
-            const t = setTimeout(onClose, 1000);
+            const t = setTimeout(onClose, 800);
             return () => clearTimeout(t);
         }
-    }, [state.success, onClose, onUpdated, student.id, name, email]);
+    }, [state.success]);
 
     return (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
@@ -309,7 +308,6 @@ function DeleteStudentModal({
 }
 
 export function TeacherStudentsClient({ classes: initialClasses }: { classes: ClassGroup[] }) {
-    const router = useRouter();
     const [classes, setClasses] = useState<ClassGroup[]>(initialClasses);
     const [search, setSearch] = useState('');
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
@@ -374,23 +372,21 @@ export function TeacherStudentsClient({ classes: initialClasses }: { classes: Cl
 
     const totalStudents = classes.reduce((acc, c) => acc + c.students.length, 0);
 
-    const handleStudentDeleted = (deletedId: string, message: string) => {
+    const handleStudentDeleted = useCallback((deletedId: string, message: string) => {
         setClasses(prev => prev.map(c => ({
             ...c,
             students: c.students.filter(s => s.id !== deletedId)
         })));
         setFeedbackMessage(message);
         setTimeout(() => setFeedbackMessage(null), 4000);
-        router.refresh();
-    };
+    }, []);
 
-    const handleStudentUpdated = (studentId: string, updated: { name: string; email: string | null }) => {
+    const handleStudentUpdated = useCallback((studentId: string, updated: { name: string; email: string | null }) => {
         setClasses(prev => prev.map(c => ({
             ...c,
             students: c.students.map(s => s.id === studentId ? { ...s, ...updated } : s)
         })));
-        router.refresh();
-    };
+    }, []);
 
     if (classes.length === 0) {
         return (

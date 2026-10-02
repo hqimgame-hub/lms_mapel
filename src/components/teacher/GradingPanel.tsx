@@ -3,7 +3,6 @@
 import { gradeSubmission } from "@/actions/grading";
 import { returnSubmission } from "@/actions/submissions";
 import { useActionState, useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { X, RotateCcw, Loader2 } from "lucide-react";
 
 interface GradingPanelProps {
@@ -14,8 +13,6 @@ interface GradingPanelProps {
 }
 
 export function GradingPanel({ submissionId, assignmentId, initialGrade, initialFeedback }: GradingPanelProps) {
-    const router = useRouter();
-
     const [gradeState, gradeFormAction, isGradePending] = useActionState(gradeSubmission, { message: '', success: false });
     const [returnState, returnFormAction, isReturnPending] = useActionState(
         returnSubmission.bind(null, submissionId, assignmentId),
@@ -42,7 +39,7 @@ export function GradingPanel({ submissionId, assignmentId, initialGrade, initial
         setCurrentFeedback(initialFeedback ?? '');
     }, [initialGrade, initialFeedback]);
 
-    // Handle grade save success
+    // Handle grade save success - update local state immediately without blocking router transitions
     useEffect(() => {
         if (gradeState?.success && submittedDataRef.current !== null) {
             const { grade, feedback } = submittedDataRef.current;
@@ -51,9 +48,8 @@ export function GradingPanel({ submissionId, assignmentId, initialGrade, initial
             setCurrentGrade(numericGrade);
             setCurrentFeedback(feedback.trim());
             setIsEditing(false);
-            router.refresh();
         }
-    }, [gradeState, router]);
+    }, [gradeState]);
 
     const handleStartEditing = () => {
         setGradeInput(currentGrade !== null && currentGrade !== undefined ? String(currentGrade) : '');

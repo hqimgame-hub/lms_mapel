@@ -2,7 +2,6 @@
 
 import { gradeSubmission } from "@/actions/grading";
 import { useActionState, useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 
 interface GradeFormProps {
@@ -13,7 +12,6 @@ interface GradeFormProps {
 }
 
 export function GradeForm({ submissionId, initialGrade, initialFeedback, assignmentId }: GradeFormProps) {
-    const router = useRouter();
     const [state, formAction, isPending] = useActionState(gradeSubmission, { message: '', success: false });
 
     // Local display state
@@ -36,7 +34,7 @@ export function GradeForm({ submissionId, initialGrade, initialFeedback, assignm
         setCurrentFeedback(initialFeedback ?? '');
     }, [initialGrade, initialFeedback]);
 
-    // Handle action success — only fires when state changes, not when user types
+    // Handle action success — update local state immediately without blocking router transitions
     useEffect(() => {
         if (state?.success && submittedDataRef.current !== null) {
             // Read submitted values and immediately clear the ref so this effect
@@ -48,9 +46,8 @@ export function GradeForm({ submissionId, initialGrade, initialFeedback, assignm
             setCurrentGrade(numericGrade);
             setCurrentFeedback(feedback.trim());
             setIsEditing(false);
-            router.refresh();
         }
-    }, [state, router]); // ← gradeInput & feedbackInput NOT here — no more spurious triggers
+    }, [state]);
 
     const handleStartEditing = () => {
         setGradeInput(currentGrade !== null && currentGrade !== undefined ? String(currentGrade) : '');
