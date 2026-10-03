@@ -34,9 +34,11 @@ export default async function AdminBackupPage() {
     }
 
     const hasGoogleDrive = Boolean(
-        process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL &&
-        process.env.GOOGLE_PRIVATE_KEY &&
-        process.env.GOOGLE_DRIVE_FOLDER_ID
+        process.env.GOOGLE_DRIVE_FOLDER_ID && (
+            (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REFRESH_TOKEN) ||
+            (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) ||
+            process.env.GOOGLE_DRIVE_CREDENTIALS
+        )
     );
 
     return (

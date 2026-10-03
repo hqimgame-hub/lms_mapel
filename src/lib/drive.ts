@@ -68,6 +68,37 @@ function getCredentials() {
     return { clientEmail, privateKey };
 }
 
+/**
+ * Inisialisasi client Google Drive:
+ * 1. Prioritaskan OAuth 2.0 (Akun Gmail Pribadi — memakai kuota 15 GB gratis)
+ * 2. Fallback ke Service Account (Google Workspace / Shared Drive)
+ */
+function getDriveInstance() {
+    // 1. Cek mode OAuth 2.0 (Akun Gmail Pribadi)
+    const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
+    const refreshToken = process.env.GOOGLE_REFRESH_TOKEN?.trim();
+
+    if (clientId && clientSecret && refreshToken) {
+        const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
+        oauth2Client.setCredentials({ refresh_token: refreshToken });
+        return { drive: google.drive({ version: 'v3', auth: oauth2Client }), type: 'OAUTH' };
+    }
+
+    // 2. Fallback: Service Account (Google Workspace / Shared Drive)
+    const { clientEmail, privateKey } = getCredentials();
+    if (clientEmail && privateKey) {
+        const auth = new google.auth.JWT({
+            email: clientEmail,
+            key: privateKey,
+            scopes: SCOPES
+        });
+        return { drive: google.drive({ version: 'v3', auth }), type: 'SERVICE_ACCOUNT' };
+    }
+
+    return null;
+}
+
 export async function uploadToDrive(
     fileInput: string | Buffer,
     fileName: string,
@@ -75,33 +106,24 @@ export async function uploadToDrive(
     folderId?: string
 ) {
     try {
-        const { clientEmail, privateKey } = getCredentials();
+        const driveAuth = getDriveInstance();
+
+        if (!driveAuth) {
+            console.error("Missing Google Drive credentials (OAuth or Service Account)");
+            return {
+                error: "Kredensial Google Drive belum lengkap di Environment Variable. Gunakan OAuth 2.0 (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN) untuk Gmail pribadi atau Service Account untuk Google Workspace."
+            };
+        }
 
         const defaultFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID?.trim();
         const parsedFolderId = extractFolderId(folderId) || defaultFolderId;
 
-        if (!clientEmail) {
-            console.error("Missing GOOGLE_DRIVE_CREDENTIALS or GOOGLE_SERVICE_ACCOUNT_EMAIL");
-            return { error: "GOOGLE_DRIVE_CREDENTIALS / GOOGLE_SERVICE_ACCOUNT_EMAIL belum ada di Environment Variable server" };
-        }
-
-        if (!privateKey) {
-            console.error("Missing GOOGLE_PRIVATE_KEY");
-            return { error: "GOOGLE_PRIVATE_KEY belum ada di Environment Variable server" };
-        }
-
         if (!parsedFolderId) {
             console.error("Missing parsedFolderId", { folderId, defaultFolderId });
-            return { error: `Guru belum memasukkan Link Folder Google Drive pada tugas ini (Tersimpan: '${folderId || 'Kosong'}')` };
+            return { error: `Folder Google Drive belum ditentukan (Tersimpan: '${folderId || 'Kosong'}')` };
         }
 
-        const auth = new google.auth.JWT({
-            email: clientEmail,
-            key: privateKey,
-            scopes: SCOPES
-        });
-
-        const drive = google.drive({ version: 'v3', auth });
+        const drive = driveAuth.drive;
 
         const requestBody = {
             name: fileName,
@@ -139,18 +161,12 @@ export async function uploadToDrive(
 
 export async function getOrCreateFolder(folderName: string) {
     try {
-        const { clientEmail, privateKey } = getCredentials();
+        const driveAuth = getDriveInstance();
         const rootFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID?.trim();
 
-        if (!clientEmail || !privateKey || !rootFolderId) return null;
+        if (!driveAuth || !rootFolderId) return null;
 
-        const auth = new google.auth.JWT({
-            email: clientEmail,
-            key: privateKey,
-            scopes: SCOPES
-        });
-
-        const drive = google.drive({ version: 'v3', auth });
+        const drive = driveAuth.drive;
 
         // Check if folder exists
         const query = `mimeType='application/vnd.google-apps.folder' and name='${folderName}' and '${rootFolderId}' in parents and trashed=false`;
