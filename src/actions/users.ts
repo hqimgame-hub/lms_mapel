@@ -288,7 +288,19 @@ export async function getTeacherStudents(teacherId: string) {
                                     username: true,
                                     email: true,
                                     _count: {
-                                        select: { submissions: true }
+                                        select: {
+                                            submissions: {
+                                                where: {
+                                                    status: { in: ['SUBMITTED', 'GRADED'] },
+                                                    assignment: {
+                                                        published: true,
+                                                        course: {
+                                                            teacherId: teacherId
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }

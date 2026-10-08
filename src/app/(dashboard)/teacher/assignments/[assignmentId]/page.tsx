@@ -54,6 +54,8 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
         .filter(Boolean)
         .sort((a, b) => (a?.name || '').localeCompare(b?.name || ''));
 
+    const submittedCount = submissions.filter(s => s.status === 'SUBMITTED' || s.status === 'GRADED').length;
+
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
             <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm transition-all">
@@ -84,7 +86,7 @@ export default async function AssignmentGradingPage({ params }: { params: Promis
                     <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <h2 className="text-xl font-black text-slate-800 dark:text-slate-200">Pengumpulan Siswa</h2>
-                            <p className="text-sm font-bold text-slate-400 dark:text-slate-500">{submissions.length} dari {students.length} Siswa Telah Mengumpulkan</p>
+                            <p className="text-sm font-bold text-slate-400 dark:text-slate-500">{submittedCount} dari {students.length} Siswa Telah Mengumpulkan</p>
                         </div>
                     </div>
 

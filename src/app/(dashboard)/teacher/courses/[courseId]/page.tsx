@@ -41,7 +41,15 @@ export default async function TeacherCoursePage({
             assignments: {
                 orderBy: { dueDate: 'desc' },
                 include: {
-                    _count: { select: { submissions: true } }
+                    _count: {
+                        select: {
+                            submissions: {
+                                where: {
+                                    status: { in: ['SUBMITTED', 'GRADED'] }
+                                }
+                            }
+                        }
+                    }
                 }
             },
             materials: {

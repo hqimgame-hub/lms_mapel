@@ -38,7 +38,13 @@ export default async function TeacherAssignmentsPage() {
                     }
                 },
                 _count: {
-                    select: { submissions: true }
+                    select: {
+                        submissions: {
+                            where: {
+                                status: { in: ['SUBMITTED', 'GRADED'] }
+                            }
+                        }
+                    }
                 }
             },
             orderBy: { dueDate: 'desc' }
