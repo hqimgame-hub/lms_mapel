@@ -14,12 +14,20 @@ async function verifyAuthorized(req: NextRequest): Promise<boolean> {
         return true;
     }
 
-    // 2. Check Vercel Cron Header if CRON_SECRET is not configured
-    if (!cronSecret && req.headers.get('x-vercel-cron') === '1') {
+    // 2. Check official Vercel Cron system headers & User-Agent
+    const userAgent = req.headers.get('user-agent');
+    const cronSchedule = req.headers.get('x-vercel-cron-schedule');
+    const vercelCronHeader = req.headers.get('x-vercel-cron');
+
+    if (
+        userAgent === 'vercel-cron/1.0' ||
+        Boolean(cronSchedule) ||
+        vercelCronHeader === '1'
+    ) {
         return true;
     }
 
-    // 3. Check Admin session
+    // 3. Check Admin session (ketika admin menekan tombol manual backup di dashboard)
     try {
         const session = await auth();
         if (session?.user?.role === 'ADMIN') {

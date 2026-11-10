@@ -154,7 +154,7 @@ export function BackupClient({ stats, totalRecords, hasGoogleDrive }: BackupClie
                             </div>
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800">
                                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                Terjadwal Harian
+                                Terjadwal Mingguan
                             </span>
                         </div>
 
@@ -163,14 +163,14 @@ export function BackupClient({ stats, totalRecords, hasGoogleDrive }: BackupClie
                                 Backup Otomatis ke Google Drive
                             </h2>
                             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                                Seluruh data database diekspor otomatis setiap hari pukul <strong>02:00 WIB</strong> ke folder <code>Backup_LMS</code> di Google Drive Anda.
+                                Seluruh data database diekspor otomatis setiap pekan (Senin dini hari pukul <strong>02:00 WIB</strong>) ke folder <code>Backup_LMS</code> di Google Drive Anda.
                             </p>
                         </div>
 
                         <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl flex flex-col gap-2 border border-slate-100 dark:border-slate-800 text-xs">
                             <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-semibold">
                                 <Calendar size={16} className="text-blue-600 dark:text-blue-400" />
-                                <span>Jadwal: Setiap Hari pukul 02:00 WIB (Vercel Cron)</span>
+                                <span>Jadwal: Setiap Pekan / Senin 02:00 WIB (Vercel Cron)</span>
                             </div>
                             <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-semibold">
                                 <FolderCheck size={16} className="text-emerald-600 dark:text-emerald-400" />
